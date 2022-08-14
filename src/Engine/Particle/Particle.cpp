@@ -14,7 +14,7 @@ Particle::Particle(vec3 pos, float lifetime, int maxlifetime)
 
 Particle::~Particle() { }
 
-bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Particle::ParticleStage*> *stages)
+bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Particle::ParticleStage*> *stages, vec3 winddir)
 {
 	elapsedTime += FPS::get();
 
@@ -42,7 +42,7 @@ bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Partic
 		finalspeed = 0;
 	}
 	
-	vec3 FinalVelocity = (Velocity * finalspeed + randomAddition + GumEngine::Physics->getWindDir()) * FPS::get();
+	vec3 FinalVelocity = (Velocity * finalspeed + randomAddition + winddir) * FPS::get();
 	if(std::isnan(FinalVelocity.x))
 	{
 		FinalVelocity = vec3(0);
@@ -128,8 +128,8 @@ void Particle::setTextureOffset(vec2 &offset, int index, int NumberofRows, int N
 {
 	int column = index % NumberofCollumns;
 	int row = index / NumberofRows;
-	offset.x = column / NumberofCollumns;
-	offset.y = row / NumberofRows;
+	offset.x = (float)column / (float)NumberofCollumns;
+	offset.y = (float)row / (float)NumberofRows;
 }
 
 float Particle::getcameradistance() 			{ return vec3::distance(v3Position, Camera::ActiveCamera->getPosition()); }

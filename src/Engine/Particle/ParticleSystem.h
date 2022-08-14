@@ -1,8 +1,10 @@
 #pragma once
-#include "Particle.h"
-#include <OpenGL/ShaderProgram.h>
 #include <OpenGL/Texture.h>
+
+#include "Particle.h"
 #include "ParticleProperties.h"
+
+class World;
 
 class ParticleSystem
 {
@@ -12,21 +14,23 @@ private:
 	ParticleProperties *properties;
 	const unsigned int MAX_INSTANCES = 100000;
 
-	GLuint VAO;
-	GLuint VertexPositions;
+	uint VAO;
+	uint VertexPositions;
+	uint TexOffsets;
+	uint TexCoordInfo;
+	uint partPositionsVBO;
 	Texture *texture;
-	GLuint TexOffsets;
-	GLuint TexCoordInfo;
-	GLuint partPositionsVBO;
 
 	std::vector<vec2> TexCoordInfoVector;
 	std::vector<vec4> TexOffsetsVector;
+
+	World* pWorld;
 
 	vec3 v3Position;
 	bool play = true;
 
 public:
-	ParticleSystem();
+	ParticleSystem(World* world);
 	~ParticleSystem();
 
 	void create(std::string file);

@@ -2,10 +2,13 @@
 #include <algorithm>
 #include <gum-maths.h>
 
+#include "../General/World.h"
 
+#include <GL/glew.h>
 
-ParticleSystem::ParticleSystem()
+ParticleSystem::ParticleSystem(World* world)
 {
+	pWorld = world;
 	properties = new ParticleProperties();
 	ParticleStages = new std::vector<Particle::ParticleStage*>();
 }
@@ -127,7 +130,7 @@ void ParticleSystem::update()
 	{
 		if(play)
 		{
-			if(vParticles[i].update(properties->NumberOfRows, properties->NumberOfCollumns, ParticleStages))
+			if(vParticles[i].update(properties->NumberOfRows, properties->NumberOfCollumns, ParticleStages, pWorld->getPhysics()->getWindDir()))
 			{
 				vParticles.erase(vParticles.begin() + i);
 				TexCoordInfoVector.erase(TexCoordInfoVector.begin() + i);

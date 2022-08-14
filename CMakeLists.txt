@@ -7,7 +7,7 @@ project (GumEngine)
 #add_definitions(-DGUM_OS_MACOS)
 add_definitions(-DGUM_OS_LINUX)
 
-add_definitions(-DDEBUG)
+#add_definitions(-DDEBUG)
 #add_definitions(-DCHECK_GL_ERRORS)
 
 set(GUM_INSTALLDIR "/usr/include/gumball/")
@@ -23,9 +23,10 @@ set(BUILD_CPU_DEMOS OFF CACHE INTERNAL "")
 set(BUILD_OPENGL3_DEMOS OFF CACHE INTERNAL "")
 set(BUILD_BULLET2_DEMOS OFF CACHE INTERNAL "")
 set(BUILD_EXTRAS OFF CACHE INTERNAL "")
+set(BUILD_UNIT_TESTS OFF CACHE INTERNAL "")
 
 
 
 add_subdirectory(./ext/bullet3/)
 add_subdirectory(./src/)
-add_subdirectory(./examples/)
+#add_subdirectory(./examples/)

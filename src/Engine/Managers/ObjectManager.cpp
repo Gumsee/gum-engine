@@ -1,5 +1,6 @@
 #include "ObjectManager.h"
 #include "ShaderManager.h"
+#include "../General/Camera.h"
 #include <string>
 
 

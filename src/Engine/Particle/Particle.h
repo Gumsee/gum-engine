@@ -37,7 +37,7 @@ public:
 		vec2 scale;
 	};
 
-	bool update(int NumberOfRows, int NumberofCollumns, std::vector<Particle::ParticleStage*> *stages);
+	bool update(int NumberOfRows, int NumberofCollumns, std::vector<Particle::ParticleStage*> *stages, vec3 winddir);
 
 	void updateTextureCoordInfo(int NumberofRows, int NumberofCollumns);
 	void setTextureOffset(vec2 &offset, int index, int NumberofRows, int NumberofCollumns);

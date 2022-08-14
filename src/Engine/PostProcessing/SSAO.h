@@ -2,7 +2,8 @@
 #include <OpenGL/Framebuffer.h>
 #include <OpenGL/ShaderProgram.h>
 #include <GUI/Primitives/Box.h>
-#include "G_Buffer.h"
+
+#include "../Lightning/G_Buffer.h"
 #include "../General/Renderer3D.h"
 
 class SSAO

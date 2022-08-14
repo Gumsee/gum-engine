@@ -4,7 +4,6 @@
 #include <Maths/vec.h>
 #include <Maths/mat.h>
 
-
 class World;
 struct Instance;
 

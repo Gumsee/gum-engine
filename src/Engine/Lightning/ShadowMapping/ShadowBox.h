@@ -2,6 +2,8 @@
 #include <Maths/vec.h>
 #include <Maths/mat.h>
 
+class Renderer3D;
+
 class ShadowBox
 {
 private:
@@ -9,6 +11,7 @@ private:
 	vec4 UP = vec4(0, 1, 0, 0);
 	vec4 FORWARD = vec4(0, 0, -1, 0);
 	const float SHADOW_DISTANCE = 20;
+	Renderer3D* pRenderer;
 
 	float minX, maxX;
 	float minY, maxY;
@@ -17,7 +20,7 @@ private:
 	float farHeight, farWidth, nearHeight, nearWidth;
     
 public:
-	ShadowBox();
+	ShadowBox(Renderer3D* renderer);
 	~ShadowBox();
 
 	void create(mat4 *lightViewMatrix);

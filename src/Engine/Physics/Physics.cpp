@@ -9,7 +9,7 @@
 #include "../General/Camera.h"
 #include "../Managers/ShaderManager.h"
 
-GumPhysics::GumPhysics()
+Physics::Physics()
 {
 	this->vRayHitPosition = vec3(0,0,0);
 	this->vWindDir = vec3(0,0,0);
@@ -34,7 +34,7 @@ GumPhysics::GumPhysics()
 	btMultiBodyConstraintSolver* solver = new btMultiBodyConstraintSolver();
 
 	//Gum::Output::debug("Physics: Creating Dynamic world");
-	pDynamicWorld = new btMultiBodyDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+	pDynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
 	pDynamicWorld->setGravity(btVector3(0, -9.81, 0));
 	pDynamicWorld->getSolverInfo().m_globalCfm = 1e-3;
@@ -48,7 +48,7 @@ GumPhysics::GumPhysics()
 }
 
 
-void GumPhysics::update()
+void Physics::update()
 {
 	Gum::Output::debug("Updating Physics");
 	pDynamicWorld->stepSimulation(FPS::get(), 100, 1.0f/240);
@@ -78,13 +78,13 @@ void GumPhysics::update()
 
 
 
-void GumPhysics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type)
+void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type)
 {
 }
 
 
 
-void GumPhysics::addDebugDrawer(ShaderProgram *shader)
+void Physics::addDebugDrawer(ShaderProgram *shader)
 {
 	delete pDebugDrawer;
 	pDebugDrawer = new DebugDrawer(shader);
@@ -98,7 +98,7 @@ void GumPhysics::addDebugDrawer(ShaderProgram *shader)
 
 
 
-void GumPhysics::drawDebug()
+void Physics::drawDebug()
 {
 	if(Settings::getSetting(Settings::Names::SHOWDEBUGINFO)) 
 	{
@@ -112,7 +112,7 @@ void GumPhysics::drawDebug()
 
 
 
-void GumPhysics::addWall(vec3 pos, vec3 size)
+void Physics::addWall(vec3 pos, vec3 size)
 {
 	btBoxShape *ColShape;
 	ColShape = new btBoxShape(btVector3(btScalar(size.x), btScalar(size.y), btScalar(size.z)));
@@ -130,12 +130,12 @@ void GumPhysics::addWall(vec3 pos, vec3 size)
 //
 // Getter
 //
-btMultiBodyDynamicsWorld* GumPhysics::getWorld()  	{ return this->pDynamicWorld; }
-DebugDrawer* GumPhysics::getDebugDrawer()		 	{ return this->pDebugDrawer; }
-Instance* GumPhysics::getMouseOnObjectInstance() 	{ return this->pOnHoverObjectInstance; }
-vec3 GumPhysics::getWindDir() 					{ return this->vWindDir; }
+btDiscreteDynamicsWorld* Physics::getWorld()  	{ return this->pDynamicWorld; }
+DebugDrawer* Physics::getDebugDrawer()		 	{ return this->pDebugDrawer; }
+Instance* Physics::getMouseOnObjectInstance() 	{ return this->pOnHoverObjectInstance; }
+vec3 Physics::getWindDir() 					    { return this->vWindDir; }
 
 //
 // Setter
 //
-void GumPhysics::setWindDir(vec3 windDir) 	 	{ this->vWindDir = windDir; }
+void Physics::setWindDir(vec3 windDir) 	 	{ this->vWindDir = windDir; }

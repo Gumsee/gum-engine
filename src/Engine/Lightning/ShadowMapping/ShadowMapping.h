@@ -7,6 +7,8 @@
 #include "../../General/Camera.h"
 #include "ShadowBox.h"
 
+class Renderer3D;
+
 class ShadowMapping
 {
 private:
@@ -23,7 +25,7 @@ private:
     void initShader();
     
 public:
-	ShadowMapping();
+	ShadowMapping(Renderer3D* renderer);
 	~ShadowMapping();
 
 	void prepare(vec3 LightDirection, int index);

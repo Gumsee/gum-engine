@@ -8,7 +8,7 @@ CombineTextures::CombineTextures(Box *canvas, ivec2 resolution)
 	pShader = Gum::ShaderManager::getShaderProgram("CombineTexturesShader");
 }
 
-CombineTextures::~CombineTexturess() {}
+CombineTextures::~CombineTextures() {}
 
 void CombineTextures::render(Texture* texture1, Texture* texture2, float exposure)
 {

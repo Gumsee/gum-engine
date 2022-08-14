@@ -1,13 +1,14 @@
 #pragma once
+#include <functional>
+
 #include "../Object/Object.h"
 #include "../Particle/Billboard.h"
-#include "../Particle/ParticleSystem.h"
 #include "../Managers/LightManager.h"
 #include "../Managers/ObjectManager.h"
+#include "../Physics/Physics.h"
 
-#include "Camera.h"
-
-#include <functional>
+class Camera;
+class ParticleSystem;
 
 class World
 {
@@ -20,6 +21,7 @@ private:
     std::vector<Camera*> vCamera;
 	ObjectManager* pObjectManager;
 	LightManager* pLightManager;
+    Physics* pPhysics;
 
     ShaderProgram* pParticleShader;
     ShaderProgram* pBillboardShader;
@@ -41,4 +43,5 @@ public:
     LightManager* getLightManager();
     ObjectManager* getObjectManager();
     Camera* getCamera(const unsigned int& index = 0);
+    Physics* getPhysics();
 };

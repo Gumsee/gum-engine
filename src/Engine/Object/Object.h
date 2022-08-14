@@ -8,8 +8,6 @@
 #include "../General/Animation.h"
 #include "Transformation.h"
 
-#include <bullet/BulletCollision/CollisionShapes/btShapeHull.h>
-
 #define	SPHERE		0
 #define	BOX_SHAPE	1
 #define	CONE		2
@@ -23,6 +21,7 @@
 #define OBJECT_TYPE_TERRAIN 1
 
 class Object; //Predefine
+class World;
 
 struct Instance : public Transformation
 {
@@ -116,7 +115,7 @@ public:
 	void setActivation(bool state, int index = 0);
 	void setActivation(bool state, Instance *inst);
 	void forceActivation(bool state, int index = 0);
-	void addPhysics(int type, bool isActive, float mass, Instance *instance, vec3 special = vec3(0,0,0));
+	void addPhysics(int type, bool isActive, float mass, Instance *instance, World* world, vec3 special = vec3(0,0,0));
 
 	vec3 getBoundingBoxSize()
 	{

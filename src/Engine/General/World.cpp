@@ -1,5 +1,6 @@
 #include "World.h"
 #include "../Managers/ShaderManager.h"
+#include "Engine/Physics/Physics.h"
 #include "Essentials/Window.h"
 
 
@@ -9,6 +10,7 @@ World::World(const ivec2& resolution, Gum::Window* context)
     pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection()); 
     pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
     pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
+    pPhysics = new Physics();
     vCamera.push_back(new Camera(context->getSize(), this, context));
 }
 
@@ -67,3 +69,4 @@ void World::addBillboard(Billboard* billboard)              { this->vBillboards.
 LightManager* World::getLightManager()                      { return this->pLightManager; }
 ObjectManager* World::getObjectManager()                    { return this->pObjectManager; }
 Camera* World::getCamera(const unsigned int& index)         { return this->vCamera[index]; }
+Physics* World::getPhysics()                                { return this->pPhysics; }

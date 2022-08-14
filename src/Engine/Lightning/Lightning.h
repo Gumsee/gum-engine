@@ -6,10 +6,10 @@
 #include <Maths/vec.h>
 
 #include "G_Buffer.h"
-#include "../General/World.h"
-#include "ShadowMapping/ShadowMapping.h"
 
 class Renderer3D;
+class ShadowMapping;
+class World;
 
 class Lightning
 {

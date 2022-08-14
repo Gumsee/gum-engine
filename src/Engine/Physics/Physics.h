@@ -1,20 +1,22 @@
 #pragma once
-#include <bullet/btBulletDynamicsCommon.h>
-#include "bullet/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h"
-#include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+//#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 #include "DebugDrawer.h"
 
 struct Instance;
 
 
-class GumPhysics
+class Physics
 {
 
 private:
 	enum ConstraintType { _6DOF };
 
-	//btDiscreteDynamicsWorld *pDynamicWorld;
-	btMultiBodyDynamicsWorld *pDynamicWorld;
+	btDiscreteDynamicsWorld *pDynamicWorld;
+	//btMultiBodyDynamicsWorld *pDynamicWorld;
 	DebugDrawer* pDebugDrawer;
 	Instance* pOnHoverObjectInstance;
 
@@ -22,7 +24,7 @@ private:
 	vec3 vRayHitPosition;
 
 public:
-	GumPhysics();
+	Physics();
 
 	void update();
 	void addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type);
@@ -32,7 +34,7 @@ public:
 
 	//Getter
 	DebugDrawer *getDebugDrawer();
-	btMultiBodyDynamicsWorld *getWorld();
+	btDiscreteDynamicsWorld *getWorld();
 	Instance* getMouseOnObjectInstance();
 	vec3 getWindDir();
 

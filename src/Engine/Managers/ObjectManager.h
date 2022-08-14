@@ -4,8 +4,6 @@
 #include "../Object/Object.h"
 #include "../Object/Skeletal/AnimatedModel.h"
 #include "../Object/Skybox.h"
-#include "../General/Camera.h"
-#include "../PostProcessing/ShadowMapping/ShadowMapping.h"
 
 
 #define OBJ_INSTANCED 	0
@@ -14,6 +12,7 @@
 #define	OBJ_ANIMATED  	3
 
 class Renderer3D;
+class Camera;
 
 class ObjectManager
 {

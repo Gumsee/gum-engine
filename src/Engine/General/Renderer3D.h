@@ -4,19 +4,19 @@
 #include <OpenGL/Framebuffer.h>
 #include <GUI/Primitives/Box.h>
 
+#include "../Lightning/G_Buffer.h"
+
 #include "../PostProcessing/SSAO.h"
-#include "../PostProcessing/G_Buffer.h"
-#include "../PostProcessing/Lightning.h"
 #include "../PostProcessing/OutlineRenderer.h"
 #include "../PostProcessing/Effects/PostProcessingEffect.h"
 #include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
-#include "../PostProcessing/ShadowMapping/ShadowMapping.h"
 #include "../Texture/EnvironmentMap.h"
 
-#include "World.h"
 #include "OcclusionMask.h"
 #include "Grid.h"
 
+class World;
+class ShadowMapping;
 class Lightning;
 
 class Renderer3D

@@ -1,12 +1,15 @@
 #include "ShadowMapping.h"
 #include "ShadowMappingShader.h"
+#include "../../Managers/ShaderManager.h"
+
+
 #include <Essentials/Output.h>
 #include <OpenGL/WrapperFunctions.h>
 
 
-ShadowMapping::ShadowMapping()
+ShadowMapping::ShadowMapping(Renderer3D* renderer)
 {
-	box = new ShadowBox();
+	box = new ShadowBox(renderer);
     initShader();
 
 
@@ -166,9 +169,9 @@ void ShadowMapping::addShadowMap(std::string name, float offset)
 
 void ShadowMapping::initShader()
 {
-    if(GumEngine::Shaders->hasShaderProgram("ShadowMapShader"))
+    if(Gum::ShaderManager::hasShaderProgram("ShadowMapShader"))
     {
-	    pShader = GumEngine::Shaders->getShaderProgram("ShadowMapShader");
+	    pShader = Gum::ShaderManager::getShaderProgram("ShadowMapShader");
     }
     else
     {
@@ -179,7 +182,7 @@ void ShadowMapping::initShader()
         pShader->addUniform("TextureMultiplier");
         pShader->addUniform("Displacement");
         pShader->addUniform("isInstanced");
-        GumEngine::Shaders->addShaderProgram(pShader);
+        Gum::ShaderManager::addShaderProgram(pShader);
     }
 }
 

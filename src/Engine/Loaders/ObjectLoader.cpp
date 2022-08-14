@@ -1,4 +1,5 @@
 #include "ObjectLoader.h"
+#include <Essentials/Tools.h>
 
 void ObjectLoader::open(const std::string& fileName)
 {

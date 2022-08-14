@@ -1,6 +1,7 @@
 #include "Object.h"
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <btBulletCollisionCommon.h>
+#include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 
 /*Object::addPhysics
@@ -18,7 +19,7 @@ Specials:
 - PLANE: X used for the Size
 - CONVEX: None
 */
-void Object::addPhysics(int type, bool isActive, float mass, Instance *instance, vec3 special)
+void Object::addPhysics(int type, bool isActive, float mass, Instance *instance, World* world, vec3 special)
 {
 	if(type >= 0)
 	{
@@ -152,7 +153,7 @@ void Object::addPhysics(int type, bool isActive, float mass, Instance *instance,
 		}
 
 		instance->setBody(body);
-		GumEngine::Physics->getWorld()->addRigidBody(instance->getBody());
+		world->getPhysics()->getWorld()->addRigidBody(instance->getBody());
 		instance->getBody()->setUserPointer(instance);
 		this->setActivation(isActive, instance);
 	}

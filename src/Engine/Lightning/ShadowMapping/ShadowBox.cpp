@@ -3,8 +3,9 @@
 
 
 
-ShadowBox::ShadowBox()
+ShadowBox::ShadowBox(Renderer3D* renderer)
 {
+	pRenderer = renderer;
 }
 
 
@@ -161,9 +162,12 @@ mat4 ShadowBox::calculateCameraRotationMatrix() {
 * by bringing the far-plane closer, which would increase shadow resolution
 * but means that distant objects wouldn't cast shadows.
 */
-void ShadowBox::calculateWidthsAndHeights() {
+void ShadowBox::calculateWidthsAndHeights() 
+{
 	farWidth = (float)(SHADOW_DISTANCE * Gum::Maths::tandeg(80.0f));
 	nearWidth = (float)(0.1f * Gum::Maths::tandeg(80.0f));
-	farHeight = farWidth / Gum::Window->getAspectRatioWidthToHeight();
-	nearHeight = nearWidth / Gum::Window->getAspectRatioWidthToHeight();
+	
+	float fAspectRatioWidthToHeight = (float)pRenderer->getRenderCanvas()->getSize().x / (float)pRenderer->getRenderCanvas()->getSize().y;
+	farHeight = farWidth / fAspectRatioWidthToHeight;
+	nearHeight = nearWidth / fAspectRatioWidthToHeight;
 }

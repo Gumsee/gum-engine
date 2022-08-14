@@ -1,7 +1,9 @@
 #pragma once
-#include "../General/Renderer3D.h"
+#include "Engine/Managers/ObjectManager.h"
 #include <OpenGL/Texture.h>
 #include <OpenGL/ShaderProgram.h>
+
+class Renderer3D;
 
 class Billboard
 {

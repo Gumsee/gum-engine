@@ -16,10 +16,7 @@ message(STATUS "GumEngine: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
 #
 # Directories
 #
-include_directories(${CMAKE_SOURCE_DIR}/include/)
-include_directories(${CMAKE_SOURCE_DIR}/include/bullet)
-include_directories(${CMAKE_SOURCE_DIR}/include/freetype2/)
-include_directories(${CMAKE_SOURCE_DIR}/include/AL/)
+include_directories(${CMAKE_SOURCE_DIR}/ext/bullet3/src/)
 include_directories(${CMAKE_SOURCE_DIR}/src/)
 include_directories(/usr/include/freetype2/)
 include_directories(${GUMGUI_DIRECTORY})
