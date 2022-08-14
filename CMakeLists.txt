@@ -18,6 +18,14 @@ set(GUMESSENTIALS_DIRECTORY ${GUMBALL_INCLUDE_DIR})
 set(GUMOPENGL_DIRECTORY ${GUMBALL_INCLUDE_DIR})
 set(BUILD_SANITIZE false)
 
-add_subdirectory(./ext/bullet/)
+set(BUILD_PYBULLET OFF CACHE INTERNAL "")
+set(BUILD_CPU_DEMOS OFF CACHE INTERNAL "")
+set(BUILD_OPENGL3_DEMOS OFF CACHE INTERNAL "")
+set(BUILD_BULLET2_DEMOS OFF CACHE INTERNAL "")
+set(BUILD_EXTRAS OFF CACHE INTERNAL "")
+
+
+
+add_subdirectory(./ext/bullet3/)
 add_subdirectory(./src/)
 add_subdirectory(./examples/)
