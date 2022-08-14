@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui-root pos="0, 0" size="100%, 100%">
+    <box id="renderview" pos="0, 0" size="70%, 80%" max-size="-800, -400" margin="0, 0"></box>
+    <box id="filesmenu" pos="0, 100%" size="70%, 20%" max-size="-800, 0" min-size="0, 400" margin="0, 0" origin="0, 100%" color="#36393F"></box>
+    <box id="sidemenu" pos="100%, 0" size="30%, 100%" min-size="800, 0" margin="0, 0" origin="100%, 0" color="#36393F">
+        <tabs id="sidemenutabs" pos="0, 0" size="100%, 100%">
+            <tab name="GBuffer">
+                <scroller pos="0, 0" size="100%, 100%">
+                    <box id="Positions"  size="100%, 500" pos="50%, 10"   margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="Normals"    size="100%, 500" pos="50%, 520"  margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="Diffuse"    size="100%, 500" pos="50%, 1030" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="IndividualColor"    size="100%, 500" pos="50%, 1540" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="SSAO"       size="100%, 500" pos="50%, 2050" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="Objectdata" size="100%, 500" pos="50%, 2560" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="ShadowMaps" size="100%, 500" pos="50%, 3070" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="Skybox"     size="100%, 500" pos="50%, 3580" margin="-20, 0" origin="50%, 0" invert="true" />
+                </scroller>
+            </tab>
+            <tab name="Object" active="true">
+                <scroller pos="0, 0" size="100%, 50%">
+                    <group pos="20, 200" size="150, 90" color="#FFFFFF" title="Translation">
+                        <slider pos="0, 0"  length="100%" title="X" infinite="true" round-corner="1, 1, 0, 0" border-radius="10" />
+                        <slider pos="0, 30" length="100%" title="Y" infinite="true" round-corner="0, 0, 0, 0" border-radius="0"  />
+                        <slider pos="0, 60" length="100%" title="Z" infinite="true" round-corner="0, 0, 1, 1" border-radius="10" />
+                    </group>
+                    <group pos="190, 200" size="150, 90" color="#FFFFFF" title="Rotation">
+                        <slider pos="0, 0"  length="100%" title="X" infinite="true" round-corner="1, 1, 0, 0" border-radius="10" unit="deg" />
+                        <slider pos="0, 30" length="100%" title="Y" infinite="true" round-corner="0, 0, 0, 0" border-radius="0"  unit="deg" />
+                        <slider pos="0, 60" length="100%" title="Z" infinite="true" round-corner="0, 0, 1, 1" border-radius="10" unit="deg" />
+                    </group>
+                    <group pos="360, 200" size="150, 90" color="#FFFFFF" title="Scale">
+                        <slider pos="0, 0"  length="100%" title="X" infinite="true" round-corner="1, 1, 0, 0" border-radius="10" />
+                        <slider pos="0, 30" length="100%" title="Y" infinite="true" round-corner="0, 0, 0, 0" border-radius="0"  />
+                        <slider pos="0, 60" length="100%" title="Z" infinite="true" round-corner="0, 0, 1, 1" border-radius="10" />
+                    </group>
+                </scroller>
+            </tab>
+            <tab name="Examples">
+                <dropdown id="examplesdropdown" pos="20, 20" size="200, 50" title="Examples" fontsize="20">
+                    <!--<item>Test1</item>-->
+                </dropdown>
+            </tab>
+            <tab name="World">
+            </tab>
+        </tabs>
+    </box>
+</gui-root>

@@ -1,0 +1,48 @@
+01.10.2017: Skyshader is now build in and hardcoded
+01.10.2017: Engine runs with only 3 lines
+01.10.2017: Added Object Reflectivity and Refractivity values
+01.10.2017: Added default Shader (Material Shader) 
+24.11.2017: Added Material class
+24.11.2017: bound a Material class to every object
+25.11.2017: Added Debug Console
+25.11.2017: Added Debug Commands
+01.12.2017: Fixed Terrain class
+02.12.2017: Removed all warning so far
+03.12.2017: Added Particle properties
+03.12.2017: Added Particle start stop mechanics
+03.12.2017: Improved randf function to use only one rand() call
+04.12.2017: Added heightmap support for Terrain
+10.12.2017: Added AntTweakBar support
+16.12.2017: Added Object and Particle editor
+17.12.2017: Added Debug Console in command line
+25.12.2017: Added Box GUI
+26.12.2017: Switched from Engine namespace to Engine class
+26.12.2017: Added Light Manager
+26.12.2017: Added Slider GUI
+27.12.2017: Added Color Wheel GUI
+30.12.2017: Improved FileParser - added Textures to object, added Camera
+20.01.2018: Fixed Terrain class
+29.01.2018: Added flat Water
+05.03.2018: Added Terrain Object Type and FileParser
+10.04.2018: Added ShaderBuilder class
+11.04.2018: Added Shaderbuilder Functions
+11.04.2018: Added Shaderbuilder FileSaver
+12.04.2018: Added ParticleStages
+14.04.2018: Added Text Class using Freetype
+15.04.2018: Added Text Box Class
+16.04.2018: Added Fancy 3D Cursor
+17.04.2018: Added Dropdown GUI
+20.04.2018: Added TextureSelector GUI
+24.06.2018: Added Window GUIs
+26.06.2018: Added File Explorer
+09.07.2018: Added Bloom effect
+09.07.2018: Added Contrast changer
+18.07.2018: Added microsecond counter for every big proccess
+18.07.2018: Graph GUI
+19.07.2018: Added SSAO
+20.07.2018: Implemented Deferred Rendering
+20.07.2018: Implemented Deferred Lighting
+21.07.2018: Added ReflectiveMap support
+21.07.2018: Added RefractiveMap support
+22.07.2018: Added Texture Selection for Object Editor
+12.08.2018: Added Shadow Mapping

@@ -1,0 +1,13 @@
+/build/
+/.cache/
+/libEngine.a
+/libEngine.so
+/libEngineAll.so
+/compile_commands.json
+*.so
+*.out
+*.log
+*.cmake
+libGumEngine.a
+libEngineAll.a
+Makefile

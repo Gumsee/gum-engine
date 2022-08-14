@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gui-root pos="0, 0" size="100%, 100%">
+    <tabs size="100%, 100%" pos="0, 0" tabsize="100, 30">
+        <tab name="Tab1">
+            <box pos="25%, 25%" size="50%, 50%" border-radius="0" texture="Cobblestone/ao.png">
+            </box>
+        </tab>
+        <tab name="Tab2" active="true">
+            <scroller size="100%, 100%" tooltip="you're not supposed to see this\n">
+                <!-- size is 1-Dimensional for sliders-->
+                <slider pos="5%, 50" length="90%" title="pos" />
+                <slider pos="5%, 80" length="90%" title="pos-inf" infinite="true" tooltip="premium tips here\n" />
+
+                <switch pos="10, -10" size="20, 20" border-radius="10" />
+                <switch pos="10, 1000" size="20, 20" border-radius="10" />
+
+                <box pos="25%, 350" size="50%, 50%" border-radius="0" texture="boii.jpg" id="stupid">
+                </box>
+            </scroller>
+        </tab>
+        <tab name="Tab3">
+        </tab>
+    </tabs>
+
+    <style>
+        #stupid.left: 25%;
+        #stupid.width: 50%;
+        #stupid.height: 50%;
+    </style>
+    
+    <script type="lua">
+        --GUI stupidGUI;
+        --elements.byID("stupid");
+        --stupidGUI.offset = stupidGUI.size / 2;
+        --x=1
+        print ("\n\n-- 1 --. Test auto GC\n")
+    </script>
+</gui-root>
