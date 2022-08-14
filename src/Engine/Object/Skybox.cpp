@@ -1,9 +1,8 @@
 #include "Skybox.h"
 #include "SkyboxShaders.h"
 #include "../Managers/ShaderManager.h"
+#include "../Managers/TextureManager.h"
 #include <OpenGL/WrapperFunctions.h>
-
-#include <iostream>
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 {
@@ -112,20 +111,7 @@ void SkyBox::update()
 
 void SkyBox::updateTexture()
 {
-	sf::Image imageData;
-
-	pTexture->bind(0);
-	for (size_t i = 0; i < textures.size(); i++)
-	{
-		imageData.loadFromFile(GumGlobals::TEXTURE_ASSETS_PATH + textures[i]);
-		if(!gumTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, ivec2(imageData.getSize().x,imageData.getSize().y), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getPixelsPtr()))
-			Gum::Output::error("SkyBox::updateTexture: glTexImage Failed.");
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    pTexture->unbind();
+    pTexture->load(textures, true);
 
 	makeIrradianceMap();
 	makePrefilterMap();
@@ -279,7 +265,7 @@ void SkyBox::makeCubeMap(Texture* texture)
     pFramebuffer->unbind();
 }
 
-void SkyBox::setTexture(std::string texture[]) { for (int i = 0; i < 6; i++) textures.push_back(texture[i]); updateTexture(); }
+void SkyBox::setTexture(std::string texture[]) { for (int i = 0; i < 6; i++) textures.push_back(Gum::TextureManager::TEXTURE_ASSETS_PATH + texture[i]); updateTexture(); }
 TextureCube* SkyBox::getTexture()              { return pTexture; }
 TextureCube* SkyBox::getIrradianceMap()        { return (TextureCube*)pIrradianceFramebuffer->getTextureAttachment(0); }
 TextureCube* SkyBox::getPreFilterMap()         { return (TextureCube*)pPreFilterMap->getTextureAttachment(0); }

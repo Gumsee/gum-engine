@@ -1,6 +1,6 @@
 #include "Physics.h"
 #include <stdio.h>
-#include <bullet/BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
+#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
 
 #include <Essentials/Input/Mouse.h>
 #include <Essentials/FPS.h>

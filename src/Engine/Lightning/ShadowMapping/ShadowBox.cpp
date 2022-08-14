@@ -1,5 +1,6 @@
 #include "ShadowBox.h"
-#include "Engine/General/Camera.h"
+#include "../../General/Camera.h"
+#include "../../General/Renderer3D.h"
 
 
 

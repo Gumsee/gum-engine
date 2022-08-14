@@ -1,6 +1,11 @@
 #include "Renderer3D.h"
 
-Renderer3D::Renderer3D(Box* canvas)
+#include "../General/World.h"
+#include "../Lightning/Lightning.h"
+#include "../Lightning/ShadowMapping/ShadowMapping.h"
+#include "Essentials/Window.h"
+
+Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
     pRenderCanvas = canvas;
     fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
@@ -9,9 +14,9 @@ Renderer3D::Renderer3D(Box* canvas)
 
     pRenderCanvas->invertTexcoordY(true);
 	pGBuffer      = new G_Buffer(canvas->getSize());
-	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, canvas->getSize());
+	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
 	pLightning    = new Lightning(pRenderCanvas, this);
-    pShadowMaps   = new ShadowMapping();
+    pShadowMaps   = new ShadowMapping(this);
     #ifdef DEBUG
     pGrid         = new Grid();
     #endif
@@ -163,12 +168,9 @@ float Renderer3D::getExposure() const                                  { return 
 float Renderer3D::getAspectRatio() const                               { return this->fAspectRatio; }
 World* Renderer3D::getWorld()                                          { return this->pWorld; }
 Framebuffer* Renderer3D::getFramebuffer()                              { return this->pFramebuffer; }
+Gum::Window* Renderer3D::getContextWindow()                            { return this->pContextWindow; }
 
 //Setter
 void Renderer3D::setExposure(const float& exposure)                    { this->fExposure = exposure; }
 void Renderer3D::setRenderCanvas(Box* canvas)                          { this->pRenderCanvas = canvas; this->setResolution(canvas->getSize()); }
 void Renderer3D::setWorld(World* world)                                { this->pWorld = world; }
-void Renderer3D::setResolution(const ivec2& resolution)                       
-{ 
-
-}

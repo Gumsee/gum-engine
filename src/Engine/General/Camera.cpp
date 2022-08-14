@@ -8,6 +8,8 @@
 #include <Essentials/Window.h>
 #include <Essentials/FPS.h>
 #include <Maths/MatrixFunctions.h>
+#include "../Object/Object.h"
+#include "../General/World.h"
 
 Camera* Camera::ActiveCamera = nullptr;
 

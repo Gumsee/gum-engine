@@ -4,7 +4,8 @@
 #include <GUI/Primitives/Box.h>
 
 #include "../Lightning/G_Buffer.h"
-#include "../General/Renderer3D.h"
+
+class Renderer3D;
 
 class SSAO
 {

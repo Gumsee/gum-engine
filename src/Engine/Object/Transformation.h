@@ -1,6 +1,6 @@
 #pragma once
-#include <bullet/LinearMath/btTransform.h>
-#include <bullet/btBulletDynamicsCommon.h>
+#include <LinearMath/btTransform.h>
+#include <btBulletDynamicsCommon.h>
 #include <iostream>
 #include <gum-maths.h>
 

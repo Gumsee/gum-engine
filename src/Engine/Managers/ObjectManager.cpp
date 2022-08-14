@@ -1,6 +1,7 @@
 #include "ObjectManager.h"
 #include "ShaderManager.h"
 #include "../General/Camera.h"
+#include "../General/Renderer3D.h"
 #include <string>
 
 
@@ -213,7 +214,7 @@ unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer) const
 	//unsigned int check = glGetError();
 	glReadBuffer(GL_COLOR_ATTACHMENT1);
 
-	vec2 pos = Input::Mouse->getPosition() / renderer->getRenderCanvas()->getSize();
+	vec2 pos = renderer->getContextWindow()->getMouse()->getPosition() / renderer->getRenderCanvas()->getSize();
 	pos.y = 1 - pos.y;
 	pos *= renderer->getRenderCanvas()->getSize();
 	unsigned char data[4];

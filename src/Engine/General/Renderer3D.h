@@ -12,6 +12,7 @@
 #include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
 #include "../Texture/EnvironmentMap.h"
 
+#include "Essentials/Window.h"
 #include "OcclusionMask.h"
 #include "Grid.h"
 
@@ -31,6 +32,7 @@ private:
     std::vector<PostProcessingEffect*> vPostProcessingEffects;
 
     World* pWorld;
+    Gum::Window* pContextWindow;
     #ifdef DEBUG
         Grid* pGrid;
     #endif
@@ -47,7 +49,7 @@ private:
 	std::chrono::high_resolution_clock::time_point start;
 
 public:
-    Renderer3D(Box* canvas);
+    Renderer3D(Box* canvas, Gum::Window* context);
     ~Renderer3D();
 
     void render();
@@ -63,6 +65,7 @@ public:
 
     //Getter
 	long long getExecutionTime() const;
+    Gum::Window* getContextWindow();
     SSAO* getSSAO();
     G_Buffer* getGBuffer();
     EnvironmentMap* getEnvironmentMap();

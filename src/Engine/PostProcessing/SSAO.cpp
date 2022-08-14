@@ -4,6 +4,7 @@
 #include <OpenGL/WrapperFunctions.h>
 #include "../Managers/ShaderManager.h"
 #include "../General/Camera.h"
+#include "../General/Renderer3D.h"
 
 #include <random>
 #include <chrono>

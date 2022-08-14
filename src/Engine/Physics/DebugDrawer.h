@@ -1,5 +1,5 @@
 #pragma once
-#include <bullet/btBulletDynamicsCommon.h>
+#include <btBulletDynamicsCommon.h>
 #include <OpenGL/ShaderProgram.h>
 
 class DebugDrawer : public btIDebugDraw

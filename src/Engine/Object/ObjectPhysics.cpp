@@ -3,6 +3,7 @@
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 
+#include "../General/World.h"
 
 /*Object::addPhysics
 * type: Type of Collision Shape

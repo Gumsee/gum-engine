@@ -2,6 +2,7 @@
 #include "../Managers/ShaderManager.h"
 #include "Engine/Physics/Physics.h"
 #include "Essentials/Window.h"
+#include "../Particle/ParticleSystem.h"
 
 
 World::World(const ivec2& resolution, Gum::Window* context)

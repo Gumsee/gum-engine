@@ -2,6 +2,7 @@
 #include <Maths/MatrixFunctions.h>
 #include <Essentials/FPS.h>
 #include "../General/Camera.h"
+#include "../General/Renderer3D.h"
 #include "Essentials/Window.h"
 
 Billboard::Billboard(vec3 Position, Renderer3D* renderer)

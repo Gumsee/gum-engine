@@ -3,6 +3,9 @@
 #include <chrono>
 #include "LightningShader.h"
 #include "../Managers/ShaderManager.h"
+#include "../General/Renderer3D.h"
+#include "../General/World.h"
+#include "ShadowMapping/ShadowMapping.h"
 
 Lightning::Lightning(Box* canvas, Renderer3D *renderer)
 {
@@ -128,7 +131,7 @@ void Lightning::initShader()
         pShader->addUniform("numLights");
         pShader->addUniform("pixelSize");
 
-        for (unsigned int i = 0; i < Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS); i++)
+        for (int i = 0; i < Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS); i++)
         {
             pShader->addUniform("lights[" + std::to_string(i) + "].Position");
             pShader->addUniform("lights[" + std::to_string(i) + "].Color");
