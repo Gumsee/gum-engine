@@ -1,6 +1,7 @@
 #include "Physics.h"
+#include <bullet/LinearMath/btAlignedAllocator.h>
 #include <stdio.h>
-#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
+//#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
 
 #include <Essentials/Input/Mouse.h>
 #include <Essentials/FPS.h>
@@ -11,27 +12,28 @@
 
 Physics::Physics()
 {
+	pDebugDrawer = nullptr;
 	this->vRayHitPosition = vec3(0,0,0);
 	this->vWindDir = vec3(0,0,0);
     
 	Gum::Output::log("Initializing Physics! \t\t\t!!!IN WORK!!!");
 	Gum::Output::debug("Physics: Creating collisionConfiguarion");
-	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
+	collisionConfiguration = new btDefaultCollisionConfiguration();
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	//Gum::Output::debug("Physics: Creating collisionDispatcher");
-	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
 	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 	//Gum::Output::debug("Physics: Creating BroadphaseInterface");
-	btDbvtBroadphase* overlappingPairCache = new btDbvtBroadphase();
-	btGhostPairCallback* m_ghostPairCallback = new btGhostPairCallback();
+	overlappingPairCache = new btDbvtBroadphase();
+	m_ghostPairCallback = new btGhostPairCallback();
 	overlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(m_ghostPairCallback);
 
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 	//Gum::Output::debug("Physics: Creating SequentialImpulseConstraintSolver");
-	//btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
-	btMultiBodyConstraintSolver* solver = new btMultiBodyConstraintSolver();
+	solver = new btSequentialImpulseConstraintSolver();
+	//btMultiBodyConstraintSolver* solver = new btMultiBodyConstraintSolver();
 
 	//Gum::Output::debug("Physics: Creating Dynamic world");
 	pDynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
@@ -47,6 +49,15 @@ Physics::Physics()
 	Gum::Output::log("Initialized Physics!");
 }
 
+Physics::~Physics()
+{
+	delete collisionConfiguration;
+	delete dispatcher;
+	delete overlappingPairCache;
+	delete m_ghostPairCallback;
+	delete solver;
+	delete pDynamicWorld;
+}
 
 void Physics::update()
 {
@@ -86,7 +97,8 @@ void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType 
 
 void Physics::addDebugDrawer(ShaderProgram *shader)
 {
-	delete pDebugDrawer;
+	if(pDebugDrawer != nullptr)
+		delete pDebugDrawer;
 	pDebugDrawer = new DebugDrawer(shader);
 
 	//btIDebugDraw *draw = new DebugDrawer();

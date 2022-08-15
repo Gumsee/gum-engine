@@ -95,7 +95,10 @@ void Object::load()
         pVertexArrayObject->bind();
         pVertexVBO = new VertexBufferObject<Vertex>();
 		pVertexVBO->setData(pProperties->pMesh->getVertexBuffer());
-        pVertexArrayObject->addBufferVertices(pVertexVBO);
+        pVertexArrayObject->addAttribute(pVertexVBO, 0, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, position.x));
+        pVertexArrayObject->addAttribute(pVertexVBO, 1, 2, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, textureCoord.x));
+        pVertexArrayObject->addAttribute(pVertexVBO, 2, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, normal.x));
+        pVertexArrayObject->addAttribute(pVertexVBO, 7, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, tangent.x));
         
         pTransMatricesVBO = new VertexBufferObject<mat4>();
 		//pTransMatricesVBO->setData(vTransforms, GL_STREAM_DRAW);

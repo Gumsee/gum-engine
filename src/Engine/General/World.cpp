@@ -5,19 +5,23 @@
 #include "../Particle/ParticleSystem.h"
 
 
-World::World(const ivec2& resolution, Gum::Window* context)
+World::World(Gum::Window* context)
 {
     pLightManager = new LightManager(this); 
     pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection()); 
     pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
     pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
     pPhysics = new Physics();
-    vCamera.push_back(new Camera(context->getSize(), this, context));
+    //vCamera.push_back(new Camera(context->getSize(), this, context));
 }
 
 World::~World()
 {
-
+    delete pLightManager;
+    delete pObjectManager;
+    delete pPhysics;
+    for(size_t i = 0; i < vCamera.size(); i++)
+        delete vCamera[i];
 }
 
 void World::update()

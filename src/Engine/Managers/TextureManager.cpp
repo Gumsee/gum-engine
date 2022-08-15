@@ -32,7 +32,7 @@ namespace TextureManager
 
 	void update()
 	{
-		for(int i = 0; i < vTexturesToLoad.size(); i++)
+		for(size_t i = 0; i < vTexturesToLoad.size(); i++)
 		{
 			vTexturesToLoad[i]->updateImage();
 			vTexturesToLoad.erase(vTexturesToLoad.begin() + i);

@@ -27,7 +27,7 @@ private:
     ShaderProgram* pBillboardShader;
 
 public:
-    World(const ivec2& resolution, Gum::Window* context);
+    World(Gum::Window* context);
     ~World();
 
     void update();

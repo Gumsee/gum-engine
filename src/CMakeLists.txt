@@ -29,7 +29,13 @@ link_directories(${CMAKE_SOURCE_DIR}/lib/)
 #
 # Source
 #
-file(GLOB_RECURSE SRC "./*.cpp")
+file(GLOB_RECURSE SRC 
+        ./*.cpp
+        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/LinearMath/*.cpp
+        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletDynamics/*.cpp
+        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletCollision/*.cpp
+        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletInverseDynamics/*.cpp
+)
 
 add_library(GumEngine STATIC ${SRC})
 target_link_libraries(GumEngine ${CMAKE_THREAD_LIBS_INIT} )
@@ -37,6 +43,9 @@ target_link_libraries(GumEngine ${CMAKE_THREAD_LIBS_INIT} )
 
 file(GLOB HEADERS "./Engine/Lightning/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Lightning/)
+
+file(GLOB HEADERS "./Engine/Lightning/ShadowMapping/*.h")
+install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Lightning/ShadowMapping/)
 
 file(GLOB HEADERS "./Engine/Managers/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Managers/)
@@ -47,6 +56,9 @@ install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Material/)
 file(GLOB HEADERS "./Engine/Object/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Object/)
 
+file(GLOB HEADERS "./Engine/Object/Skeletal/*.h")
+install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Object/Skeletal/)
+
 file(GLOB HEADERS "./Engine/Particle/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Particle/)
 
@@ -55,6 +67,12 @@ install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Physics/)
 
 file(GLOB HEADERS "./Engine/PostProcessing/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/)
+
+file(GLOB HEADERS "./Engine/PostProcessing/Effects/*.h")
+install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/Effects/)
+
+file(GLOB HEADERS "./Engine/PostProcessing/ImageCorrection/*.h")
+install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/ImageCorrection/)
 
 file(GLOB HEADERS "./Engine/Texture/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Texture/)

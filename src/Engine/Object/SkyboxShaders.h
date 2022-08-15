@@ -31,10 +31,11 @@ R"(
 	uniform int gradiant;
 	uniform vec3 SunDirection;
 	
-	void main(void) 
+	void main() 
 	{
         vec3 envColor = texture(dayTexture, Texcoord).rgb;
         gl_FragColor = vec4(envColor, 1.0f);
+        //gl_FragColor = vec4(Texcoord, 1.0f);
 	}
 )";
 
@@ -69,6 +70,8 @@ R"(
 			vec3 envColor = texture(hdrTexture, uv).rgb;            
 			gl_FragColor = vec4(envColor, 1.0f);
 		} 
+
+		//gl_FragColor = vec4(1,0,0, 1.0f);
 	}
 )";
 

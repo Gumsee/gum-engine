@@ -17,7 +17,7 @@ private:
 
 public:
     G_Buffer(ivec2 resolution);
-    ~G_Buffer(){}
+    ~G_Buffer();
 
     void bind();
     void unbind();

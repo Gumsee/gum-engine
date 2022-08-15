@@ -25,6 +25,11 @@ G_Buffer::G_Buffer(ivec2 resolution)
     initShader();
 }
 
+G_Buffer::~G_Buffer()
+{
+    delete gBuffer;
+}
+
 void G_Buffer::bind()
 {
     start = std::chrono::high_resolution_clock::now();
@@ -49,7 +54,7 @@ void G_Buffer::unbind()
 // Getter
 //
 int G_Buffer::getDepthBuffer()              { return gBuffer->getDepthAttachmentID(); }
-ShaderProgram *G_Buffer::getShader()          { return this->pShader; }
+ShaderProgram *G_Buffer::getShader()        { return this->pShader; }
 Texture* G_Buffer::getPositionMap()         { return gBuffer->getTextureAttachment(0); }
 Texture* G_Buffer::getIndividualColorMap()  { return gBuffer->getTextureAttachment(1); }
 Texture* G_Buffer::getNormalMap()           { return gBuffer->getTextureAttachment(2); }

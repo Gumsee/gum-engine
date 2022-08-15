@@ -1,9 +1,12 @@
 #include "EnvironmentMap.h"
 #include <OpenGL/WrapperFunctions.h>
+#include "../Managers/ShaderManager.h"
+#include "../General/Renderer3D.h"
+#include "../General/World.h"
 
-EnvironmentMap::EnvironmentMap(ObjectManager* objmanager)
+EnvironmentMap::EnvironmentMap(Renderer3D* renderer)
 {
-    this->pObjectManager = objmanager;
+    this->pRenderer = renderer;
 	pResultTexture = new TextureCube("EnvironmentMap");
     pResultTexture->bind(0);
     for (unsigned int i = 0; i < 6; ++i)
@@ -57,12 +60,12 @@ void EnvironmentMap::render()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		
-		pObjectManager->getSkybox()->getShader()->use();
-		pObjectManager->getSkybox()->render();
-		pObjectManager->getSkybox()->getShader()->unuse();
+		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShader()->use();
+		pRenderer->getWorld()->getObjectManager()->getSkybox()->render();
+		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShader()->unuse();
 
         //GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
-		pObjectManager->render(ObjectManager::ExceptionTypes::WITHOUTSKYBOX, GumEngine::Shaders->getShaderProgram("ReflectionlessBasicShader"));
+		pRenderer->getWorld()->getObjectManager()->render(ObjectManager::ExceptionTypes::WITHOUTSKYBOX, Gum::ShaderManager::getShaderProgram("ReflectionlessBasicShader"));
     }
 
 	/*GumEngine::ActiveCamera->viewMat = oldview;
@@ -70,8 +73,7 @@ void EnvironmentMap::render()
 	GumEngine::Shaders->update("viewMatrix");
 	GumEngine::Shaders->update("projectionMatrix");*/
 
-    pFramebuffer->unbind();
-	glViewport(0, 0, Gum::Window->getRenderQuadSize().x, Gum::Window->getRenderQuadSize().y);
+    pFramebuffer->unbind(pRenderer->getRenderCanvas()->getSize());
 }
 
 //	GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);

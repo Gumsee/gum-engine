@@ -3,14 +3,20 @@
 #include "../General/World.h"
 #include "../Lightning/Lightning.h"
 #include "../Lightning/ShadowMapping/ShadowMapping.h"
-#include "Essentials/Window.h"
+#include <Essentials/Window.h>
+#include "../PostProcessing/PostProcessing.h"
+#include "../Particle/ShaderInitializer.h"
+#include "Engine/Managers/TextureManager.h"
 
 Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
     pRenderCanvas = canvas;
     fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
     
-    std::cout << "Current render canvas: " << canvas->getID() << std::endl;
+    Gum::PostProcessing::initShaders();
+    Gum::Particles::initShaders();
+
+    std::cout << "Current render canvas: " << canvas->getType() << std::endl;
 
     pRenderCanvas->invertTexcoordY(true);
 	pGBuffer      = new G_Buffer(canvas->getSize());
@@ -39,7 +45,13 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 
 Renderer3D::~Renderer3D()
 {
-
+    delete pOcclusionMask;
+    delete pFramebuffer;
+	delete pGBuffer;
+	delete pSSAO;
+	delete pLightning;
+    delete pShadowMaps;
+    delete pHighDynamicRange;
 }
 
 
@@ -102,7 +114,9 @@ void Renderer3D::render()
         Outline rendering has to be done separately due to GBuffer
     */
     //TODO
-
+    glClearColor(0,0,0,1);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    pWorld->renderSky();
     pFramebuffer->unbind();
 
 
@@ -118,7 +132,7 @@ void Renderer3D::render()
     }
 
     pHighDynamicRange->render(lastTex, this->fExposure);
-    lastTex = pHighDynamicRange->getResultTexture();
+    //lastTex = pHighDynamicRange->getResultTexture();
 
     glCullFace(GL_FRONT);
     //glCullFace(GL_BACK);
@@ -142,7 +156,8 @@ void Renderer3D::render()
     //pEnvironmentMap->render();
 
     pRenderCanvas->setTexture(lastTex);
-    //pRenderCanvas->getSize().print();
+    //pRenderCanvas->setTexture(Gum::TextureManager::getTexture("/home/gumse/Projects/gumball/gum-engine-backup/examples/assets/textures/grass.jpg", true));
+    //Gum::Output::print(pRenderCanvas->getSize().toString());
 
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
@@ -172,5 +187,5 @@ Gum::Window* Renderer3D::getContextWindow()                            { return 
 
 //Setter
 void Renderer3D::setExposure(const float& exposure)                    { this->fExposure = exposure; }
-void Renderer3D::setRenderCanvas(Box* canvas)                          { this->pRenderCanvas = canvas; this->setResolution(canvas->getSize()); }
+void Renderer3D::setRenderCanvas(Box* canvas)                          { this->pRenderCanvas = canvas; }
 void Renderer3D::setWorld(World* world)                                { this->pWorld = world; }

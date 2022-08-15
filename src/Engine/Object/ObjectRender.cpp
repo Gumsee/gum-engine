@@ -70,14 +70,14 @@ void Object::renderMesh()
 
 		if(vInstances[i]->renderOutline)
 		{
-			if(GumEngine::DefaultOutlineRenderer != nullptr)
+			/*if(GumEngine::DefaultOutlineRenderer != nullptr)
 			{
 				Gum::Output::info("Rendering Outline");
 				ShaderProgram* currentShader = ShaderProgram::getCurrentlyBoundShader();
 				GumEngine::DefaultOutlineRenderer->renderObject(vInstances[i]);
 				GumEngine::DefaultOutlineRenderer->renderOutlines(vInstances[i]);
 				currentShader->use();
-			}
+			}*/
 		}
 
         getInstance()->transformChanged = false;

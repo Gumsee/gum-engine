@@ -4,6 +4,7 @@
 //#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
 #include <BulletCollision/CollisionDispatch/btCollisionObject.h>
 #include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletDynamics/ConstraintSolver/btConstraintSolver.h>
 #include "DebugDrawer.h"
 
 struct Instance;
@@ -15,6 +16,11 @@ class Physics
 private:
 	enum ConstraintType { _6DOF };
 
+	btDefaultCollisionConfiguration* collisionConfiguration;
+	btCollisionDispatcher* dispatcher;
+	btDbvtBroadphase* overlappingPairCache;
+	btGhostPairCallback* m_ghostPairCallback;
+	btSequentialImpulseConstraintSolver* solver;
 	btDiscreteDynamicsWorld *pDynamicWorld;
 	//btMultiBodyDynamicsWorld *pDynamicWorld;
 	DebugDrawer* pDebugDrawer;
@@ -25,6 +31,7 @@ private:
 
 public:
 	Physics();
+	~Physics();
 
 	void update();
 	void addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type);

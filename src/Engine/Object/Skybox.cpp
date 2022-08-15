@@ -17,16 +17,17 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 	pProperties->Name = name;
 	pProperties->pMesh = mesh;
 	load();
+	getInstance(0)->setMatrix(Gum::Maths::createTransformationMatrix(this->getInstance(0)->getPosition(), this->getInstance(0)->getRotation(), this->getInstance(0)->getScale()));
 
 
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
     pFramebuffer = new Framebuffer(v2Resolution);
-    pFramebuffer->addCubeTextureAttachment(0, "Skybox", GL_RGBA, GL_RGBA32F, GL_FLOAT);
-    pFramebuffer->getTextureAttachment(0)->bind(0);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    pTexture = pFramebuffer->addCubeTextureAttachment(0, "Skybox", GL_RGBA, GL_RGBA32F, GL_FLOAT);
+    pTexture->bind(0);
+	//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    pFramebuffer->getTextureAttachment(0)->unbind(0);
-    pTexture = (TextureCube*)pFramebuffer->getTextureAttachment(0);
+    pTexture->unbind(0);
 
     
     pBRDFFramebuffer = new Framebuffer(v2BRDFResolution);
@@ -73,7 +74,10 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
     updateTexture();
 }
 
-SkyBox::~SkyBox() {}
+SkyBox::~SkyBox() 
+{
+	textures.clear();
+}
 
 void SkyBox::render()
 {
@@ -83,15 +87,16 @@ void SkyBox::render()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
 	pTexture->bind(0);
-    //->getTextureAttachment(0)->bind(0);
+	glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, pTexture->getID());
+    //pFramebuffer->getTextureAttachment(0)->bind(0);
 	//pPreFilterMap->getTextureAttachment(0)->bind(0);
     
-	getInstance(0)->setMatrix(Gum::Maths::createTransformationMatrix(this->getInstance(0)->getPosition(), this->getInstance(0)->getRotation(), this->getInstance(0)->getScale()));
     getShader()->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
 	getShader()->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
 	getShader()->LoadUniform("gradiant", (int)gradiant);
 	getShader()->LoadUniform("SunDirection", *this->sunDir);
-
 	renderMesh();
 	pTexture->unbind(0);
 
@@ -111,16 +116,21 @@ void SkyBox::update()
 
 void SkyBox::updateTexture()
 {
-    pTexture->load(textures, true);
+    if(textures.size() == 6)
+    {
+        pTexture->load(textures, true);
+    }
+    
+    pTexture->bind();
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    pTexture->unbind();
 
 	makeIrradianceMap();
 	makePrefilterMap();
 	makeBRDFMap();
-}
-
-void SkyBox::clean()
-{
-	textures.clear();
 }
 
 void SkyBox::setTexture(Texture *tex)
@@ -245,7 +255,8 @@ void SkyBox::makeCubeMap(Texture* texture)
     texture->bind(0);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pFramebuffer->getTextureAttachment(0)->getID(), 0);
+        pFramebuffer->drawAttachmentTexture(0, 0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i);
+
 		glClear(GL_COLOR_BUFFER_BIT);
 		prepareRender();
 		HDRToCubeMapShader->LoadUniform("viewMatrix", captureViews[i]);
@@ -260,6 +271,7 @@ void SkyBox::makeCubeMap(Texture* texture)
 		glCullFace(GL_BACK);
 		finishRender();
 	}
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
     texture->unbind(0);
 	HDRToCubeMapShader->unuse();
     pFramebuffer->unbind();

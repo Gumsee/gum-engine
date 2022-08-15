@@ -66,9 +66,4 @@ public:
 	Texture2D *getBRDFConvMap();
 	void useGradiant(bool gradiant);
 	void spin(bool spin);
-
-	/*
-	* This function gets called the Engine never call it yourself
-	*/
-	void clean();
 };

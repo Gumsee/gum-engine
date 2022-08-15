@@ -27,6 +27,6 @@ set(BUILD_UNIT_TESTS OFF CACHE INTERNAL "")
 
 
 
-add_subdirectory(./ext/bullet3/)
+#add_subdirectory(./ext/bullet3/)
 add_subdirectory(./src/)
 #add_subdirectory(./examples/)
