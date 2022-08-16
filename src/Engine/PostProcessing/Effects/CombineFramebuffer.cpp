@@ -2,9 +2,9 @@
 #include "../../Managers/ShaderManager.h"
 
 
-CombineFramebuffer::CombineFramebuffer(Box *canvas, ivec2 resolution)
+CombineFramebuffer::CombineFramebuffer(Box *canvas)
 {
-    init(canvas, resolution);
+    init(canvas);
 	pShader = Gum::ShaderManager::getShaderProgram("CombineFramebufferShader");
 }
 
@@ -21,7 +21,7 @@ void CombineFramebuffer::render(Texture* texture)
     framebuffer1->getDepthTextureAttachment()->bind(1);
     framebuffer2->getTextureAttachment(0)->bind(2);
     framebuffer2->getDepthTextureAttachment()->bind(3);
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
     framebuffer2->getDepthTextureAttachment()->unbind(3);
     framebuffer2->getTextureAttachment(0)->unbind(2);
     framebuffer1->getDepthTextureAttachment()->unbind(1);

@@ -9,7 +9,7 @@ private:
 	using PostProcessingEffect::render;
 
 public:
-	CombineTextures(Box *canvas, ivec2 resolution);
+	CombineTextures(Box *canvas);
 	~CombineTextures();
 	void render(Texture* texture1, Texture* texture2, float exposure);
 };

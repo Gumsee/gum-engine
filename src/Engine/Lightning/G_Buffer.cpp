@@ -19,7 +19,7 @@ G_Buffer::G_Buffer(ivec2 resolution)
     gBuffer->addTextureAttachment(4, "G_BufferObjectDataMap", GL_RGBA, GL_RGBA);
 
     gBuffer->addDepthAttachment();
-    gBuffer->addDepthTextureAttachment();
+    //gBuffer->addDepthTextureAttachment();
     //gBuffer->addDepthStencilTextureAttachment("GBufferDepthTextureAttachment");
 
     initShader();
@@ -36,9 +36,11 @@ void G_Buffer::bind()
     gBuffer->bind();
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClearDepth(1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_BLEND);
+    glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
+    glDepthFunc(GL_LESS);
 }
 
 void G_Buffer::unbind()

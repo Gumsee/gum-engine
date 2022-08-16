@@ -2,9 +2,9 @@
 #include "../../Managers/ShaderManager.h"
 
 
-ContrastChanger::ContrastChanger(Box *canvas, ivec2 resolution)
+ContrastChanger::ContrastChanger(Box *canvas)
 {
-    init(canvas, resolution);
+    init(canvas);
 	this->pShader = Gum::ShaderManager::getShaderProgram("ContrastChangerShader");
 	pShader->addTexture("Texture1", 0);
 }
@@ -18,7 +18,7 @@ void ContrastChanger::render(Texture* texture, int contrast)
 	pShader->use();
 	pShader->LoadUniform("Contrast", contrast);
 	texture->bind();
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 	texture->unbind();
 
 	pShader->unuse();

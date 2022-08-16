@@ -57,6 +57,8 @@ public:
 
     void addPostProcessingEffect(PostProcessingEffect* effect);
 
+    void updateFramebufferSize();
+
     //Setter
     void setExposure(const float& exposure);
     void setResolution(const ivec2& resolution);

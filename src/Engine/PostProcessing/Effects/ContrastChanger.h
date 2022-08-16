@@ -8,7 +8,7 @@ private:
 	using PostProcessingEffect::render;
 
 public:
-	ContrastChanger(Box *canvas, ivec2 resolution);
+	ContrastChanger(Box *canvas);
 	~ContrastChanger();
 
 	void render(Texture* texture, int contrast);

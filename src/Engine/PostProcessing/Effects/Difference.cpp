@@ -1,9 +1,9 @@
 #include "Difference.h"
 #include "../../Managers/ShaderManager.h"
 
-Difference::Difference(Box *canvas, ivec2 resolution)
+Difference::Difference(Box *canvas)
 {
-    init(canvas, resolution);
+    init(canvas);
 	this->pShader = Gum::ShaderManager::getShaderProgram("DifferenceShader");
 }
 
@@ -19,7 +19,7 @@ void Difference::render(Texture* texture1, Texture* texture2)
 
     texture1->bind(0);
     texture2->bind(1);
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
     texture2->unbind(1);
     texture1->unbind(0);
 

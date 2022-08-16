@@ -7,7 +7,7 @@ private:
 	ShaderProgram *pShader;
 	
 public:
-	Difference(Box *canvas, ivec2 resolution);
+	Difference(Box *canvas);
 	~Difference();
 
 	void render(Texture* texture1, Texture* texture2);

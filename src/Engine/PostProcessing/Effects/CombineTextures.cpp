@@ -2,9 +2,9 @@
 #include "../../Managers/ShaderManager.h"
 
 
-CombineTextures::CombineTextures(Box *canvas, ivec2 resolution)
+CombineTextures::CombineTextures(Box *canvas)
 {
-    init(canvas, resolution);
+    init(canvas);
 	pShader = Gum::ShaderManager::getShaderProgram("CombineTexturesShader");
 }
 
@@ -19,7 +19,7 @@ void CombineTextures::render(Texture* texture1, Texture* texture2, float exposur
 
     texture1->bind(0);
     texture2->bind(1);
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
     texture2->unbind(1);
     texture1->unbind(0);
 

@@ -25,7 +25,7 @@ void Object::prepareRender()
 	if ((bool)Settings::getSetting(Settings::WIREFRAMED)) { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
 	else { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 
-	glEnable(GL_DEPTH_TEST); 
+	//glEnable(GL_DEPTH_TEST); 
 	
 	if(pMaterial->isTransparent()) { glEnable(GL_BLEND); } 
 	else { glDisable(GL_BLEND); }

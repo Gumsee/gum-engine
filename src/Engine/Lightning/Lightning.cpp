@@ -73,7 +73,7 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 	pShader->LoadUniform("ToShadowMap", *shadowmap->getMatrix());
 	pShader->LoadUniform("ShadowMapSize", *shadowmap->getShadowMapSize());
 	pShader->LoadUniform("pixelSize", pixelSize);
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 
 	pShader->unuse();
 

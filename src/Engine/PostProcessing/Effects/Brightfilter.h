@@ -7,7 +7,7 @@ private:
 	ShaderProgram *pShader;
 
 public:
-	Brightfilter(Box* canvas, ivec2 resolution);
+	Brightfilter(Box* canvas);
 	~Brightfilter();
 
 	void render(Texture* texture);

@@ -2,9 +2,9 @@
 #include "../../Managers/ShaderManager.h"
 
 
-GaussianBlur::GaussianBlur(Box *canvas, ivec2 resolution, int stage)
+GaussianBlur::GaussianBlur(Box *canvas, int stage)
 {
-	init(canvas, resolution);
+	init(canvas);
 
 	if (stage % 2 == 0)
 	{
@@ -13,10 +13,10 @@ GaussianBlur::GaussianBlur(Box *canvas, ivec2 resolution, int stage)
 	}
     delete pFramebuffer;
     
-    pBlurFramebufferH = new Framebuffer(resolution / BlurryDivider1);
-    pFramebuffer = new Framebuffer(resolution / BlurryDivider2);
-    pBlurFramebufferV = new Framebuffer(resolution / BlurryDivider1);
-    pBlurFramebufferV2 = new Framebuffer(resolution / BlurryDivider2);
+    pBlurFramebufferH = new Framebuffer(canvas->getSize() / BlurryDivider1);
+    pFramebuffer = new Framebuffer(canvas->getSize() / BlurryDivider2);
+    pBlurFramebufferV = new Framebuffer(canvas->getSize() / BlurryDivider1);
+    pBlurFramebufferV2 = new Framebuffer(canvas->getSize() / BlurryDivider2);
 
     pBlurFramebufferH->addTextureAttachment(0);
     pFramebuffer->addTextureAttachment(0);
@@ -49,7 +49,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	VblurShader->use();
 	VblurShader->LoadUniform("specialVar", (float)pBlurFramebufferV->getSize().x);
 	RenderResult->bind();
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 	RenderResult->unbind();
 	VblurShader->unuse();
 
@@ -58,7 +58,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	HblurShader->use();
 	HblurShader->LoadUniform("specialVar", (float)pBlurFramebufferH->getSize().y);
 	pBlurFramebufferV->getTextureAttachment(0)->bind();
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 	pBlurFramebufferV->getTextureAttachment(0)->unbind();
 	HblurShader->unuse();
 
@@ -67,7 +67,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	VblurShader->use();
 	VblurShader->LoadUniform("specialVar", (float)pBlurFramebufferV2->getSize().x);
 	pBlurFramebufferH->getTextureAttachment(0)->bind();
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 	pBlurFramebufferH->getTextureAttachment(0)->unbind();
 	VblurShader->unuse();
 
@@ -76,7 +76,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	HblurShader->use();
 	HblurShader->LoadUniform("specialVar", (float)pFramebuffer->getSize().y);
 	pBlurFramebufferV2->getTextureAttachment(0)->bind();
-	pRenderCanvas->render();
+	pRenderCanvas->renderCustom();
 	pBlurFramebufferV2->getTextureAttachment(0)->unbind();
 	HblurShader->unuse();
 	pFramebuffer->unbind();

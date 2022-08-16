@@ -8,11 +8,11 @@ class PostProcessingEffect
 protected:
 	Box *pRenderCanvas;
 	Framebuffer *pFramebuffer;
-    void init(Box* canvas, ivec2 resolution);
+    void init(Box* canvas);
 
 public:
     PostProcessingEffect();
-    ~PostProcessingEffect();
+    virtual ~PostProcessingEffect();
 
 	virtual void render(Texture* texture);
 

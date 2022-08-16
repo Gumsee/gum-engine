@@ -2,12 +2,12 @@
 #include "HighDynamicRangeShader.h"
 #include "../../Managers/ShaderManager.h"
 
-HighDynamicRange::HighDynamicRange(Box *canvas, ivec2 resolution)
+HighDynamicRange::HighDynamicRange(Box *canvas)
 {
-    init(canvas, resolution);
+    init(canvas);
     if(Gum::ShaderManager::hasShaderProgram("HighDynamicRangeShader"))
     {
-		pShader = Gum::ShaderManager::getShaderProgram("HighDynamicRangeShader");
+		  pShader = Gum::ShaderManager::getShaderProgram("HighDynamicRangeShader");
     }
     else
     {
@@ -30,11 +30,12 @@ HighDynamicRange::~HighDynamicRange(){ }
 void HighDynamicRange::render(Texture* texture, float exposure)
 {
   pFramebuffer->bind();
+  glViewport(0, 0, pRenderCanvas->getSize().x, pRenderCanvas->getSize().y);
   pShader->use();
   pShader->LoadUniform("exposure", exposure);
 
   texture->bind();
-  pRenderCanvas->render();
+  pRenderCanvas->renderCustom();
   texture->unbind();
 
   pShader->unuse();

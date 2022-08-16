@@ -2,10 +2,10 @@
 
 PostProcessingEffect::PostProcessingEffect() {}
 PostProcessingEffect::~PostProcessingEffect() {}
-void PostProcessingEffect::init(Box* canvas, ivec2 resolution)
+void PostProcessingEffect::init(Box* canvas)
 {
     this->pRenderCanvas = canvas;
-	this->pFramebuffer = new Framebuffer(resolution);
+	this->pFramebuffer = new Framebuffer(pRenderCanvas->getSize());
     this->pFramebuffer->addTextureAttachment(0, "PostProcessingEffect", GL_RGBA, GL_RGBA);
 }
 

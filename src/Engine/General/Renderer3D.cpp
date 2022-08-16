@@ -16,8 +16,6 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
     Gum::PostProcessing::initShaders();
     Gum::Particles::initShaders();
 
-    std::cout << "Current render canvas: " << canvas->getType() << std::endl;
-
     pRenderCanvas->invertTexcoordY(true);
 	pGBuffer      = new G_Buffer(canvas->getSize());
 	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
@@ -38,7 +36,7 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
     pFramebuffer->addDepthAttachment();
     pFramebuffer->addDepthStencilTextureAttachment();
 
-    pHighDynamicRange = new HighDynamicRange(pRenderCanvas, canvas->getSize());
+    pHighDynamicRange = new HighDynamicRange(pRenderCanvas);
     this->fExposure = 1.0f;
 
 }
@@ -95,9 +93,7 @@ void Renderer3D::render()
 
 	Gum::Output::debug("Rendering ParticleSystem");
 	
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, pGBuffer->getFramebuffer()->getID());
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, pFramebuffer->getID()); // write to default framebuffer 
-    glBlitFramebuffer(0, 0, pRenderCanvas->getSize().x, pRenderCanvas->getSize().y, 0, 0, pRenderCanvas->getSize().x, pRenderCanvas->getSize().y, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+    pGBuffer->getFramebuffer()->blitDepthToOtherFramebuffer(pFramebuffer);
     
     pFramebuffer->bind();
 
@@ -116,7 +112,7 @@ void Renderer3D::render()
     //TODO
     glClearColor(0,0,0,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    pWorld->renderSky();
+    pLightning->render(pShadowMaps, pWorld);
     pFramebuffer->unbind();
 
 
@@ -130,6 +126,7 @@ void Renderer3D::render()
     //    vPostProcessingEffects[i]->render(lastTex);
     //    lastTex = vPostProcessingEffects[i]->getResultTexture();
     }
+
 
     pHighDynamicRange->render(lastTex, this->fExposure);
     //lastTex = pHighDynamicRange->getResultTexture();
@@ -166,6 +163,11 @@ void Renderer3D::render()
 void Renderer3D::update()
 {
     pWorld->update();
+}
+
+void Renderer3D::updateFramebufferSize()
+{
+
 }
 
 

@@ -9,7 +9,6 @@
 class SkyBox : public Object
 {
 private:
-	std::vector<std::string> textures;
 	bool gradiant;
 	bool isSpinning = false;
 
@@ -58,7 +57,6 @@ public:
 	* 5 GL_TEXTURE_CUBE_MAP_POSITIVE_Z = Back
 	* 6 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = Front
 	*/
-	void setTexture(std::string texture[]);
 	void setTexture(Texture *tex);
 	TextureCube *getTexture();
 	TextureCube *getIrradianceMap();
