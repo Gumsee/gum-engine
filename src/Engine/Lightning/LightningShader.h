@@ -31,7 +31,7 @@ R"(
 	uniform mat4 viewmat;
 	uniform vec3 viewPos;
 	uniform vec2 pixelSize;
-	uniform Light lights[4];
+	uniform Light lights[128];
 	uniform int numLights;
 
 	const float PI = 3.14159265359;

@@ -133,6 +133,7 @@ void Lightning::initShader()
         pShader->addUniform("numLights");
         pShader->addUniform("pixelSize");
 
+		//std::cout << "activelights: " << Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS) << std::endl;
         for (int i = 0; i < Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS); i++)
         {
             pShader->addUniform("lights[" + std::to_string(i) + "].Position");

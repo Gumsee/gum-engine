@@ -22,12 +22,13 @@ private:
 	ObjectManager* pObjectManager;
 	LightManager* pLightManager;
     Physics* pPhysics;
+    Renderer3D* pRenderer;
 
     ShaderProgram* pParticleShader;
     ShaderProgram* pBillboardShader;
 
 public:
-    World(Gum::Window* context);
+    World(Renderer3D* renderer);
     ~World();
 
     void update();
@@ -44,4 +45,5 @@ public:
     ObjectManager* getObjectManager();
     Camera* getCamera(const unsigned int& index = 0);
     Physics* getPhysics();
+    Renderer3D* getBoundRenderer();
 };

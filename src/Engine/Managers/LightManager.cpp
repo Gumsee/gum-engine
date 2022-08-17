@@ -2,7 +2,9 @@
 #include <Essentials/Output.h>
 #include <Essentials/MemoryManagement.h>
 #include "../General/Camera.h"
+#include "../General/World.h"
 #include "TextureManager.h"
+#include "../Particle/Billboard.h"
 
 LightManager::LightManager(World* world)
 {
@@ -10,7 +12,7 @@ LightManager::LightManager(World* world)
     this->pSun = new DirectionalLight(vec3(-1,-1,-1), vec3(1), "Sun");
     this->pWorld = world;
 
-	NearestPointLights.resize(Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS));
+	//NearestPointLights.resize(Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS));
     for(size_t i = 0; i < NearestPointLights.size(); i++)
     {
 	    NearestPointLights[i] = new PointLight(vec3(0,1000,0), vec3(0,0,0), "unused");
@@ -30,67 +32,14 @@ void LightManager::update()
 {
     if(PointLights.size() > 0)
     {
-        std::vector<int> FinalIndex;
-        FinalIndex.resize(4);
-        float NearestDistance = 500000;
-        for (size_t i = 0; i < PointLights.size(); i++)
+        for(int i = 0; i < 4; i++)
         {
-            if (vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition()) < NearestDistance)
-            {
-                NearestDistance = vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition());
-                FinalIndex[0] = i;
-            }
+            NearestPointLights[i] = PointLights[i];
+            std::cout << NearestPointLights[i]->getName() << std::endl;
+            //NearestPointLights[i]->setPosition(PointLights[FinalIndex[i]]->getPosition());
+            //NearestPointLights[i]->setColor(PointLights[FinalIndex[i]]->getColor());
+            //NearestPointLights[i]->setAttenuation(PointLights[FinalIndex[i]]->getAttenuation());
         }
-        NearestDistance = 500000;
-        for (size_t i = 0; i < PointLights.size(); i++)
-        {
-            if ((int)i != FinalIndex[0])
-            {
-                if (vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition()) < NearestDistance)
-                {
-                    NearestDistance = vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition());
-                    FinalIndex[1] = i;
-                }
-            }
-        }
-        NearestDistance = 500000;
-        for (size_t i = 0; i < PointLights.size(); i++)
-        {
-            if ((int)i != FinalIndex[1] && (int)i != FinalIndex[0])
-            {
-                if (vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition()) < NearestDistance)
-                {
-                    NearestDistance = vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition());
-                    FinalIndex[2] = i;
-                }
-            }
-        }
-        NearestDistance = 500000;
-        for (size_t i = 0; i < PointLights.size(); i++)
-        {
-            if ((int)i != FinalIndex[2] && (int)i != FinalIndex[1] && (int)i != FinalIndex[0])
-            {
-                if (vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition()) < NearestDistance)
-                {
-                    NearestDistance = vec3::distance(PointLights[i]->getPosition(), Camera::ActiveCamera->getPosition());
-                    FinalIndex[3] = i;
-                }
-            }
-        }
-        NearestPointLights[0]->setPosition(PointLights[FinalIndex[0]]->getPosition());
-        NearestPointLights[1]->setPosition(PointLights[FinalIndex[1]]->getPosition());
-        NearestPointLights[2]->setPosition(PointLights[FinalIndex[2]]->getPosition());
-        NearestPointLights[3]->setPosition(PointLights[FinalIndex[3]]->getPosition());
-
-        NearestPointLights[0]->setColor(PointLights[FinalIndex[0]]->getColor());
-        NearestPointLights[1]->setColor(PointLights[FinalIndex[1]]->getColor());
-        NearestPointLights[2]->setColor(PointLights[FinalIndex[2]]->getColor());
-        NearestPointLights[3]->setColor(PointLights[FinalIndex[3]]->getColor());
-
-        NearestPointLights[0]->setAttenuation(PointLights[FinalIndex[0]]->getAttenuation());
-        NearestPointLights[1]->setAttenuation(PointLights[FinalIndex[1]]->getAttenuation());
-        NearestPointLights[2]->setAttenuation(PointLights[FinalIndex[2]]->getAttenuation());
-        NearestPointLights[3]->setAttenuation(PointLights[FinalIndex[3]]->getAttenuation());
     }
 }
 
@@ -98,29 +47,29 @@ void LightManager::update()
 void LightManager::addPointLight(PointLight* light)
 {
     PointLights.push_back(light);
-	#ifdef DEBUG
-        if(light->getName() != "unused")
-        {
-            Billboard* billboard = new Billboard(light->getPosition());
-            billboard->setTexture(Gum::TextureManager::getTexture("lightbulb"));
-            light->setBillboard(billboard);
-            pWorld->addBillboard(billboard);
-        }
-	#endif
+
+    Billboard* billboard = new Billboard(light->getPosition(), pWorld);
+    light->setCallback([billboard, this](Light* clight) {
+        billboard->setTexture(Gum::TextureManager::getTexture("lightbulb"));
+        billboard->setPosition(clight->getPosition());
+
+        for(int i = 0; i < vCallbackFunctions.size(); i++)
+            vCallbackFunctions[i](clight);
+    });
+    pWorld->addBillboard(billboard);
 }
 void LightManager::addSpotLight(SpotLight* light)
 {
 	SpotLights.push_back(light);
 }
 
-std::vector<PointLight*> LightManager::getNearestPointLights()
+
+void LightManager::addCallback(std::function<void(Light*)> callback)
 {
-    return NearestPointLights;
+    this->vCallbackFunctions.push_back(callback);
 }
-std::vector<SpotLight*> LightManager::getNearestSpotLights()
-{
-    return NearestSpotLights;
-}
+
+
 DirectionalLight *LightManager::getSun()
 {
     return pSun;
