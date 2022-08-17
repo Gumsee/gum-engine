@@ -23,12 +23,14 @@ G_Buffer::G_Buffer(ivec2 resolution)
     //gBuffer->addDepthTextureAttachment();
     //gBuffer->addDepthStencilTextureAttachment("GBufferDepthTextureAttachment");
 
+    pShader = nullptr;
     initShader();
 }
 
 G_Buffer::~G_Buffer()
 {
     Gum::_delete(gBuffer);
+    //Gum::_delete(pShader);
 }
 
 void G_Buffer::bind()
@@ -56,25 +58,21 @@ void G_Buffer::unbind()
 //
 // Getter
 //
-int G_Buffer::getDepthBuffer()              { return gBuffer->getDepthAttachmentID(); }
+int G_Buffer::getDepthBuffer()              { return this->gBuffer->getDepthAttachmentID(); }
 ShaderProgram *G_Buffer::getShader()        { return this->pShader; }
-Texture* G_Buffer::getPositionMap()         { return gBuffer->getTextureAttachment(0); }
-Texture* G_Buffer::getIndividualColorMap()  { return gBuffer->getTextureAttachment(1); }
-Texture* G_Buffer::getNormalMap()           { return gBuffer->getTextureAttachment(2); }
-Texture* G_Buffer::getDiffuseMap()          { return gBuffer->getTextureAttachment(3); }
-Texture* G_Buffer::getObjectDataMap()       { return gBuffer->getTextureAttachment(4); }
-Texture* G_Buffer::getDepthMap()            { return gBuffer->getDepthTextureAttachment(); }
-long long G_Buffer::getExecutionTime()      { return microseconds; }
-Framebuffer* G_Buffer::getFramebuffer()     { return gBuffer; }
+Texture* G_Buffer::getPositionMap()         { return this->gBuffer->getTextureAttachment(0); }
+Texture* G_Buffer::getIndividualColorMap()  { return this->gBuffer->getTextureAttachment(1); }
+Texture* G_Buffer::getNormalMap()           { return this->gBuffer->getTextureAttachment(2); }
+Texture* G_Buffer::getDiffuseMap()          { return this->gBuffer->getTextureAttachment(3); }
+Texture* G_Buffer::getObjectDataMap()       { return this->gBuffer->getTextureAttachment(4); }
+Texture* G_Buffer::getDepthMap()            { return this->gBuffer->getDepthTextureAttachment(); }
+long long G_Buffer::getExecutionTime()      { return this->microseconds; }
+Framebuffer* G_Buffer::getFramebuffer()     { return this->gBuffer; }
 
 
 void G_Buffer::initShader()
 {
-    if(Gum::ShaderManager::hasShaderProgram("GBufferShader"))
-    {
-        pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");
-    }
-    else
+    if(!Gum::ShaderManager::hasShaderProgram("GBufferShader"))
     {
         pShader = new ShaderProgram();
         pShader->addShader(new Shader(GBufferVertexShader, Shader::VERTEX_SHADER));
@@ -118,6 +116,11 @@ void G_Buffer::initShader()
         pShader->addTexture("normalmap", 14);
         pShader->addTexture("Enviorment", 15);
         pShader->addTexture("ShadowMap", 16);
+
         Gum::ShaderManager::addShaderProgram(pShader);
+    }
+    else 
+    {
+        pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");
     }
 }

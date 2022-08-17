@@ -1,6 +1,7 @@
 #include "SSAO.h"
 #include "SSAOShader.h"
 
+#include <Essentials/MemoryManagement.h>
 #include <OpenGL/WrapperFunctions.h>
 #include "../Managers/ShaderManager.h"
 #include "../General/Camera.h"
@@ -15,6 +16,9 @@ SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer3D* renderer)
 	this->pRenderer = renderer;
 	this->rect = gui;
 	this->gbuffer = gbuffer;
+	this->pShader = nullptr;
+	this->pBlurShader = nullptr;
+
 	this->NoiseSize = 4;
 	this->kernelSize = 8;
 	this->power = 1.0f;// 2;
@@ -37,7 +41,17 @@ SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer3D* renderer)
 	generateKernel();
 }
 
-SSAO::~SSAO() {}
+SSAO::~SSAO() 
+{
+	Gum::_delete(pSSAOFramebuffer);
+	Gum::_delete(pSSAOBlurFramebuffer);
+	Gum::_delete(pNoiseTexture);
+
+	pShader->removeShader(0);
+	pBlurShader->removeShader(0);
+	Gum::_delete(pShader);
+	Gum::_delete(pBlurShader);
+}
 
 
 void SSAO::render()
@@ -200,13 +214,9 @@ vbuilder->set(randomVec, vbuilder->normalize(vbuilder->elementOf(vbuilder->textu
 
 void SSAO::initShader()
 {
-    if(Gum::ShaderManager::hasShaderProgram("SSAOShader"))
-    {
-	    pShader = Gum::ShaderManager::getShaderProgram("SSAOShader");
-    }
-    else
-    {
-        pShader = new ShaderProgram();
+    if(pShader == nullptr)
+	{
+		pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
         pShader->addShader(new Shader(SSAOFragmentShader, Shader::FRAGMENT_SHADER));
         pShader->build("SSAOShader");
@@ -223,14 +233,9 @@ void SSAO::initShader()
         {
             pShader->addUniform("samples[" + std::to_string(i) + "]");
         }
-        Gum::ShaderManager::addShaderProgram(pShader);
     }
 
-    if(Gum::ShaderManager::hasShaderProgram("SSAOBlurShader"))
-    {
-	    pBlurShader = Gum::ShaderManager::getShaderProgram("SSAOBlurShader");
-    }
-    else
+    if(pBlurShader == nullptr)
     {
         pBlurShader = new ShaderProgram();
         pBlurShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
@@ -238,6 +243,5 @@ void SSAO::initShader()
         pBlurShader->build("SSAOBlurShader");
         pBlurShader->addTexture("ssaoInput", 0);
         pBlurShader->addUniform("NoiseSize");
-        Gum::ShaderManager::addShaderProgram(pBlurShader);
     }
 }

@@ -14,7 +14,6 @@ ShadowBox::ShadowBox(Renderer3D* renderer)
 
 ShadowBox::~ShadowBox()
 {
-	Gum::_delete(lightViewMatrix);
 }
 
 

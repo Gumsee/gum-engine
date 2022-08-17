@@ -14,6 +14,7 @@ LightManager::LightManager(World* world)
     for(size_t i = 0; i < NearestPointLights.size(); i++)
     {
 	    NearestPointLights[i] = new PointLight(vec3(0,1000,0), vec3(0,0,0), "unused");
+        PointLights.push_back(NearestPointLights[i]);
     }
     Gum::Output::info("Successfully initialized Light Manager!");
 }

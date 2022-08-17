@@ -14,9 +14,6 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
     pRenderCanvas = canvas;
     fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
-    
-    Gum::PostProcessing::initShaders();
-    Gum::Particles::initShaders();
 
     pRenderCanvas->invertTexcoordY(true);
 	pGBuffer      = new G_Buffer(canvas->getSize());
@@ -112,9 +109,6 @@ void Renderer3D::render()
         Outline rendering has to be done separately due to GBuffer
     */
     //TODO
-    glClearColor(0,0,0,1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    pLightning->render(pShadowMaps, pWorld);
     pFramebuffer->unbind();
 
 
@@ -131,7 +125,7 @@ void Renderer3D::render()
 
 
     pHighDynamicRange->render(lastTex, this->fExposure);
-    //lastTex = pHighDynamicRange->getResultTexture();
+    lastTex = pHighDynamicRange->getResultTexture();
 
     glCullFace(GL_FRONT);
     //glCullFace(GL_BACK);

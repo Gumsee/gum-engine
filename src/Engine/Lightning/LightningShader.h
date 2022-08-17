@@ -1,9 +1,9 @@
 #pragma once
 #include <OpenGL/Shader.h>
 
-static const std::string LightningVertexShader = Shader::SHADER_VERSION_STR + 
+static const std::string LightningFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
-	in vec2 vary_Texcoord;
+	in vec2 Texcoord;
 
 	struct Light {
 	    vec3 Position;
@@ -149,15 +149,15 @@ R"(
 	void main()
 	{
 	    // retrieve data from gbuffer
-	       vec4 additionalData = texture(gObjectData, vary_Texcoord);
-	       vec4 PositionViewSpace = texture(gPosition, vary_Texcoord);
+	       vec4 additionalData = texture(gObjectData, Texcoord);
+	       vec4 PositionViewSpace = texture(gPosition, Texcoord);
 	       vec3 Position = (inverse(viewmat) * PositionViewSpace).xyz; //WorldSpace
-	       vec3 NormalViewSpace =   texture(gNormal, vary_Texcoord).xyz;
+	       vec3 NormalViewSpace =   texture(gNormal, Texcoord).xyz;
 	       vec3 Normal =   (inverse(viewmat) * vec4(NormalViewSpace, 0.0f)).xyz; //WorldSpace
-	       vec4 Albedo =   texture(gAlbedo, vary_Texcoord);
+	       vec4 Albedo =   texture(gAlbedo, Texcoord);
 
 	    //AO
-	    float AmbientOcclusion = texture(ssao, vary_Texcoord).r;
+	    float AmbientOcclusion = texture(ssao, Texcoord).r;
 	    AmbientOcclusion += 0.01;
 	    float AmbientOcclusionFactor = additionalData.a;// * AmbientOcclusion;
 
@@ -271,7 +271,7 @@ R"(
 	    gl_FragColor = vec4(color, alpha);
 	    //gl_FragColor = mix(gl_FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
 	    //gl_FragColor = texture(ShadowMap, shadowmapcoords.xy);
-    	gl_FragColor = vec4(Normal, 1.0f);
+    	//gl_FragColor = vec4(NormalViewSpace, 1.0f);
     	//gl_FragColor = vec4(1,0,0, 1.0f);
 	}
 )";

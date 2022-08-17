@@ -84,10 +84,10 @@ SkyBox::~SkyBox()
 	Gum::_delete(pBRDFCanvas);
 
     
-	Gum::_delete(HDRToCubeMapShader);
+    HDRToCubeMapShader->removeShader(0);
     IrradianceMapShader->removeShader(0);
     PreFilteredMapShader->removeShader(0);
-    BRDFMapShader->removeShader(0);
+	Gum::_delete(HDRToCubeMapShader);
 	Gum::_delete(IrradianceMapShader);
 	Gum::_delete(PreFilteredMapShader);
 	Gum::_delete(BRDFMapShader);

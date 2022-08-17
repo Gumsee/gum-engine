@@ -3,14 +3,17 @@
 #include "../Physics/Physics.h"
 #include "../Managers/ObjectManager.h"
 #include "../Managers/MaterialManager.h"
+#include "../Loaders/ObjectLoader.h"
 #include <Essentials/Tools.h>
 
 Object::Object()
 {
 	pMaterial = Gum::MaterialManager::getDefaultMaterial();
-	pObjectLoader = new ObjectLoader();
 	pProperties = new ObjectProperties();
     pVertexArrayObject = new VertexArrayObject();
+
+	//Set attributes
+	this->pShader = nullptr;
 }
 
 /** Loads the Object files content into memory and loads
@@ -20,21 +23,13 @@ Object::Object()
  */
 Object::Object(std::string modelFilePath, std::string name) : Object()
 {
-	//Set attributes
-	this->pShader = nullptr;
-
-	//Open object file
-	pObjectLoader->open(ObjectManager::MODEL_ASSETS_PATH + modelFilePath);
-
 	//Create and add Properties
 	pProperties->Name = name;
-
-	//Combine all meshes into one
 	pProperties->pMesh = new Mesh();
-	for(size_t i = 0; i < pObjectLoader->vMeshes.size(); i++)
-	{
-		pProperties->pMesh->addMesh(pObjectLoader->vMeshes[i]);
-	}
+	ObjectLoader loader(ObjectManager::MODEL_ASSETS_PATH + modelFilePath, [this](Mesh* mesh) {
+		pProperties->pMesh->addMesh(mesh);
+		Gum::_delete(mesh);
+	}, nullptr);
 
 	load();
 }
@@ -50,7 +45,6 @@ Object::Object(ObjectProperties *properties, std::string name) : Object()
 {
 	Gum::_delete(pProperties);
 	pProperties = new ObjectProperties(*properties);
-	this->pShader = nullptr;
 	pProperties->Name = name;
 	load();
 }
@@ -63,26 +57,20 @@ Object::Object(ObjectProperties *properties, std::string name) : Object()
  */
 Object::Object(Mesh *mesh, std::string name) : Object()
 {
-	//Set attributes
-	this->pShader = nullptr;
-
 	//Create and add Properties
 	pProperties->Name = name;
-	pProperties->pMesh = new Mesh(*mesh);
-
-
+	pProperties->pMesh = mesh;
 	load();
 }
 
 Object::~Object()
 {
-	Gum::_delete(this->getProperties()->pMesh);
+	Gum::_delete(pProperties->pMesh);
 	Gum::_delete(pProperties);
 	Gum::_delete(pVertexArrayObject);
 	Gum::_delete(pVertexVBO);
 	Gum::_delete(pIndividualColorsVBO);
 	Gum::_delete(pTransMatricesVBO);
-	Gum::_delete(pObjectLoader);
 	for(Instance *inst : vInstances)
 		Gum::_delete(inst);
 }

@@ -35,7 +35,9 @@ Camera::Camera(const ivec2& resolution, World* world, Gum::Window* context)
         if(!world->getObjectManager()->hasObject("GumEngineCamera"))
         {
             CameraMesh camMesh;
-            world->getObjectManager()->addObject(new Object(camMesh.CameraObjectMesh, "GumEngineCamera"));
+            Object *obj = new Object(camMesh.CameraObjectMesh, "GumEngineCamera");
+            world->getObjectManager()->addObject(obj);
+            obj->getProperties()->pMesh = nullptr;
             pCameraObjectInstance = world->getObjectManager()->getObject("GumEngineCamera")->getInstance();
         }
         else

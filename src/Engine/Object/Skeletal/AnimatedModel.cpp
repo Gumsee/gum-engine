@@ -1,23 +1,28 @@
 #include "AnimatedModel.h"
 #include <Essentials/Tools.h>
 #include "../../Managers/ObjectManager.h"
+#include "../../Loaders/ObjectLoader.h"
 #include <OpenGL/ShaderProgram.h>
+#include <vector>
 
 
 AnimatedModel::AnimatedModel(std::string file, std::string name)
 {
 	this->pShader = nullptr;
-	pProperties->Name = name;
-
-	//Open object file
-	pObjectLoader->open(ObjectManager::MODEL_ASSETS_PATH + file);
-
 	//Combine all meshes into one
+	pProperties->Name = name;
 	pProperties->pMesh = new Mesh();
-	for(size_t i = 0; i < pObjectLoader->vMeshes.size(); i++)
-	{
-		pProperties->pMesh->addMesh(pObjectLoader->vMeshes[i]);
-	}
+	ObjectLoader loader(ObjectManager::MODEL_ASSETS_PATH + file, [this](Mesh* mesh) {
+		pProperties->pMesh->addMesh(mesh);
+    }, [this](std::vector<Bone*> bones, Bone* rootbone, std::vector<SkeletalAnimation*> animations, mat4 globalInverseTransform) {
+        for(size_t i = 0; i < bones.size(); i++)
+        {
+            if(bones[i]->getParent() != nullptr)
+                std::cout << bones[i]->getName() << " " << bones[i]->getParent()->getName() << std::endl;
+        }
+        
+        pSkeleton = new Skeleton(rootbone, globalInverseTransform);
+    });
 
 
 
@@ -27,14 +32,8 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
     pVertexArrayObject->addAttribute(pVertexVBO, 9, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, Weights));
 
     
-    for(size_t i = 0; i < pObjectLoader->vBones.size(); i++)
-    {
-        if(pObjectLoader->vBones[i]->getParent() != nullptr)
-            std::cout << pObjectLoader->vBones[i]->getName() << " " << pObjectLoader->vBones[i]->getParent()->getName() << std::endl;
-    }
 
 
-    pSkeleton = new Skeleton(pObjectLoader->rootBone, pObjectLoader->globalInverseTransform);
 
     SkeletalAnimation* PlaceHolder = new SkeletalAnimation("Null", vec2(1, 1), 0, 0, 0);
 	PlaySkeletalAnimation(PlaceHolder,false,true);

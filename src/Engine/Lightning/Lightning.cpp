@@ -1,6 +1,7 @@
 #include "Lightning.h"
 #include <random>
 #include <chrono>
+#include <Essentials/MemoryManagement.h>
 #include "LightningShader.h"
 #include "../Managers/ShaderManager.h"
 #include "../General/Renderer3D.h"
@@ -9,13 +10,18 @@
 
 Lightning::Lightning(Box* canvas, Renderer3D *renderer)
 {
+	this->pShader = nullptr;
     this->pRenderCanvas = canvas;
 	this->pRenderer = renderer;
 	initShader();
 }
 
 
-Lightning::~Lightning() { }
+Lightning::~Lightning() 
+{ 
+	pShader->removeShader(0);
+	Gum::_delete(pShader);
+}
 
 
 void Lightning::render(ShadowMapping *shadowmap, World* world)
@@ -100,15 +106,11 @@ long long Lightning::getExecutionTime()  { return microseconds; }
 
 void Lightning::initShader()
 {
-    if(Gum::ShaderManager::hasShaderProgram("LightningShader"))
-    {
-		pShader = Gum::ShaderManager::getShaderProgram("LightningShader");
-    }
-    else
+    if(pShader == nullptr)
     {
         pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
-        pShader->addShader(new Shader(LightningVertexShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(LightningFragmentShader, Shader::FRAGMENT_SHADER));
         pShader->build("LightningShader");
 
         //Textures
@@ -141,7 +143,5 @@ void Lightning::initShader()
         }
         pShader->addUniform("SunColor");
         pShader->addUniform("SunDirection");
-
-        Gum::ShaderManager::addShaderProgram(pShader);
     }
 }

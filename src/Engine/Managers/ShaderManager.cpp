@@ -36,7 +36,10 @@ namespace ShaderManager
 	void cleanup()
 	{
 		for(auto program : mShaderPrograms)
+		{
+			std::cout << "cleaning " << program.first << std::endl;
 			Gum::_delete(program.second);
+		}
 		mShaders.clear();
 	}
 

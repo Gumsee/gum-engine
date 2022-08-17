@@ -1,15 +1,13 @@
 #include "HighDynamicRange.h"
+#include <Essentials/MemoryManagement.h>
 #include "HighDynamicRangeShader.h"
 #include "../../Managers/ShaderManager.h"
 
 HighDynamicRange::HighDynamicRange(Box *canvas)
 {
     init(canvas);
-    if(Gum::ShaderManager::hasShaderProgram("HighDynamicRangeShader"))
-    {
-		  pShader = Gum::ShaderManager::getShaderProgram("HighDynamicRangeShader");
-    }
-    else
+    pShader = nullptr;
+    if(pShader == nullptr)
     {
         pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
@@ -19,13 +17,15 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
         //Textures
         pShader->addTexture("texture", 0);
         pShader->addUniform("exposure");
-
-        Gum::ShaderManager::addShaderProgram(pShader);
     }
 }
 
 
-HighDynamicRange::~HighDynamicRange(){ }
+HighDynamicRange::~HighDynamicRange()
+{
+  pShader->removeShader(0);
+  Gum::_delete(pShader);
+}
 
 void HighDynamicRange::render(Texture* texture, float exposure)
 {

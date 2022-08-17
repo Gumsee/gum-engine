@@ -3,7 +3,7 @@
 
 static const std::string HighDynamicRangeFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
-	in vec2 vary_Texcoord;
+	in vec2 Texcoord;
 
     uniform float exposure;
     uniform sampler2D texture;
@@ -11,7 +11,7 @@ R"(
     void main()
     {             
         const float gamma = 2.2;
-        vec3 hdrColor = texture2D(texture, vary_Texcoord).rgb;
+        vec3 hdrColor = texture2D(texture, Texcoord).rgb;
     
         // exposure tone mapping
         vec3 mapped = vec3(1.0) - exp(-hdrColor * exposure);

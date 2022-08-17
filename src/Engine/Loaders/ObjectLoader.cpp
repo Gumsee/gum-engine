@@ -1,104 +1,121 @@
 #include "ObjectLoader.h"
+#include <Essentials/MemoryManagement.h>
 #include <Essentials/Tools.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <assimp/scene.h>
+#include <assimp/cimport.h>
+#include <Essentials/Output.h>
 
-void ObjectLoader::open(const std::string& fileName)
+
+std::vector<aiNodeAnim*> ai_nodes_anim;
+std::vector<Mesh*> vMeshes;
+std::vector<Bone*> vBones;
+std::vector<SkeletalAnimation*> vSkeletalAnimations;
+
+void processNode(aiNode *node, const aiScene *scene, std::function<void(Mesh* mesh)> nodefunc);
+Mesh* processMesh(aiMesh *mesh);
+void processAnimNode(const aiScene *scene);
+void recursiveBuildSkeleton(aiNode* node, Bone *currentBone, int layer);
+void processBones(Mesh* mesh, aiMesh *pAiMesh);
+
+aiNode* FindAiNode(std::string name);
+aiNodeAnim* FindAiNodeAnim(std::string name);
+Bone* FindBone(std::string name);
+
+ObjectLoader::ObjectLoader(const std::string& fileName, 
+		std::function<void(Mesh* mesh)> nodefunc, 
+		std::function<void(std::vector<Bone*> allbones, Bone* rootbone, std::vector<SkeletalAnimation*> skelanim, mat4 globalinverse)> skelfunc)
 {
     Assimp::Importer importer;
-    pScene = importer.ReadFile(fileName, aiProcess_RemoveRedundantMaterials | aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_ValidateDataStructure | aiProcess_JoinIdenticalVertices);
+	const aiScene *pScene = importer.ReadFile(fileName, aiProcess_RemoveRedundantMaterials | aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace | aiProcess_ValidateDataStructure | aiProcess_JoinIdenticalVertices);
     // check for errors
     if(!pScene || pScene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) // if is Not Zero
     {
         Gum::Output::fatal("ObjectLoader: " + fileName + " ERROR::ASSIMP:: " + importer.GetErrorString());
         return;
     }
-    processAnimNode();
-    processNode(pScene->mRootNode);
+    processAnimNode(pScene);
+    processNode(pScene->mRootNode, pScene, nodefunc);
 
-    rootBone = new Bone(vMeshes[0], 0, "root", mat4(), mat4());
-    recursiveBuildSkeleton(pScene->mRootNode, rootBone, 0);
-    globalInverseTransform = mat4::inverse(Tools::aiMatrix4x4ToMat4(pScene->mRootNode->mTransformation));
+    if(skelfunc != nullptr)
+    {
+        
+        Bone* rootBone = new Bone(vMeshes[0], 0, "root", mat4(), mat4());
+        recursiveBuildSkeleton(pScene->mRootNode, rootBone, 0);
+        mat4 globalInverseTransform = mat4::inverse(Tools::aiMatrix4x4ToMat4(pScene->mRootNode->mTransformation));
+        skelfunc(vBones, rootBone, vSkeletalAnimations, globalInverseTransform);
+    }
+    else 
+    {
+        for(SkeletalAnimation *anim : vSkeletalAnimations)
+            Gum::_delete(anim);
+
+        for(Bone *bone : vBones)
+            Gum::_delete(bone);
+    }
     
     Gum::Output::info("Loaded Object: " + fileName + ", numMeshes: " + std::to_string(vMeshes.size()) + ", Children: " + std::to_string(pScene->mRootNode->mNumChildren));
+
+    importer.FreeScene();
 }
 
-void ObjectLoader::open(const aiScene *scene)
+ObjectLoader::~ObjectLoader() 
 {
-    this->pScene = scene;
-    processAnimNode();
-    processNode(pScene->mRootNode);
 
-    rootBone = new Bone(vMeshes[0], 0, "root", mat4(), mat4());
-    recursiveBuildSkeleton(pScene->mRootNode, rootBone, 0);
-    globalInverseTransform = mat4::inverse(Tools::aiMatrix4x4ToMat4(pScene->mRootNode->mTransformation));
-}
-
-void ObjectLoader::recursiveBuildSkeleton(aiNode* node, Bone *currentBone, int layer)
-{
-    for(unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-        std::string ChildBoneName = node->mChildren[i]->mName.data;
-        Bone *childBone = FindBone(ChildBoneName);
-        if(childBone != nullptr)
-        {
-            childBone->setParent(currentBone);
-            currentBone->addChild(childBone);
-            recursiveBuildSkeleton(node->mChildren[i], childBone, layer + 1);
-        }
-        else 
-        {
-            recursiveBuildSkeleton(node->mChildren[i], currentBone, layer + 1);
-        }
-    }
 }
 
 //We only get data from the first mSkeletalAnimation because 
 //Assimp crushes all of the SkeletalAnimation data into one
 //large sequence of data known as mSkeletalAnimation.
 //Assimp does not support multiple mSkeletalAnimations, surprisingly.
-void ObjectLoader::processAnimNode()
+void processAnimNode(const aiScene *scene)
 {
-    if(pScene->mNumAnimations != 0)
-        for(unsigned int i = 0; i < pScene->mAnimations[0]->mNumChannels; i++)
-            ai_nodes_anim.push_back(pScene->mAnimations[0]->mChannels[i]);
+    if(scene->mNumAnimations != 0)
+        for(unsigned int i = 0; i < scene->mAnimations[0]->mNumChannels; i++)
+            ai_nodes_anim.push_back(scene->mAnimations[0]->mChannels[i]);
 }
 
-void ObjectLoader::processNode(aiNode *node)
+void recursiveBuildSkeleton(aiNode* node, Bone *currentBone, int layer)
 {
-    // process each mesh located at the current node
-    for(unsigned int i = 0; i < node->mNumMeshes; i++)
-    {
-        // the node object only contains indices to index the actual objects in the scene. 
-        // the scene contains all the data, node is just to keep stuff organized (like relations between nodes).
-        aiMesh* mesh = pScene->mMeshes[node->mMeshes[i]];
-        Mesh *retMesh = processMesh(mesh);
+    if(currentBone == nullptr)
+        return;
 
-        retMesh->offsetMatrix = Tools::aiMatrix4x4ToMat4(pScene->mRootNode->mTransformation) * Tools::aiMatrix4x4ToMat4(node->mTransformation);
-        
-    }
-    
-    // after we've processed all of the meshes (if any) we then recursively process each of the children nodes
     for(unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i]);
+        Bone *childBone = FindBone(node->mChildren[i]->mName.data);
+        currentBone->addChild(childBone);
+        childBone->setParent(currentBone);
+
+        recursiveBuildSkeleton(node->mChildren[i], childBone, layer + 1);
     }
 }
 
-void ObjectLoader::processBones(Mesh* mesh, aiMesh *pAiMesh)
+void processNode(aiNode *node, const aiScene *scene, std::function<void(Mesh* mesh)> nodefunc)
+{
+    for(unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        Mesh *retMesh = processMesh(mesh);
+        processBones(retMesh, mesh);
+
+        retMesh->offsetMatrix = Tools::aiMatrix4x4ToMat4(scene->mRootNode->mTransformation) * Tools::aiMatrix4x4ToMat4(node->mTransformation);
+        nodefunc(retMesh);
+    }
+    
+    for(unsigned int i = 0; i < node->mNumChildren; i++)
+        processNode(node->mChildren[i], scene, nodefunc);
+}
+
+
+void processBones(Mesh* mesh, aiMesh *pAiMesh)
 {
     for (uint i = 0 ; i < pAiMesh->mNumBones ; i++) 
     {
         std::string BoneName = pAiMesh->mBones[i]->mName.data;
         int BoneIndex = 0;
-
-
-        if (FindBone(BoneName) == nullptr) 
-        {
-            BoneIndex = i;
-        }
-        else 
-        {
-            BoneIndex = FindBone(BoneName)->getID();
-        }
+        if (FindBone(BoneName) == nullptr)  { BoneIndex = i; }
+        else                                { BoneIndex = FindBone(BoneName)->getID(); }
 
         mat4 BoneOffset = Tools::aiMatrix4x4ToMat4(pAiMesh->mBones[BoneIndex]->mOffsetMatrix);
         Bone* bone = new Bone(mesh, BoneIndex, BoneName, BoneOffset, BoneOffset);
@@ -135,7 +152,7 @@ void ObjectLoader::processBones(Mesh* mesh, aiMesh *pAiMesh)
     }
 }
 
-Mesh* ObjectLoader::processMesh(aiMesh *mesh)
+Mesh* processMesh(aiMesh *mesh)
 {
     Mesh *pMesh = new Mesh();
     pMesh->name = mesh->mName.C_Str();
@@ -198,8 +215,6 @@ Mesh* ObjectLoader::processMesh(aiMesh *mesh)
             pMesh->addIndex(face.mIndices[j]);
         }
     }
-
-    processBones(pMesh, mesh);
     
     //If weights don't add up to 1, add the rest to the first bone
     for(unsigned int i = 0; i < pMesh->numVertices(); i++)
@@ -222,7 +237,7 @@ Mesh* ObjectLoader::processMesh(aiMesh *mesh)
 //find any, we return nullptr.
 //Keep in mind, the bones vector is empty at the point of writing this,
 //but when this function is called it will already be filled up.
-Bone* ObjectLoader::FindBone(std::string name)
+Bone* FindBone(std::string name)
 {
     for(size_t i = 0; i < vBones.size(); i++)
         if(vBones[i]->getName() == name)
@@ -234,7 +249,7 @@ Bone* ObjectLoader::FindBone(std::string name)
 //right after calling our recursiveNodeProcess() function, but this function
 //will only really come into play during the next tutorial, where we cover
 //the actual SkeletalAnimation portion of skeletal SkeletalAnimation.
-aiNodeAnim* ObjectLoader::FindAiNodeAnim(std::string name)
+aiNodeAnim* FindAiNodeAnim(std::string name)
 {
     for(size_t i = 0; i < ai_nodes_anim.size(); i++)
     {
@@ -244,9 +259,4 @@ aiNodeAnim* ObjectLoader::FindAiNodeAnim(std::string name)
         }
     }
     return nullptr;
-}
-
-const aiScene* ObjectLoader::getScene()
-{
-    return pScene;
 }

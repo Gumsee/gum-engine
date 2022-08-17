@@ -2,10 +2,10 @@
 #include <OpenGL/ShaderProgram.h>
 #include <OpenGL/VertexArrayObject.h>
 #include <OpenGL/Texture.h>
+#include <OpenGL/Mesh.h>
 #include <Essentials/Settings.h>
 #include <Essentials/BoundingBox.h>
 #include "../Material/Material.h"
-#include "../Loaders/ObjectLoader.h"
 #include "../General/Animation.h"
 #include "Transformation.h"
 
@@ -56,7 +56,7 @@ struct ObjectProperties
 
 
 	//Technical	(OpenGL)
-	Mesh *pMesh;
+	Mesh *pMesh = nullptr;
 	
 	//Outline
 	bool outline = false;
@@ -75,7 +75,6 @@ protected:
 
 	Material *pMaterial;
 	ShaderProgram *pShader;
-	ObjectLoader *pObjectLoader;
 	ObjectProperties *pProperties;
 	VertexArrayObject* pVertexArrayObject;
     VertexBufferObject<mat4>* pTransMatricesVBO;

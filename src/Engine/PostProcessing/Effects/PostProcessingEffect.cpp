@@ -1,7 +1,16 @@
 #include "PostProcessingEffect.h"
+#include <Essentials/MemoryManagement.h>
 
-PostProcessingEffect::PostProcessingEffect() {}
-PostProcessingEffect::~PostProcessingEffect() {}
+PostProcessingEffect::PostProcessingEffect() 
+{
+    this->pFramebuffer = nullptr;
+}
+
+PostProcessingEffect::~PostProcessingEffect() 
+{
+    Gum::_delete(pFramebuffer);
+}
+
 void PostProcessingEffect::init(Box* canvas)
 {
     this->pRenderCanvas = canvas;
