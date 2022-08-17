@@ -54,13 +54,15 @@ void Billboard::render(ShaderProgram *shader)
         else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
         glDepthMask(false);
 
-        tex->bind(0);
+		if(tex != nullptr)
+        	tex->bind(0);
         glBindVertexArray(VAO);
         glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
         glDisableVertexAttribArray(0);
         glBindVertexArray(0);
-        tex->unbind(0);
+		if(tex != nullptr)
+        	tex->unbind(0);
 
         glDepthMask(true);
         glDisable(GL_BLEND);

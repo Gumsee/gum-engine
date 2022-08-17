@@ -186,4 +186,10 @@ Gum::Window* Renderer3D::getContextWindow()                            { return 
 //Setter
 void Renderer3D::setExposure(const float& exposure)                    { this->fExposure = exposure; }
 void Renderer3D::setRenderCanvas(Box* canvas)                          { this->pRenderCanvas = canvas; }
-void Renderer3D::setWorld(World* world)                                { this->pWorld = world; }
+void Renderer3D::setWorld(World* world) 
+{ 
+    this->pWorld = world; 
+    world->getLightManager()->addCallback([this](Light* light, int index) {
+        pLightning->loadLight(light, index);
+    });
+}

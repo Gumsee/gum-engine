@@ -5,20 +5,22 @@
 #include "../General/World.h"
 #include "TextureManager.h"
 #include "../Particle/Billboard.h"
+#include "../Lightning/lightbulb.h"
+
+Texture2D* LightManager::pLightbulb = nullptr;
 
 LightManager::LightManager(World* world)
 {
     //Gum::Output::log("Adding Lights!");
     this->pSun = new DirectionalLight(vec3(-1,-1,-1), vec3(1), "Sun");
     this->pWorld = world;
+    Gum::Output::print("Successfully initialized Light Manager!");
 
-	//NearestPointLights.resize(Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS));
-    for(size_t i = 0; i < NearestPointLights.size(); i++)
+    if(pLightbulb == nullptr)
     {
-	    NearestPointLights[i] = new PointLight(vec3(0,1000,0), vec3(0,0,0), "unused");
-        PointLights.push_back(NearestPointLights[i]);
+        pLightbulb = new Texture2D("lightbulb");
+        pLightbulb->loadFromMemory(lightbulb, sizeof(lightbulb));
     }
-    Gum::Output::info("Successfully initialized Light Manager!");
 }
 
 LightManager::~LightManager() 
@@ -28,9 +30,14 @@ LightManager::~LightManager()
         Gum::_delete(PointLights[i]);
 }
 
+void LightManager::cleanup()
+{
+    Gum::_delete(pLightbulb);
+}
+
 void LightManager::update()
 {
-    if(PointLights.size() > 0)
+    /*if(PointLights.size() > 0)
     {
         for(int i = 0; i < 4; i++)
         {
@@ -40,7 +47,7 @@ void LightManager::update()
             //NearestPointLights[i]->setColor(PointLights[FinalIndex[i]]->getColor());
             //NearestPointLights[i]->setAttenuation(PointLights[FinalIndex[i]]->getAttenuation());
         }
-    }
+    }*/
 }
 
 
@@ -50,11 +57,12 @@ void LightManager::addPointLight(PointLight* light)
 
     Billboard* billboard = new Billboard(light->getPosition(), pWorld);
     light->setCallback([billboard, this](Light* clight) {
-        billboard->setTexture(Gum::TextureManager::getTexture("lightbulb"));
+        std::cout << pLightbulb->getName() << std::endl;
+        billboard->setTexture(pLightbulb);
         billboard->setPosition(clight->getPosition());
 
-        for(int i = 0; i < vCallbackFunctions.size(); i++)
-            vCallbackFunctions[i](clight);
+        for(size_t i = 0; i < vCallbackFunctions.size(); i++)
+            vCallbackFunctions[i](clight, i);
     });
     pWorld->addBillboard(billboard);
 }
@@ -64,11 +72,15 @@ void LightManager::addSpotLight(SpotLight* light)
 }
 
 
-void LightManager::addCallback(std::function<void(Light*)> callback)
+void LightManager::addCallback(std::function<void(Light*, int)> callback)
 {
     this->vCallbackFunctions.push_back(callback);
 }
 
+int LightManager::numLights()
+{
+    return PointLights.size();
+}
 
 DirectionalLight *LightManager::getSun()
 {

@@ -5,6 +5,7 @@
 #include <Maths/mat.h>
 #include <Maths/vec.h>
 
+#include "Light.h"
 #include "G_Buffer.h"
 
 class Renderer3D;
@@ -31,9 +32,5 @@ public:
 
 	long long getExecutionTime();
 	
-	/*
-	* This function gets called the Engine never call it yourself
-	*/
-	void cleanup();
+	void loadLight(Light* light, int index);
 };
-

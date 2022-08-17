@@ -2,6 +2,7 @@
 #include <random>
 #include <chrono>
 #include <Essentials/MemoryManagement.h>
+#include "Engine/Managers/LightManager.h"
 #include "LightningShader.h"
 #include "../Managers/ShaderManager.h"
 #include "../General/Renderer3D.h"
@@ -52,24 +53,7 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 
 	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
 
-	const float linear = 0.7;
-	const float quadratic = 1.8;
-	const float constant = 1.0;
-
-	for (unsigned int i = 0; i < world->getLightManager()->getNearestPointLights().size(); i++)
-	{
-		pShader->LoadUniform("lights[" + std::to_string(i) + "].Position", world->getLightManager()->getNearestPointLights()[i]->getPosition());
-		pShader->LoadUniform("lights[" + std::to_string(i) + "].Color", world->getLightManager()->getNearestPointLights()[i]->getColor());
-		pShader->LoadUniform("lights[" + std::to_string(i) + "].Linear", linear);
-		pShader->LoadUniform("lights[" + std::to_string(i) + "].Quadratic", quadratic);
-		
-		vec3 color = world->getLightManager()->getNearestPointLights()[i]->getColor();
-		const float maxBrightness = std::max(std::max(color.x, color.y), color.z);
-		float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
-
-		pShader->LoadUniform("lights[" + std::to_string(i) + "].Radius", radius);
-	}
-	pShader->LoadUniform("numLights", (int)world->getLightManager()->getNearestPointLights().size());
+	pShader->LoadUniform("numLights", (int)world->getLightManager()->numLights());
 
 	pShader->LoadUniform("SunColor", world->getLightManager()->getSun()->getColor());
 	pShader->LoadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
@@ -92,12 +76,6 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 }
-
-void Lightning::cleanup()
-{
-	
-}
-
 
 //
 // Getter
@@ -134,7 +112,7 @@ void Lightning::initShader()
         pShader->addUniform("pixelSize");
 
 		//std::cout << "activelights: " << Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS) << std::endl;
-        for (int i = 0; i < Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS); i++)
+        for (int i = 0; i < GUM_MAX_LIGHTS; i++)
         {
             pShader->addUniform("lights[" + std::to_string(i) + "].Position");
             pShader->addUniform("lights[" + std::to_string(i) + "].Color");
@@ -145,4 +123,29 @@ void Lightning::initShader()
         pShader->addUniform("SunColor");
         pShader->addUniform("SunDirection");
     }
+}
+
+void Lightning::loadLight(Light* light, int index)
+{
+	if(index > GUM_MAX_LIGHTS)
+	{
+		Gum::Output::error("Maximum number of light exceeded");
+		return;
+	}
+	const float linear = 0.7;
+	const float quadratic = 1.8;
+	const float constant = 1.0;
+
+	pShader->use();
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Linear", linear);
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Quadratic", quadratic);
+	
+	vec3 color = light->getColor();
+	const float maxBrightness = std::max(std::max(color.x, color.y), color.z);
+	float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
+
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Radius", radius);
+	pShader->unuse();
 }

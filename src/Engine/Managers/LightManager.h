@@ -2,6 +2,7 @@
 #include "../Lightning/DirectionalLight.h"
 #include "../Lightning/SpotLight.h"
 #include "../Lightning/PointLight.h"
+#include <OpenGL/Texture2D.h>
 #include <vector>
 
 class World;
@@ -11,24 +12,28 @@ class World;
 class LightManager
 {
 private:
-    std::vector<PointLight*> PointLights, NearestPointLights;
-    std::vector<SpotLight*> SpotLights, NearestSpotLights;
-    std::vector<std::function<void(Light*)>> vCallbackFunctions;
+    std::vector<PointLight*> PointLights;
+    std::vector<SpotLight*> SpotLights;
+    std::vector<std::function<void(Light*, int)>> vCallbackFunctions;
 	DirectionalLight *pSun;
-    
+    static Texture2D* pLightbulb;
+
+
     World* pWorld;
 
 public:
     LightManager(World* world);
     ~LightManager();
 
+    static void cleanup();
+
     void update();
     
     void addPointLight(PointLight* light);
     void addSpotLight(SpotLight* light);
-    void addCallback(std::function<void(Light*)> callback);
+    void addCallback(std::function<void(Light*, int)> callback);
 
-    std::vector<PointLight*> getNearestPointLights();
-    std::vector<SpotLight*> getNearestSpotLights();
+
+    int numLights();
     DirectionalLight *getSun();
 };
