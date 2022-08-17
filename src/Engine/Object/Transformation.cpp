@@ -1,4 +1,5 @@
 #include "Transformation.h"
+#include <Essentials/MemoryManagement.h>
 #include <Essentials/Tools.h>
 
 Transformation::Transformation()
@@ -14,7 +15,10 @@ Transformation::Transformation()
 }
 
 
-Transformation::~Transformation() {}
+Transformation::~Transformation() 
+{
+	Gum::_delete(pTransformationMatrix);
+}
 
 void Transformation::setPosition(const vec3& Pos)
 {

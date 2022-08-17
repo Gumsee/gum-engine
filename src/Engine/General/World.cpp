@@ -3,6 +3,7 @@
 #include "Engine/Physics/Physics.h"
 #include "Essentials/Window.h"
 #include "../Particle/ParticleSystem.h"
+#include <Essentials/MemoryManagement.h>
 
 
 World::World(Gum::Window* context)
@@ -17,11 +18,11 @@ World::World(Gum::Window* context)
 
 World::~World()
 {
-    delete pLightManager;
-    delete pObjectManager;
-    delete pPhysics;
+    Gum::_delete(pLightManager);
+    Gum::_delete(pObjectManager);
+    Gum::_delete(pPhysics);
     for(size_t i = 0; i < vCamera.size(); i++)
-        delete vCamera[i];
+        Gum::_delete(vCamera[i]);
 }
 
 void World::update()

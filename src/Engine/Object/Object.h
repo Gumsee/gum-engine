@@ -3,6 +3,7 @@
 #include <OpenGL/VertexArrayObject.h>
 #include <OpenGL/Texture.h>
 #include <Essentials/Settings.h>
+#include <Essentials/BoundingBox.h>
 #include "../Material/Material.h"
 #include "../Loaders/ObjectLoader.h"
 #include "../General/Animation.h"
@@ -67,6 +68,7 @@ class Object
 {
 private:
 	void createIndividualColor(Instance *instance);
+	bbox3 bBoundingBox;
 
 protected:
 	Object();
@@ -92,6 +94,7 @@ public:
 	Object(std::string ModelFilePath, std::string name);
 	Object(ObjectProperties *properties, std::string name);
 	Object(Mesh *mesh, std::string name);
+	virtual ~Object();
 
 	virtual void render();
 	void renderMesh();
@@ -99,14 +102,6 @@ public:
 	void prepareRender();
 	void finishRender();
 	void generateBoundingBox(Instance *inst);
-
-
-
-	struct AABB
-	{
-		vec3 m_vecMax = vec3(0,0,0);
-		vec3 m_vecMin = vec3(0,0,0);
-	}BoundingBox;
 
 	void reload();
 
@@ -117,14 +112,6 @@ public:
 	void forceActivation(bool state, int index = 0);
 	void addPhysics(int type, bool isActive, float mass, Instance *instance, World* world, vec3 special = vec3(0,0,0));
 
-	vec3 getBoundingBoxSize()
-	{
-		return vec3(Gum::Maths::distance(BoundingBox.m_vecMax.x, BoundingBox.m_vecMin.x),
-			        Gum::Maths::distance(BoundingBox.m_vecMax.y, BoundingBox.m_vecMin.y),
-			        Gum::Maths::distance(BoundingBox.m_vecMax.z, BoundingBox.m_vecMin.z));
-	}
-
-	void clean();
 	
 	void addInstance();
 	void addInstance(Instance *inst);

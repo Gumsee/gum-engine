@@ -1,4 +1,5 @@
 #include "Skybox.h"
+#include "Essentials/MemoryManagement.h"
 #include "SkyboxShaders.h"
 #include "../Managers/ShaderManager.h"
 #include "../Managers/TextureManager.h"
@@ -6,6 +7,7 @@
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 {
+    pShader = nullptr;
     initShaders();
 	this->sunDir = SunDirection;
 	this->gradiant = true;
@@ -75,6 +77,20 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 
 SkyBox::~SkyBox() 
 {
+	Gum::_delete(pFramebuffer);
+    Gum::_delete(pIrradianceFramebuffer);
+	Gum::_delete(pBRDFFramebuffer);
+	Gum::_delete(pPreFilterMap);
+	Gum::_delete(pBRDFCanvas);
+
+    
+	Gum::_delete(HDRToCubeMapShader);
+    IrradianceMapShader->removeShader(0);
+    PreFilteredMapShader->removeShader(0);
+    BRDFMapShader->removeShader(0);
+	Gum::_delete(IrradianceMapShader);
+	Gum::_delete(PreFilteredMapShader);
+	Gum::_delete(BRDFMapShader);
 }
 
 void SkyBox::render()
@@ -277,15 +293,7 @@ void SkyBox::spin(bool spin)                   { this->isSpinning = spin; }
 
 void SkyBox::initShaders()
 {
-    if(Gum::ShaderManager::hasShaderProgram("SkyShader"))
-    {
-	    pShader = Gum::ShaderManager::getShaderProgram("SkyShader");
-        HDRToCubeMapShader = Gum::ShaderManager::getShaderProgram("HDRToCubeMapShader");
-        IrradianceMapShader = Gum::ShaderManager::getShaderProgram("IrradianceMapShader");
-        PreFilteredMapShader = Gum::ShaderManager::getShaderProgram("PreFilteredMapShader");
-        BRDFMapShader = Gum::ShaderManager::getShaderProgram("BRDFMapShader");
-    }
-    else
+    if(pShader == nullptr)
     {
         Shader* skyVertexShader = new Shader(SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
 
@@ -296,7 +304,7 @@ void SkyBox::initShaders()
         pShader->addUniform("gradiant");
         pShader->addTexture("dayTexture", 0);
         pShader->addUniform("SunDirection");
-        Gum::ShaderManager::addShaderProgram(pShader);
+        Gum::ShaderManager::addShaderProgram(pShader); // Make it public
 
 
         HDRToCubeMapShader = new ShaderProgram();
@@ -306,7 +314,6 @@ void SkyBox::initShaders()
         HDRToCubeMapShader->addUniform("gradiant");
         HDRToCubeMapShader->addTexture("hdrTexture", 0);
         HDRToCubeMapShader->addUniform("SunDirection");
-        Gum::ShaderManager::addShaderProgram(HDRToCubeMapShader);
 
         
         IrradianceMapShader = new ShaderProgram();
@@ -314,7 +321,6 @@ void SkyBox::initShaders()
         IrradianceMapShader->addShader(new Shader(SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         IrradianceMapShader->build("IrradianceMapShader");
         IrradianceMapShader->addUniform("cubeMap");
-        Gum::ShaderManager::addShaderProgram(IrradianceMapShader);
 
         
         PreFilteredMapShader = new ShaderProgram();
@@ -323,7 +329,6 @@ void SkyBox::initShaders()
         PreFilteredMapShader->build("PreFilteredMapShader");
         PreFilteredMapShader->addUniform("roughness");
         PreFilteredMapShader->addUniform("cubeMap");
-        Gum::ShaderManager::addShaderProgram(PreFilteredMapShader);
 
         
         BRDFMapShader = new ShaderProgram();
@@ -332,6 +337,5 @@ void SkyBox::initShaders()
         BRDFMapShader->build("BRDFMapShader");
         BRDFMapShader->addUniform("roughness");
         BRDFMapShader->addUniform("cubeMap");
-        Gum::ShaderManager::addShaderProgram(BRDFMapShader);
     }
 }

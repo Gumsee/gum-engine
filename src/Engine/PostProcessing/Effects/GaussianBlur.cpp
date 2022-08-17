@@ -1,5 +1,6 @@
 #include "GaussianBlur.h"
 #include "../../Managers/ShaderManager.h"
+#include <Essentials/MemoryManagement.h>
 
 
 GaussianBlur::GaussianBlur(Box *canvas, int stage)
@@ -11,7 +12,7 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
 		BlurryDivider1 = stage / 2;
 		BlurryDivider2 = stage;
 	}
-    delete pFramebuffer;
+    Gum::_delete(pFramebuffer);
     
     pBlurFramebufferH = new Framebuffer(canvas->getSize() / BlurryDivider1);
     pFramebuffer = new Framebuffer(canvas->getSize() / BlurryDivider2);
@@ -37,8 +38,8 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
 
 GaussianBlur::~GaussianBlur() 
 {
-	delete HblurShader;
-	delete VblurShader;
+	Gum::_delete(HblurShader);
+	Gum::_delete(VblurShader);
 }
 
 

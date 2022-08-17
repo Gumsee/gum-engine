@@ -6,6 +6,7 @@
 #include <Essentials/Input/Mouse.h>
 #include <Essentials/FPS.h>
 #include <Essentials/Output.h>
+#include <Essentials/MemoryManagement.h>
 
 #include "../General/Camera.h"
 #include "../Managers/ShaderManager.h"
@@ -51,12 +52,13 @@ Physics::Physics()
 
 Physics::~Physics()
 {
-	delete collisionConfiguration;
-	delete dispatcher;
-	delete overlappingPairCache;
-	delete m_ghostPairCallback;
-	delete solver;
-	delete pDynamicWorld;
+	Gum::_delete(collisionConfiguration);
+	Gum::_delete(dispatcher);
+	Gum::_delete(overlappingPairCache);
+	Gum::_delete(m_ghostPairCallback);
+	Gum::_delete(solver);
+	Gum::_delete(pDynamicWorld);
+	Gum::_delete(pDebugDrawer);
 }
 
 void Physics::update()
@@ -97,8 +99,7 @@ void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType 
 
 void Physics::addDebugDrawer(ShaderProgram *shader)
 {
-	if(pDebugDrawer != nullptr)
-		delete pDebugDrawer;
+	Gum::_delete(pDebugDrawer);
 	pDebugDrawer = new DebugDrawer(shader);
 
 	//btIDebugDraw *draw = new DebugDrawer();

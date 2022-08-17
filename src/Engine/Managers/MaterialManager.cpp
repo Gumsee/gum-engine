@@ -1,4 +1,5 @@
 #include "MaterialManager.h"
+#include <Essentials/MemoryManagement.h>
 #include <map>
 
 namespace Gum {
@@ -17,6 +18,7 @@ namespace MaterialManager
 
     void cleanup()
     {
+        Gum::_delete(pDefaultMaterial);
         Materials.clear();
     }
     

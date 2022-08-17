@@ -4,6 +4,7 @@
 
 
 #include <Essentials/Output.h>
+#include <Essentials/MemoryManagement.h>
 #include <OpenGL/WrapperFunctions.h>
 
 
@@ -48,7 +49,12 @@ ShadowMapping::ShadowMapping(Renderer3D* renderer)
 }
 
 
-ShadowMapping::~ShadowMapping() {}
+ShadowMapping::~ShadowMapping() 
+{
+	Gum::_delete(box);
+	for(int i = 0; i < vFramebuffers.size(); i++)
+		Gum::_delete(vFramebuffers[i]);
+}
 
 
 void ShadowMapping::prepare(vec3 LightDirection, int index)

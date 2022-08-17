@@ -1,13 +1,20 @@
 #include <vector>
 #include <OpenGL/Mesh.h>
+#include <Essentials/MemoryManagement.h>
 
 struct CameraMesh
 {
-    Mesh* CameraObjectMesh = new Mesh();
+    Mesh* CameraObjectMesh = nullptr;
+    
+    ~CameraMesh()
+    {
+        Gum::_delete(CameraObjectMesh);
+    }
 
     //Cursor
     CameraMesh()
     {
+        CameraObjectMesh = new Mesh();
         CameraObjectMesh->addVertex(Vertex(vec3(-4.463313, 0.132401, -0.762015), vec2(0.000000, 0.000000), vec3(1.000000, 0.000000, 0.000000), vec3(0.000000, 1.000000, 0.000000), vec3(0.000000, 0.000000, 0.000000), ivec3(0, 0, 0), vec3(1.000000, 0.000000, 0.000000), 0));
         CameraObjectMesh->addVertex(Vertex(vec3(-4.463313, 0.233306, -1.165636), vec2(0.000000, 0.000000), vec3(1.000000, 0.000000, 0.000000), vec3(0.000000, 1.000000, 0.000000), vec3(0.000000, 0.000000, 0.000000), ivec3(0, 0, 0), vec3(1.000000, 0.000000, 0.000000), 0));
         CameraObjectMesh->addVertex(Vertex(vec3(-4.463313, 0.233306, -0.762015), vec2(0.000000, 0.000000), vec3(1.000000, 0.000000, 0.000000), vec3(0.000000, 1.000000, 0.000000), vec3(0.000000, 0.000000, 0.000000), ivec3(0, 0, 0), vec3(1.000000, 0.000000, 0.000000), 0));

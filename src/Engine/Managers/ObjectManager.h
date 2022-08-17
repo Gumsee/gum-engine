@@ -61,14 +61,8 @@ public:
 	Object* getObject(const unsigned int& vaoID);
 	Instance* getInstanceByID(const unsigned int& id);
 	bool hasObject(std::string name);
-    std::map<std::string, Object*> getObjectsMap();
 	AnimatedModel *getAnimObject(std::string name);
 	SkyBox *getSkybox();
 
 	unsigned int getObjectUnderMouse(Renderer3D* renderer) const;
-	
-	/*
-	* This function gets called the Engine never call it yourself
-	*/
-	void clean();
 };

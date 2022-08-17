@@ -2,6 +2,7 @@
 #include "ShaderManager.h"
 #include "../General/Camera.h"
 #include "../General/Renderer3D.h"
+#include <Essentials/MemoryManagement.h>
 #include <string>
 
 
@@ -14,7 +15,16 @@ ObjectManager::ObjectManager(vec3 *sunDirection)
 
     pSkyBox = new SkyBox(Mesh::generateUVSphere(5, 15), sunDirection, "Skybox");
 }
-ObjectManager::~ObjectManager() {}
+ObjectManager::~ObjectManager() 
+{
+	Gum::_delete(pSkyBox);
+
+	for(auto &obj : Objects)
+		Gum::_delete(obj.second);
+
+	AnimObjs.clear();
+	Objects.clear();
+}
 
 
 void ObjectManager::render(int exception, ShaderProgram *shader, bool noPrepare)
@@ -113,23 +123,6 @@ Object* ObjectManager::addObject(Object *obj, std::string Identifier)
 	return obj;
 }
 
-
-void ObjectManager::clean()
-{
-	pSkyBox->clean();
-
-	//TODO delete every single object
-
-
-	for(auto &obj : Objects)
-	{
-		obj.second->clean();
-		//obj.second.erase(obj.second.begin() + i);	
-	}
-
-	AnimObjs.clear();
-	Objects.clear();
-}
 
 Object* ObjectManager::getObject(const std::string& name)
 {
@@ -236,4 +229,3 @@ void ObjectManager::setSkybox(SkyBox *skybox)                 { this->pSkyBox = 
 //Getter
 //
 SkyBox* ObjectManager::getSkybox() 			                  { return this->pSkyBox; }
-std::map<std::string, Object*> ObjectManager::getObjectsMap() { return this->Objects; }

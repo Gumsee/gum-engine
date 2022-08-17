@@ -42,10 +42,7 @@ void Object::addPhysics(int type, bool isActive, float mass, Instance *instance,
 			btBoxShape *ColShape;
 			if (special == vec3(0,0,0))
 			{
-				ColShape = new btBoxShape(btVector3(
-					btScalar(Gum::Maths::distance(BoundingBox.m_vecMax.x, BoundingBox.m_vecMin.x) / 2), 
-					btScalar(Gum::Maths::distance(BoundingBox.m_vecMax.y, BoundingBox.m_vecMin.y) / 2), 
-					btScalar(Gum::Maths::distance(BoundingBox.m_vecMax.z, BoundingBox.m_vecMin.z) / 2)));
+				ColShape = new btBoxShape(btVector3(bBoundingBox.getSize().x / 2, bBoundingBox.getSize().y / 2, bBoundingBox.getSize().z / 2));
 			}
 			else
 			{
@@ -63,7 +60,7 @@ void Object::addPhysics(int type, bool isActive, float mass, Instance *instance,
 			btCapsuleShape *ColShape;
 			if (special == vec3(0,0,0))
 			{
-				ColShape = new btCapsuleShape(BoundingBox.m_vecMax.z, BoundingBox.m_vecMax.y);
+				ColShape = new btCapsuleShape(bBoundingBox.getSize().z / 2, bBoundingBox.getSize().y / 2);
 			}
 			else
 			{
@@ -81,7 +78,7 @@ void Object::addPhysics(int type, bool isActive, float mass, Instance *instance,
 			btSphereShape *ColShape;
 			if(special == vec3(0,0,0))
 			{
-				ColShape = new btSphereShape(std::max(std::max(BoundingBox.m_vecMax.x, BoundingBox.m_vecMax.y), BoundingBox.m_vecMax.z));
+				ColShape = new btSphereShape(std::max(std::max(bBoundingBox.getSize().x, bBoundingBox.getSize().y), bBoundingBox.getSize().z) / 2);
 			}
 			else
 			{
@@ -170,7 +167,7 @@ bool Object::isCollidingWithRay(vec3 ray, int index)
 
 void Object::generateBoundingBox(Instance *inst)
 {
-	if(BoundingBox.m_vecMin == vec3(0,0,0) && BoundingBox.m_vecMax == vec3(0,0,0))
+	if(bBoundingBox.getPos() == vec3(0,0,0) && bBoundingBox.getSize() == vec3(0,0,0))
 	{
 		if(pProperties->pMesh != nullptr)
 		{
@@ -204,44 +201,43 @@ void Object::generateBoundingBox(Instance *inst)
 				{
 					MaxZ.push_back(Gum::Maths::distance(pProperties->pMesh->getVertex(i).position.z * inst->getScale().z , 0.0f));
 				}
-
 			}
 
 			std::vector<float>::iterator result;
 			if (MinX.size() != 0)
 			{
 				result = std::max_element(MinX.begin(), MinX.end());
-				BoundingBox.m_vecMin.x = -result[0];
+				bBoundingBox.pos.x = -result[0];
 			}
 
 			if (MaxX.size() != 0)
 			{
 				result = std::max_element(MaxX.begin(), MaxX.end());
-				BoundingBox.m_vecMax.x = result[0];
+				bBoundingBox.size.x = result[0];
 			}
 
 			if (MinY.size() != 0)
 			{
 				result = std::max_element(MinY.begin(), MinY.end());
-				BoundingBox.m_vecMin.y = -result[0];
+				bBoundingBox.pos.y = -result[0];
 			}
 
 			if (MaxY.size() != 0)
 			{
 				result = std::max_element(MaxY.begin(), MaxY.end());
-				BoundingBox.m_vecMax.y = result[0];
+				bBoundingBox.size.y = result[0];
 			}
 
 			if (MinZ.size() != 0)
 			{
 				result = std::max_element(MinZ.begin(), MinZ.end());
-				BoundingBox.m_vecMin.z = -result[0];
+				bBoundingBox.pos.z = -result[0];
 			}
 
 			if (MaxZ.size() != 0)
 			{
 				result = std::max_element(MaxZ.begin(), MaxZ.end());
-				BoundingBox.m_vecMax.z = result[0];
+				bBoundingBox.size.z = result[0];
 			}
 		}
 		else

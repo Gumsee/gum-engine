@@ -47,6 +47,11 @@ Camera::Camera(const ivec2& resolution, World* world, Gum::Window* context)
     }
 }
 
+Camera::~Camera()
+{
+    Gum::_delete(OffsetToPos);
+}
+
 void Camera::updateProjection(const ivec2& resolution)
 {
     if(iProjectionMode == ProjectionModes::PERSPECTIVE)

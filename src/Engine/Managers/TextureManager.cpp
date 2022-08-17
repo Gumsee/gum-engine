@@ -1,5 +1,6 @@
 #include "TextureManager.h"
 #include <Essentials/Tools.h>
+#include <Essentials/MemoryManagement.h>
 
 namespace Gum {
 namespace TextureManager
@@ -41,10 +42,12 @@ namespace TextureManager
 
 	void cleanup()
 	{
+		for(auto tex : mTextures)
+			Gum::_delete(tex.second);
 		mTextures.clear();
 	}
 
-	void deleteTexture(std::string TexName) 				{ delete mTextures[TexName]; mTextures.erase(TexName); }
+	void deleteTexture(std::string TexName) 				{ Gum::_delete(mTextures[TexName]); mTextures.erase(TexName); }
 	void addTexture(Texture *tex, std::string Identifier) 	{ mTextures[Identifier] = tex; }
 	void addTextureToLoad(Texture* tex)                     { vTexturesToLoad.push_back(tex); }
 

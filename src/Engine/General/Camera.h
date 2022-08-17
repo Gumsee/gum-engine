@@ -55,6 +55,7 @@ public:
     };
 
     Camera(const ivec2& resolution, World* world, Gum::Window* context);
+    ~Camera();
 
 	static Camera* ActiveCamera;
 

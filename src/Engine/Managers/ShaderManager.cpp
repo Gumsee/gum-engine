@@ -1,4 +1,6 @@
 #include "ShaderManager.h"
+#include "Essentials/MemoryManagement.h"
+#include "OpenGL/ShaderProgram.h"
 #include <Essentials/Output.h>
 #include <map>
 
@@ -33,6 +35,8 @@ namespace ShaderManager
 
 	void cleanup()
 	{
+		for(auto program : mShaderPrograms)
+			Gum::_delete(program.second);
 		mShaders.clear();
 	}
 

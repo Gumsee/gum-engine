@@ -38,17 +38,6 @@ void Object::writeObjectInfoToFile(std::string filename)  //Move to fileparser
 	file.close();
 }
 
-
-
-void Object::clean()
-{
-	//for(size_t i = 0; i < vInstances.size(); i++)
-	{
-	//	GumEngine::Physics->getWorld()->removeRigidBody(vInstances[i]->getBody());
-	}
-}
-
-
 void Object::addInstance() { addInstance(new Instance(*vInstances[0])); }
 
 void Object::addInstance(Instance *inst)

@@ -3,10 +3,12 @@
 #include "../General/World.h"
 #include "../Lightning/Lightning.h"
 #include "../Lightning/ShadowMapping/ShadowMapping.h"
-#include <Essentials/Window.h>
 #include "../PostProcessing/PostProcessing.h"
 #include "../Particle/ShaderInitializer.h"
-#include "Engine/Managers/TextureManager.h"
+#include "../Managers/TextureManager.h"
+
+#include <Essentials/Window.h>
+#include <Essentials/MemoryManagement.h>
 
 Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
@@ -43,13 +45,13 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 
 Renderer3D::~Renderer3D()
 {
-    delete pOcclusionMask;
-    delete pFramebuffer;
-	delete pGBuffer;
-	delete pSSAO;
-	delete pLightning;
-    delete pShadowMaps;
-    delete pHighDynamicRange;
+    Gum::_delete(pOcclusionMask);
+    Gum::_delete(pFramebuffer);
+	Gum::_delete(pGBuffer);
+	Gum::_delete(pSSAO);
+	Gum::_delete(pLightning);
+    Gum::_delete(pShadowMaps);
+    Gum::_delete(pHighDynamicRange);
 }
 
 

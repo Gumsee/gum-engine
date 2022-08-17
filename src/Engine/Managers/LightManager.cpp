@@ -1,5 +1,6 @@
 #include "LightManager.h"
 #include <Essentials/Output.h>
+#include <Essentials/MemoryManagement.h>
 #include "../General/Camera.h"
 #include "TextureManager.h"
 
@@ -17,11 +18,15 @@ LightManager::LightManager(World* world)
     Gum::Output::info("Successfully initialized Light Manager!");
 }
 
-LightManager::~LightManager() {}
+LightManager::~LightManager() 
+{
+    Gum::_delete(pSun);
+    for(size_t i = 0; i < PointLights.size(); i++)
+        Gum::_delete(PointLights[i]);
+}
 
 void LightManager::update()
 {
-    Gum::Output::debug("Updating Lights");
     if(PointLights.size() > 0)
     {
         std::vector<int> FinalIndex;

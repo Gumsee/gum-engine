@@ -1,11 +1,13 @@
+#include "Essentials/MemoryManagement.h"
 #include "Object.h"
 #include "../Physics/Physics.h"
 #include "../Managers/ObjectManager.h"
+#include "../Managers/MaterialManager.h"
 #include <Essentials/Tools.h>
 
 Object::Object()
 {
-	pMaterial = new Material();
+	pMaterial = Gum::MaterialManager::getDefaultMaterial();
 	pObjectLoader = new ObjectLoader();
 	pProperties = new ObjectProperties();
     pVertexArrayObject = new VertexArrayObject();
@@ -16,12 +18,8 @@ Object::Object()
  *  @param[in] Shader Shader used to render object
  *  @param[in] name Identifier, also used in the objectmanager in most cases
  */
-Object::Object(std::string modelFilePath, std::string name)
+Object::Object(std::string modelFilePath, std::string name) : Object()
 {
-	pMaterial = new Material();
-	pObjectLoader = new ObjectLoader();
-	pProperties = new ObjectProperties();
-    pVertexArrayObject = new VertexArrayObject();
 	//Set attributes
 	this->pShader = nullptr;
 
@@ -48,12 +46,10 @@ Object::Object(std::string modelFilePath, std::string name)
  *  @param[in] Shader Shader used to render object
  *  @param[in] name Identifier, also used in the objectmanager in most cases
  */
-Object::Object(ObjectProperties *properties, std::string name)
+Object::Object(ObjectProperties *properties, std::string name) : Object()
 {
-	pMaterial = new Material();
-	pObjectLoader = new ObjectLoader();
+	Gum::_delete(pProperties);
 	pProperties = new ObjectProperties(*properties);
-    pVertexArrayObject = new VertexArrayObject();
 	this->pShader = nullptr;
 	pProperties->Name = name;
 	load();
@@ -65,12 +61,8 @@ Object::Object(ObjectProperties *properties, std::string name)
  *  @param[in] Shader Shader used to render object
  *  @param[in] name Identifier, also used in the objectmanager in most cases
  */
-Object::Object(Mesh *mesh, std::string name)
+Object::Object(Mesh *mesh, std::string name) : Object()
 {
-	pMaterial = new Material();
-	pObjectLoader = new ObjectLoader();
-	pProperties = new ObjectProperties();
-    pVertexArrayObject = new VertexArrayObject();
 	//Set attributes
 	this->pShader = nullptr;
 
@@ -82,6 +74,18 @@ Object::Object(Mesh *mesh, std::string name)
 	load();
 }
 
+Object::~Object()
+{
+	Gum::_delete(this->getProperties()->pMesh);
+	Gum::_delete(pProperties);
+	Gum::_delete(pVertexArrayObject);
+	Gum::_delete(pVertexVBO);
+	Gum::_delete(pIndividualColorsVBO);
+	Gum::_delete(pTransMatricesVBO);
+	Gum::_delete(pObjectLoader);
+	for(Instance *inst : vInstances)
+		Gum::_delete(inst);
+}
 
 /** Gernerates the Objects Vertex Array and Buffers
  *  It also creates the bounding box

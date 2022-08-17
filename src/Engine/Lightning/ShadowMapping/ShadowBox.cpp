@@ -1,17 +1,20 @@
 #include "ShadowBox.h"
 #include "../../General/Camera.h"
 #include "../../General/Renderer3D.h"
+#include <Essentials/MemoryManagement.h>
 
 
 
 ShadowBox::ShadowBox(Renderer3D* renderer)
 {
 	pRenderer = renderer;
+	lightViewMatrix = nullptr;
 }
 
 
 ShadowBox::~ShadowBox()
 {
+	Gum::_delete(lightViewMatrix);
 }
 
 

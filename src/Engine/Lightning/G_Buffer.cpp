@@ -1,6 +1,7 @@
 #include "G_Buffer.h"
 #include "GBufferShader.h"
 #include "../Managers/ShaderManager.h"
+#include <Essentials/MemoryManagement.h>
 
 /*
     0 PositionMap;
@@ -27,7 +28,7 @@ G_Buffer::G_Buffer(ivec2 resolution)
 
 G_Buffer::~G_Buffer()
 {
-    delete gBuffer;
+    Gum::_delete(gBuffer);
 }
 
 void G_Buffer::bind()
