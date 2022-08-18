@@ -17,6 +17,7 @@ namespace Particles
             pParticleShader->addShader(new Shader(ParticleVertexShader, Shader::VERTEX_SHADER));
             pParticleShader->addShader(new Shader(ParticleFragmentShader, Shader::FRAGMENT_SHADER));
             pParticleShader->build("ParticleShader");
+            pParticleShader->addTexture("textureSampler", 0);
             Gum::ShaderManager::addShaderProgram(pParticleShader);
         }
 
@@ -26,6 +27,10 @@ namespace Particles
             pBillboardShader->addShader(new Shader(BillboardVertexShader, Shader::VERTEX_SHADER));
             pBillboardShader->addShader(new Shader(BillboardFragmentShader, Shader::FRAGMENT_SHADER));
             pBillboardShader->build("BillboardShader");
+            pBillboardShader->addUniform("billboardCenter");
+            pBillboardShader->addUniform("billboardSize");
+            pBillboardShader->addUniform("fixedSize");
+            pBillboardShader->addTexture("textureSampler", 0);
             Gum::ShaderManager::addShaderProgram(pBillboardShader);
         }
     }

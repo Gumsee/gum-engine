@@ -17,15 +17,24 @@ Light::~Light()
 
 void Light::IncreasePosition(const vec3& pos) { setPosition(getPosition() + pos); }
 
+void Light::update()
+{
+	if(this->pCallback != nullptr) 
+	{ 
+		this->pCallback(this); 
+	}
+}
+
+
 //
 // Setter
 //
-void Light::setPosition(const vec3& pos) 		          { this->vPosition = pos; if(this->pCallback != nullptr) { this->pCallback(this); } }
-void Light::setAttenuation(const vec3& att) 	          { this->vAttenuation = att; if(this->pCallback != nullptr) { this->pCallback(this); } }
-void Light::setStrength(const float& strength) 	          { this->fStrength = strength; if(this->pCallback != nullptr) { this->pCallback(this); } }
-void Light::setColor(const vec3& rgb) 		              { this->vColor = rgb; if(this->pCallback != nullptr) { this->pCallback(this); } }
+void Light::setPosition(const vec3& pos) 		          { this->vPosition = pos; update(); }
+void Light::setAttenuation(const vec3& att) 	          { this->vAttenuation = att; update(); }
+void Light::setStrength(const float& strength) 	          { this->fStrength = strength; update(); }
+void Light::setColor(const vec3& rgb) 		              { this->vColor = rgb; update(); }
 void Light::setName(const std::string& name) 	          { this->sName = name; }
-void Light::setCallback(std::function<void(Light*)> func) { this->pCallback = func; }
+void Light::setCallback(std::function<void(Light*)> func) { this->pCallback = func; update(); }
 
 
 //

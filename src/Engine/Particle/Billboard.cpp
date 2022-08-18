@@ -13,7 +13,7 @@ Billboard::Billboard(vec3 Position, World* world)
 	this->Position = Position;
     this->Rotation = vec3(0,0,0);
     //this->Scale = vec2(30) / Gum::Window->getRenderQuadSize(); // 30x30 pixels
-    this->Scale = vec2(0.1f * pWorld->getBoundRenderer()->getAspectRatio(), 0.1f); //10% of the screen
+    this->Scale = vec2(0.1f, 0.1f * pWorld->getBoundRenderer()->getAspectRatio()); //10% of the screen
 	this->tex = nullptr;
 
 	std::vector<float> vertices =

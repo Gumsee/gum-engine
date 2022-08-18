@@ -8,9 +8,6 @@ R"(
 	struct Light {
 	    vec3 Position;
 	    vec3 Color;
-	    float Linear;
-	    float Quadratic;
-	    float Radius;
 	};
 
 	uniform samplerCube ReflectionMap;
@@ -182,7 +179,7 @@ R"(
 	    //Point Lights
         //
 	    vec3 light = vec3(0.0);
-	    for(int i = 0; i < numLights; ++i)
+	    for(int i = 0; i < numLights; i++)
 	    {
 	        // calculate per-light radiance
 	        vec3 LightDir = normalize(lights[i].Position - Position);
@@ -196,7 +193,7 @@ R"(
 	        float G   = GeometrySmith(Normal, viewDir, LightDir, roughnessFactor);      
 	        vec3 F    = fresnelSchlick(max(dot(Half, viewDir), 0.0), F0);
 
-	        vec3 nominator    = NDF * G * F * shadow; 
+	        vec3 nominator    = NDF * G * F;// * shadow; 
 	        float denominator = 4 * max(dot(Normal, viewDir), 0.0) * max(dot(Normal, LightDir), 0.0) + 0.001; // 0.001 to prevent divide by zero.
 	        vec3 specular = nominator / denominator;
 
@@ -235,7 +232,7 @@ R"(
 	    float NdotL = max(dot(Normal, LightDir), 0.0);        
 
 	    // add to outgoing radiance Lo
-	    vec3 sunlight = (kD * Albedo.rgb / PI + specular * shadow) * radiance * NdotL;
+	    vec3 sunlight = (kD * Albedo.rgb / PI + specular/* * shadow*/) * radiance * NdotL;
 
 
         //
@@ -253,7 +250,7 @@ R"(
 
 
 
-	    vec3 color = (ambient + sunlight * shadow + light);
+	    vec3 color = (ambient + sunlight/* * shadow*/ + light);
         //color = light + ambient * shadow;
         //color = irradiance;
         
@@ -268,10 +265,10 @@ R"(
 	    float alpha = 1.0f;
 	    if(Normal == vec3(0.0f)) { alpha = 0.0f; }
 
-	    gl_FragColor = vec4(color, alpha);
+	    //gl_FragColor = vec4(color, alpha);
 	    //gl_FragColor = mix(gl_FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
 	    //gl_FragColor = texture(ShadowMap, shadowmapcoords.xy);
     	//gl_FragColor = vec4(NormalViewSpace, 1.0f);
-    	//gl_FragColor = vec4(1,0,0, 1.0f);
+    	gl_FragColor = vec4(light, alpha);
 	}
 )";

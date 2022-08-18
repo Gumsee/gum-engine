@@ -53,7 +53,7 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 
 	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
 
-	pShader->LoadUniform("numLights", (int)world->getLightManager()->numLights());
+	pShader->LoadUniform("numLights", world->getLightManager()->numLights());
 
 	pShader->LoadUniform("SunColor", world->getLightManager()->getSun()->getColor());
 	pShader->LoadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
@@ -115,10 +115,7 @@ void Lightning::initShader()
         for (int i = 0; i < GUM_MAX_LIGHTS; i++)
         {
             pShader->addUniform("lights[" + std::to_string(i) + "].Position");
-            pShader->addUniform("lights[" + std::to_string(i) + "].Color");
-            pShader->addUniform("lights[" + std::to_string(i) + "].Radius");
-            pShader->addUniform("lights[" + std::to_string(i) + "].Quadratic");		
-            pShader->addUniform("lights[" + std::to_string(i) + "].Linear");		
+            pShader->addUniform("lights[" + std::to_string(i) + "].Color");		
         }
         pShader->addUniform("SunColor");
         pShader->addUniform("SunDirection");
@@ -132,13 +129,14 @@ void Lightning::loadLight(Light* light, int index)
 		Gum::Output::error("Maximum number of light exceeded");
 		return;
 	}
-	const float linear = 0.7;
-	const float quadratic = 1.8;
-	const float constant = 1.0;
 
 	pShader->use();
 	pShader->LoadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
 	pShader->LoadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
+	/*
+	const float linear = 0.7;
+	const float quadratic = 1.8;
+	const float constant = 1.0;
 	pShader->LoadUniform("lights[" + std::to_string(index) + "].Linear", linear);
 	pShader->LoadUniform("lights[" + std::to_string(index) + "].Quadratic", quadratic);
 	
@@ -146,6 +144,6 @@ void Lightning::loadLight(Light* light, int index)
 	const float maxBrightness = std::max(std::max(color.x, color.y), color.z);
 	float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Radius", radius);
+	pShader->LoadUniform("lights[" + std::to_string(index) + "].Radius", radius);*/
 	pShader->unuse();
 }

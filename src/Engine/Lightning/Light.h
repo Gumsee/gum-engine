@@ -18,6 +18,7 @@ public:
 	~Light();
 
 	void IncreasePosition(const vec3& pos);
+	void update();
 
 	//Setter
 	void setPosition(const vec3& pos);

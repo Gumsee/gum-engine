@@ -43,9 +43,6 @@ R"(
     in float blend;
 
     uniform sampler2D textureSampler;
-    uniform vec3 LightColor;
-    uniform int HasTransparenty;
-    uniform vec3 SkyColor;
 
     void main(void)
     {

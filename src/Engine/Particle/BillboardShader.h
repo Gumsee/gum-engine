@@ -36,19 +36,13 @@ R"(
 
 static const std::string BillboardFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
-    in float visibility;
     in vec2 Texcoord;
 
     uniform sampler2D textureSampler;
-    uniform vec3 LightColor;
-    uniform int HasTransparenty;
-    uniform vec3 SkyColor;
 
     void main(void)
     {
         vec4 color = texture(textureSampler, Texcoord);
-        float DiscardChecker = color.r + color.g + color.b;
-        //if(DiscardChecker < 0.5) { discard; } else {}
         gl_FragColor = color;
     }
 )";

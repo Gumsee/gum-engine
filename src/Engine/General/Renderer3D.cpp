@@ -61,11 +61,6 @@ void Renderer3D::render()
     //Render Occlusion Mask via CPU
     pOcclusionMask->render();
     pWorld->renderRenderable();
-
-    Gum::Output::debug("Rendering PostProcessing");
-    glDisable(GL_CLIP_DISTANCE0);
-
-    //Get everything to the screen
     
     //Render Objects to GBuffer
     pGBuffer->bind();
@@ -79,7 +74,7 @@ void Renderer3D::render()
     //SSAO
     //pSSAO->render();
     pFramebuffer->bind();
-    glClearColor(0,0,0,1);
+    glClearColor(0.02, 0.31, 0.53,1);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
     pWorld->renderSky();
 
@@ -90,18 +85,16 @@ void Renderer3D::render()
 	//pShadowMaps->getResultTexture(0)->unbind(16);
 
 
-	Gum::Output::debug("Rendering ParticleSystem");
-	
     pGBuffer->getFramebuffer()->blitDepthToOtherFramebuffer(pFramebuffer);
     
     pFramebuffer->bind();
-
     pWorld->getObjectManager()->renderExceptGBuffer(pGBuffer->getShader(), Camera::ActiveCamera);
 
     #ifdef DEBUG
         pGrid->render();
     #endif
 
+	Gum::Output::debug("Rendering ParticleSystem");
 	pWorld->renderParticles();
     pWorld->renderBillboards();
 
@@ -163,7 +156,8 @@ void Renderer3D::update()
 
 void Renderer3D::updateFramebufferSize()
 {
-
+    if(pRenderCanvas != nullptr)
+        fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
 }
 
 
