@@ -30,7 +30,6 @@ HighDynamicRange::~HighDynamicRange()
 void HighDynamicRange::render(Texture* texture, float exposure)
 {
   pFramebuffer->bind();
-  glViewport(0, 0, pRenderCanvas->getSize().x, pRenderCanvas->getSize().y);
   pShader->use();
   pShader->LoadUniform("exposure", exposure);
 

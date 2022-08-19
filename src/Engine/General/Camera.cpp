@@ -25,7 +25,6 @@ Camera::Camera(const ivec2& resolution, World* world, Gum::Window* context)
     OffsetToPos->setMin(3);
     OffsetToPos->setMax(100);
 
-    v2CurrentResolution = resolution;
     iProjectionMode = ProjectionModes::PERSPECTIVE;
     updateProjection(resolution);
     updateView();
@@ -56,6 +55,7 @@ Camera::~Camera()
 
 void Camera::updateProjection(const ivec2& resolution)
 {
+    v2CurrentResolution = resolution;
     if(iProjectionMode == ProjectionModes::PERSPECTIVE)
     {
         projectionMatrix = Gum::Maths::perspective(FOV, (float)resolution.x / (float)resolution.y, 0.1f, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));

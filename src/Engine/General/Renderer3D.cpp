@@ -156,8 +156,10 @@ void Renderer3D::update()
 
 void Renderer3D::updateFramebufferSize()
 {
-    if(pRenderCanvas != nullptr)
-        fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
+    fAspectRatio = (float)pRenderCanvas->getSize().x / (float)pRenderCanvas->getSize().y;
+    //pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
+    //pFramebuffer->setSize(pRenderCanvas->getSize());
+    Camera::ActiveCamera->updateProjection(pRenderCanvas->getSize());
 }
 
 

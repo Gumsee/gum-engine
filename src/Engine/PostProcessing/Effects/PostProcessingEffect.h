@@ -17,4 +17,6 @@ public:
 	virtual void render(Texture* texture);
 
 	Texture* getResultTexture();
+
+	virtual void setSize(ivec2 size);
 };
