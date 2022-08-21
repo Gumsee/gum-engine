@@ -4,7 +4,6 @@
 #include <OpenGL/Texture.h>
 #include <OpenGL/Mesh.h>
 #include <Essentials/Settings.h>
-#include <Essentials/BoundingBox.h>
 #include "../Material/Material.h"
 #include "../General/Animation.h"
 #include "Transformation.h"
