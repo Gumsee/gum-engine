@@ -3,23 +3,22 @@
 #include <OpenGL/ShaderProgram.h>
 #include <OpenGL/Framebuffer.h>
 
-#include "../Object/Object.h"
+#include "../../Object/Object.h"
 
 class OutlineRenderer
 {
 private:
-    ShaderProgram* pShader;
-    Framebuffer* pFramebuffer;
+    ShaderProgram* pShader, *pProcessingShader;
+    Framebuffer* pFramebuffer, *pProcessingFramebuffer;
+    Box* pCanvas;
 
 public:
     OutlineRenderer(Box* rendercanvas);
     ~OutlineRenderer();
 
-    void resetFramebuffer();
-
-    void renderObject(Instance *instance);
-    void renderOutlines(Instance *instance);
-
+    void render(Instance *instance, Framebuffer* fb);
+ 
     void initShader();
     Framebuffer* getFramebuffer();
+    Texture2D* getResultTexture();
 };

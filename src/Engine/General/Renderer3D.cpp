@@ -84,7 +84,6 @@ void Renderer3D::render()
 	//pEnvironmentMap->getTexture()->unbind(15);
 	//pShadowMaps->getResultTexture(0)->unbind(16);
 
-
     pGBuffer->getFramebuffer()->blitDepthToOtherFramebuffer(pFramebuffer);
     
     pFramebuffer->bind();

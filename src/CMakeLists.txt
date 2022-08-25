@@ -74,6 +74,9 @@ install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/Eff
 file(GLOB HEADERS "./Engine/PostProcessing/ImageCorrection/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/ImageCorrection/)
 
+file(GLOB HEADERS "./Engine/PostProcessing/OutlineRenderer/*.h")
+install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/OutlineRenderer/)
+
 file(GLOB HEADERS "./Engine/Texture/*.h")
 install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Texture/)
 

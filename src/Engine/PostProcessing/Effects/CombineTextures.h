@@ -5,11 +5,13 @@
 class CombineTextures : public PostProcessingEffect
 {
 private:
-	ShaderProgram *pShader;
+	static ShaderProgram *pShader;
 	using PostProcessingEffect::render;
 
 public:
 	CombineTextures(Box *canvas);
 	~CombineTextures();
 	void render(Texture* texture1, Texture* texture2, float exposure);
+
+	static void initShader();
 };

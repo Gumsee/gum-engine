@@ -111,7 +111,7 @@ public:
 	void addPhysics(int type, bool isActive, float mass, Instance *instance, World* world, vec3 special = vec3(0,0,0));
 
 	
-	void addInstance();
+	Instance* addInstance();
 	void addInstance(Instance *inst);
 	void operator++();
 

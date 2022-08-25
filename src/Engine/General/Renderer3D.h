@@ -7,7 +7,6 @@
 #include "../Lightning/G_Buffer.h"
 
 #include "../PostProcessing/SSAO.h"
-#include "../PostProcessing/OutlineRenderer.h"
 #include "../PostProcessing/Effects/PostProcessingEffect.h"
 #include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
 #include "../Texture/EnvironmentMap.h"

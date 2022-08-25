@@ -38,7 +38,7 @@ void Object::writeObjectInfoToFile(std::string filename)  //Move to fileparser
 	file.close();
 }
 
-void Object::addInstance() { addInstance(new Instance(*vInstances[0])); }
+Instance* Object::addInstance() { Instance* inst = new Instance(*vInstances[0]); addInstance(inst); return inst; }
 
 void Object::addInstance(Instance *inst)
 {

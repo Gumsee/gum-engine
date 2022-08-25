@@ -68,19 +68,7 @@ void Object::renderMesh()
 			pTransMatricesVBO->setSingleData(vInstances[i]->getMatrix(), i);
         }
 
-		if(vInstances[i]->renderOutline)
-		{
-			/*if(GumEngine::DefaultOutlineRenderer != nullptr)
-			{
-				Gum::Output::info("Rendering Outline");
-				ShaderProgram* currentShader = ShaderProgram::getCurrentlyBoundShader();
-				GumEngine::DefaultOutlineRenderer->renderObject(vInstances[i]);
-				GumEngine::DefaultOutlineRenderer->renderOutlines(vInstances[i]);
-				currentShader->use();
-			}*/
-		}
-
-        getInstance()->transformChanged = false;
+        vInstances[i]->transformChanged = false;
     }
 
 	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("isInstanced", (int)pProperties->isInstanced);

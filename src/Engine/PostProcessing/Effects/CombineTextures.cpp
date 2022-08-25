@@ -1,14 +1,20 @@
 #include "CombineTextures.h"
+#include "CombineTexturesShader.h"
 #include "../../Managers/ShaderManager.h"
+#include <Essentials/MemoryManagement.h>
 
+ShaderProgram* CombineTextures::pShader = nullptr;
 
 CombineTextures::CombineTextures(Box *canvas)
 {
     init(canvas);
-	pShader = Gum::ShaderManager::getShaderProgram("CombineTexturesShader");
+	initShader();
 }
 
-CombineTextures::~CombineTextures() {}
+CombineTextures::~CombineTextures() 
+{
+    Gum::_delete(pShader);
+}
 
 void CombineTextures::render(Texture* texture1, Texture* texture2, float exposure)
 {
@@ -25,4 +31,19 @@ void CombineTextures::render(Texture* texture1, Texture* texture2, float exposur
 
 	pShader->unuse();
 	pFramebuffer->unbind();
+}
+
+
+void CombineTextures::initShader()
+{
+	if(pShader == nullptr)
+	{
+        pShader = new ShaderProgram();
+        pShader->addShader(new Shader(CombineTexturesVertexShader, Shader::VERTEX_SHADER));
+        pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->build("CombineTexturesShader");
+        pShader->addUniform("exposure");
+        pShader->addTexture("texture1", 0);
+        pShader->addTexture("texture2", 1);
+	}
 }
