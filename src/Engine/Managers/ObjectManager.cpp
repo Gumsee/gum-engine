@@ -1,4 +1,5 @@
 #include "ObjectManager.h"
+#include "Engine/Object/Skeletal/AnimatedModel.h"
 #include "ShaderManager.h"
 #include "../General/Camera.h"
 #include "../General/Renderer3D.h"
@@ -19,11 +20,14 @@ ObjectManager::~ObjectManager()
 {
 	Gum::_delete(pSkyBox);
 
-	for(auto &obj : Objects)
-		Gum::_delete(obj.second);
+	for(Object* obj : vObjects)
+		Gum::_delete(obj);
+		
+	for(Object* obj : vAnimObjs)
+		Gum::_delete(obj);
 
-	AnimObjs.clear();
-	Objects.clear();
+	vAnimObjs.clear();
+	vObjects.clear();
 }
 
 
@@ -43,27 +47,27 @@ void ObjectManager::render(int exception, ShaderProgram *shader, bool noPrepare)
             pSkyBox->render();
     }
 
-	for (auto &obj : Objects)
+	for (Object* obj : vObjects)
 	{
         if(shader == nullptr)
-		    obj.second->getShader()->use();
+		    obj->getShader()->use();
         if(noPrepare)
         {
-            obj.second->renderMesh();
+            obj->renderMesh();
         }
         else
-		    obj.second->render();
+		    obj->render();
 		/*if (obj.second->getPosition().y < Settings::getSetting(Settings::MAXIMUMFALLDISTANCE))
 		{
 			obj.second->clean();
 		}*/
 	}
 
-	for (auto &obj : AnimObjs)
+	for (AnimatedModel* obj : vAnimObjs)
 	{
         if(shader == nullptr)
-		    obj.second->getShader()->use();
-		obj.second->render();
+		    obj->getShader()->use();
+		obj->render();
 	}
 	glUseProgram(0);
 }
@@ -71,40 +75,40 @@ void ObjectManager::render(int exception, ShaderProgram *shader, bool noPrepare)
 
 void ObjectManager::renderToGBuffer(ShaderProgram* gbufferShader)
 {
-	for (auto &obj : Objects)
+	for (Object* obj : vObjects)
 	{
-        if(obj.second->getShader() == gbufferShader)
-		    obj.second->render();
+        if(obj->getShader() == gbufferShader)
+		    obj->render();
 	}
 
-	for (auto &obj : AnimObjs)
+	for (AnimatedModel* obj : vAnimObjs)
 	{
-        if(obj.second->getShader() == gbufferShader)
-		    obj.second->render();
+        if(obj->getShader() == gbufferShader)
+		    obj->render();
 	}
 }
 
 void ObjectManager::renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* camera)
 {
-	for (auto &obj : Objects)
+	for (Object* obj : vObjects)
 	{
-        if(obj.second->getShader() != gbufferShader)
+        if(obj->getShader() != gbufferShader)
         {
-            obj.second->getShader()->use();
-			obj.second->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
-			obj.second->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
-		    obj.second->render();
+            obj->getShader()->use();
+			obj->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
+			obj->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
+		    obj->render();
         }
 	}
 
-	for (auto &obj : AnimObjs)
+	for (AnimatedModel* obj : vAnimObjs)
 	{
-        if(obj.second->getShader() != gbufferShader)
+        if(obj->getShader() != gbufferShader)
         {
-            obj.second->getShader()->use();
-			obj.second->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
-			obj.second->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
-		    obj.second->render();
+            obj->getShader()->use();
+			obj->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
+			obj->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
+		    obj->render();
         }
 	}
 	glUseProgram(0);
@@ -119,58 +123,38 @@ Object* ObjectManager::addObject(Object *obj, std::string Identifier)
     if(obj->getShader() == nullptr)
     	 obj->setShader(Gum::ShaderManager::getShaderProgram("GBufferShader"));
 	
-	Objects[Identifier] = obj;
+	vObjects.push_back(obj);
 	return obj;
 }
 
 
 Object* ObjectManager::getObject(const std::string& name)
 {
-	if (Objects.find(name) != Objects.end())
+	for(Object* obj : vObjects)
 	{
-		if (Objects[name] != nullptr)
-		{
-			return Objects[name];
-		}
-		else
-		{
-			Gum::Output::error("ObjectManager: Texture Object: " + name + " doesn't exist!");
-		}
+		if (obj->getName() == name)
+			return obj;
 	}
     Gum::Output::error("ObjectManager: Texture Object " + name + " doesn't exist!");
     return nullptr;
 }
 
-Object* ObjectManager::getObject(const unsigned int& vaoID)
+Object* ObjectManager::getObject(const unsigned int& index)
 {
-	for (auto &obj : Objects)
-	{
-		if (obj.second->getVertexArrayObject()->getID() == vaoID)
-		{
-			return obj.second;
-		}
-	}
-
-	return nullptr;
+	return vObjects[index];
 }
 
 bool ObjectManager::hasObject(std::string name)
 {
-	return Objects.find(name) != Objects.end();
+	return getObject(name) != nullptr;
 }
 
 AnimatedModel* ObjectManager::getAnimObject(std::string name)
 {
-	if (AnimObjs.find(name) != AnimObjs.end())
+	for(AnimatedModel* obj : vAnimObjs)
 	{
-		if ((AnimObjs[name]) != nullptr)
-		{
-			return (AnimObjs[name]);
-		}
-		else
-		{
-			Gum::Output::error("ObjectManager: Animated Object: " + name + " doesn't exist!");
-		}
+		if (obj->getName() == name)
+			return obj;
 	}
     Gum::Output::error("ObjectManager: Animated Object " + name + " doesn't exist!");
     return nullptr;
@@ -183,13 +167,13 @@ void ObjectManager::removeObject(Object *objToDelete)
 
 Instance* ObjectManager::getInstanceByID(const unsigned int& id)
 {
-	for (auto &obj : Objects)
+	for(Object* obj : vObjects)
 	{
-		for(int i = 0; i < obj.second->numInstances(); i++)
+		for(int i = 0; i < obj->numInstances(); i++)
 		{
-			if (obj.second->getInstance(i)->id == id)
+			if (obj->getInstance(i)->id == id)
 			{
-				return obj.second->getInstance(i);
+				return obj->getInstance(i);
 			}
 		}
 	}
@@ -229,3 +213,4 @@ void ObjectManager::setSkybox(SkyBox *skybox)                 { this->pSkyBox = 
 //Getter
 //
 SkyBox* ObjectManager::getSkybox() 			                  { return this->pSkyBox; }
+unsigned int ObjectManager::numObjects() 					  { return this->vObjects.size(); }

@@ -53,7 +53,7 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 
 	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
 
-	pShader->LoadUniform("numLights", world->getLightManager()->numLights());
+	pShader->LoadUniform("numLights", (int)world->getLightManager()->numPointLights());
 
 	pShader->LoadUniform("SunColor", world->getLightManager()->getSun()->getColor());
 	pShader->LoadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());

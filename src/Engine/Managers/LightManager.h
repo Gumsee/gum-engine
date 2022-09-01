@@ -34,6 +34,7 @@ public:
     void addCallback(std::function<void(Light*, int)> callback);
 
 
-    int numLights();
+    unsigned int numPointLights();
+    PointLight* getPointLight(const unsigned int& index);
     DirectionalLight *getSun();
 };

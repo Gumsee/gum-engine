@@ -53,10 +53,10 @@ void LightManager::update()
 
 void LightManager::addPointLight(PointLight* light)
 {
-    int index = numLights();
+    int index = numPointLights();
     PointLights.push_back(light);
 
-    Billboard* billboard = new Billboard(light->getPosition(), pWorld);
+    Billboard* billboard = new Billboard(light->getPosition());
     light->setCallback([billboard, this, index](Light* clight) {
         billboard->setTexture(pLightbulb);
         billboard->setPosition(clight->getPosition());
@@ -81,9 +81,14 @@ void LightManager::addCallback(std::function<void(Light*, int)> callback)
         PointLights[i]->update();
 }
 
-int LightManager::numLights()
+unsigned int LightManager::numPointLights()
 {
     return PointLights.size();
+}
+
+PointLight* LightManager::getPointLight(const unsigned int& index)
+{
+    return this->PointLights[index];
 }
 
 DirectionalLight *LightManager::getSun()

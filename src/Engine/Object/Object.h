@@ -149,7 +149,7 @@ public:
 	bool 				isRendererdToShadowMap();
 	bool 				isMouseOn(int index = 0);
 	bool				isCollidingWithRay(vec3 ray, int index = 0);
-	int 				numInstances();
+	unsigned int		numInstances();
     VertexArrayObject*  getVertexArrayObject();
 
 	//Throughput

@@ -18,8 +18,8 @@ class ObjectManager
 {
 private:
 	SkyBox *pSkyBox;
-	std::map<std::string, Object*> Objects;
-	std::map<std::string, AnimatedModel*> AnimObjs;
+	std::vector<Object*> vObjects;
+	std::vector<AnimatedModel*> vAnimObjs;
 	
 public:
 	ObjectManager(vec3 *sunDirection);
@@ -63,6 +63,7 @@ public:
 	bool hasObject(std::string name);
 	AnimatedModel *getAnimObject(std::string name);
 	SkyBox *getSkybox();
+	unsigned int numObjects();
 
 	unsigned int getObjectUnderMouse(Renderer3D* renderer) const;
 };

@@ -51,6 +51,8 @@ public:
     Renderer3D(Box* canvas, Gum::Window* context);
     ~Renderer3D();
 
+    static Renderer3D* ActiveRenderer;
+
     void render();
     void update();
 

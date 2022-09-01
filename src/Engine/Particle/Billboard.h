@@ -2,8 +2,6 @@
 #include <OpenGL/Texture.h>
 #include <OpenGL/ShaderProgram.h>
 
-class World;
-
 class Billboard
 {
 private:
@@ -12,7 +10,6 @@ private:
 	vec2 Scale;
 	bool Transparency = false;
     bool bFixedSize = true;
-	World* pWorld;
 
 	GLuint VAO;
 	GLuint VertexPositions;
@@ -22,7 +19,7 @@ private:
 	mat4 TransMatrix;
 
 public:
-	Billboard(vec3 Position, World* renderer);
+	Billboard(vec3 Position);
 	~Billboard();
 
 	void render(ShaderProgram *shader);

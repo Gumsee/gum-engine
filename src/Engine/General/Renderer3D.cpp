@@ -10,6 +10,8 @@
 #include <Essentials/Window.h>
 #include <Essentials/MemoryManagement.h>
 
+Renderer3D* Renderer3D::ActiveRenderer = nullptr;
+
 Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
     pRenderCanvas = canvas;

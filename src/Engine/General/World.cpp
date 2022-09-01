@@ -1,20 +1,18 @@
 #include "World.h"
 #include "../Managers/ShaderManager.h"
-#include "Engine/General/Renderer3D.h"
 #include "Engine/Physics/Physics.h"
 #include "Essentials/Window.h"
 #include "../Particle/ParticleSystem.h"
 #include <Essentials/MemoryManagement.h>
 
 
-World::World(Renderer3D* renderer)
+World::World()
 {
     pLightManager = new LightManager(this); 
     pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection()); 
     pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
     pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
     pPhysics = new Physics();
-    pRenderer = renderer;
     //vCamera.push_back(new Camera(context->getSize(), this, context));
 }
 
@@ -78,4 +76,3 @@ LightManager* World::getLightManager()                      { return this->pLigh
 ObjectManager* World::getObjectManager()                    { return this->pObjectManager; }
 Camera* World::getCamera(const unsigned int& index)         { return this->vCamera[index]; }
 Physics* World::getPhysics()                                { return this->pPhysics; }
-Renderer3D* World::getBoundRenderer()                       { return this->pRenderer; }

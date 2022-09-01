@@ -95,7 +95,7 @@ ObjectProperties*	Object::getProperties() 								{ return pProperties; }
 Instance* 			Object::getInstance(int index)							{ return vInstances[index]; }
 GLuint 				Object::getShaderID() 									{ return pShader->getProgramID(); }
 Material* 			Object::getMaterial() 									{ return pMaterial; }
-int 				Object::numInstances() 									{ return vInstances.size(); }
+unsigned int 		Object::numInstances() 									{ return vInstances.size(); }
 bool 				Object::isMouseOn(int index) 							{ return vInstances[index]->ismouseon; }
 bool 				Object::isRendererdToShadowMap() 						{ return pProperties->RendererdToShadowMap; }
 VertexArrayObject*  Object::getVertexArrayObject()                          { return pVertexArrayObject; }

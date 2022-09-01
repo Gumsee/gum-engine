@@ -2,18 +2,16 @@
 #include <Maths/MatrixFunctions.h>
 #include <Essentials/FPS.h>
 #include "../General/Camera.h"
-#include "../General/World.h"
 #include "../General/Renderer3D.h"
 #include "Essentials/Window.h"
 
-Billboard::Billboard(vec3 Position, World* world)
+Billboard::Billboard(vec3 Position)
 {
-	pWorld = world;
 	//this->terrain = terrain;
 	this->Position = Position;
     this->Rotation = vec3(0,0,0);
     //this->Scale = vec2(30) / Gum::Window->getRenderQuadSize(); // 30x30 pixels
-    this->Scale = vec2(0.1f, 0.1f * pWorld->getBoundRenderer()->getAspectRatio()); //10% of the screen
+    this->Scale = vec2(0.1f, 0.1f * Renderer3D::ActiveRenderer->getAspectRatio()); //10% of the screen
 	this->tex = nullptr;
 
 	std::vector<float> vertices =
@@ -79,7 +77,7 @@ bool Billboard::operator<(Billboard& that) { return this->getcameradistance() > 
 void Billboard::setTexture(Texture *tex)     { this->tex = tex; }
 void Billboard::setPosition(vec3 pos)        { this->Position = pos; }
 void Billboard::setScale(vec2 scale)         { this->Scale = scale; }
-void Billboard::setPixelSize(vec2 size)      { this->Scale = size / pWorld->getBoundRenderer()->getRenderCanvas()->getSize(); } 
+void Billboard::setPixelSize(vec2 size)      { this->Scale = size / Renderer3D::ActiveRenderer->getRenderCanvas()->getSize(); } 
 void Billboard::useFixedSize(bool fixedsize) { this->bFixedSize = fixedsize; }
 
 //
