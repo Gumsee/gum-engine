@@ -1,7 +1,7 @@
 #include "SSAO.h"
 #include "SSAOShader.h"
 
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 #include <OpenGL/WrapperFunctions.h>
 #include "../Managers/ShaderManager.h"
 #include "../General/Camera.h"

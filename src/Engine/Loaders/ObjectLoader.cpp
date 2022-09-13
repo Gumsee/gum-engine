@@ -1,11 +1,11 @@
 #include "ObjectLoader.h"
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 #include <Essentials/Tools.h>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/cimport.h>
-#include <Essentials/Output.h>
+#include <System/IO/Output.h>
 
 
 std::vector<aiNodeAnim*> ai_nodes_anim;

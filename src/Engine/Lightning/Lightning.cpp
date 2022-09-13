@@ -1,7 +1,7 @@
 #include "Lightning.h"
 #include <random>
 #include <chrono>
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 #include "Engine/Managers/LightManager.h"
 #include "LightningShader.h"
 #include "../Managers/ShaderManager.h"

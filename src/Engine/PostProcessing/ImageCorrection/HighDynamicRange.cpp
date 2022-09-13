@@ -1,5 +1,5 @@
 #include "HighDynamicRange.h"
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 #include "HighDynamicRangeShader.h"
 #include "../../Managers/ShaderManager.h"
 

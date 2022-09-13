@@ -3,8 +3,8 @@
 #include "../../Managers/ShaderManager.h"
 
 
-#include <Essentials/Output.h>
-#include <Essentials/MemoryManagement.h>
+#include <System/IO/Output.h>
+#include <System/MemoryManagement.h>
 #include <OpenGL/WrapperFunctions.h>
 
 

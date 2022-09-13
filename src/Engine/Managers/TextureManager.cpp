@@ -1,6 +1,6 @@
 #include "TextureManager.h"
 #include <Essentials/Tools.h>
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 
 namespace Gum {
 namespace TextureManager

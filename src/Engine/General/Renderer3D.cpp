@@ -7,8 +7,8 @@
 #include "../Particle/ShaderInitializer.h"
 #include "../Managers/TextureManager.h"
 
-#include <Essentials/Window.h>
-#include <Essentials/MemoryManagement.h>
+#include <System/Window.h>
+#include <System/MemoryManagement.h>
 
 Renderer3D* Renderer3D::ActiveRenderer = nullptr;
 

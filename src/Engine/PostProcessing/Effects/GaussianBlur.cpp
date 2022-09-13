@@ -1,6 +1,6 @@
 #include "GaussianBlur.h"
 #include "../../Managers/ShaderManager.h"
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 
 
 GaussianBlur::GaussianBlur(Box *canvas, int stage)

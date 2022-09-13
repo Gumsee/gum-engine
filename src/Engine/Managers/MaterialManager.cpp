@@ -1,5 +1,5 @@
 #include "MaterialManager.h"
-#include <Essentials/MemoryManagement.h>
+#include <System/MemoryManagement.h>
 #include <map>
 
 namespace Gum {

@@ -1,6 +1,6 @@
 #include "LightManager.h"
-#include <Essentials/Output.h>
-#include <Essentials/MemoryManagement.h>
+#include <System/IO/Output.h>
+#include <System/MemoryManagement.h>
 #include "../General/Camera.h"
 #include "../General/World.h"
 #include "TextureManager.h"

@@ -1,7 +1,7 @@
 #include "ShaderManager.h"
 #include "Essentials/MemoryManagement.h"
 #include "OpenGL/ShaderProgram.h"
-#include <Essentials/Output.h>
+#include <System/IO/Output.h>
 #include <map>
 
 namespace Gum {

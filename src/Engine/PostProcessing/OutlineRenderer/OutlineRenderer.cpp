@@ -1,7 +1,7 @@
 #include "OutlineRenderer.h"
 #include <OpenGL/Framebuffer.h>
-#include <Essentials/Window.h>
-#include <Essentials/MemoryManagement.h>
+#include <System/Window.h>
+#include <System/MemoryManagement.h>
 
 #include "OutlineRendererShader.h"
 #include "../../Managers/ShaderManager.h"
