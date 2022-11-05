@@ -1,5 +1,5 @@
 #include "LightManager.h"
-#include <System/IO/Output.h>
+#include <System/Output.h>
 #include <System/MemoryManagement.h>
 #include "../General/Camera.h"
 #include "../General/World.h"

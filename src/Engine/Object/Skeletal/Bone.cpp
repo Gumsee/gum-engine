@@ -1,6 +1,6 @@
 #include "Bone.h"
 #include <gum-maths.h>
-#include <System/IO/Output.h>
+#include <System/Output.h>
 #include <Essentials/Tools.h>
 
 

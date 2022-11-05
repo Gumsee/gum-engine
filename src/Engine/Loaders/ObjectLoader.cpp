@@ -5,7 +5,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <assimp/cimport.h>
-#include <System/IO/Output.h>
+#include <System/Output.h>
 
 
 std::vector<aiNodeAnim*> ai_nodes_anim;

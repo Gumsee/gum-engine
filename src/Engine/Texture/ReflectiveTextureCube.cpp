@@ -1,6 +1,6 @@
 #include "ReflectiveTextureCube.h"
 #include <gum-maths.h>
-#include <System/IO/Output.h>
+#include <System/Output.h>
 #include "../Managers/ShaderManager.h"
 
 ReflectiveTextureCube::ReflectiveTextureCube(ivec2 resolution)

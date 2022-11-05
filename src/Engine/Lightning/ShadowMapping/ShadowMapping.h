@@ -2,7 +2,7 @@
 #include <OpenGL/ShaderProgram.h>
 #include <OpenGL/Framebuffer.h>
 #include <OpenGL/Texture.h>
-#include <System/Window.h>
+#include <OS/Window.h>
 
 #include "../../General/Camera.h"
 #include "ShadowBox.h"

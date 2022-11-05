@@ -3,9 +3,9 @@
 #include <stdio.h>
 //#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
 
-#include <System/IO/Mouse.h>
+#include <OS/IO/Mouse.h>
 #include <Essentials/FPS.h>
-#include <System/IO/Output.h>
+#include <System/Output.h>
 #include <System/MemoryManagement.h>
 
 #include "../General/Camera.h"

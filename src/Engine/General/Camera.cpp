@@ -1,11 +1,11 @@
 #include "Camera.h"
 #include "CameraObject.h"
 #include <Essentials/Tools.h>
-#include <System/IO/Output.h>
-#include <System/IO/Mouse.h>
+#include <System/Output.h>
+#include <OS/IO/Mouse.h>
 #include <Essentials/Input/Controls.h>
 #include <Essentials/Settings.h>
-#include <System/Window.h>
+#include <OS/Window.h>
 #include <Essentials/FPS.h>
 #include <Maths/MatrixFunctions.h>
 #include "../Object/Object.h"

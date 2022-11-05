@@ -1,7 +1,7 @@
 #include "Skeleton.h"
 #include <Essentials/Tools.h>
 #include <Essentials/FPS.h>
-#include <System/IO/Output.h>
+#include <System/Output.h>
 
 Skeleton::Skeleton(Bone *rootBone, mat4 in_globalInverseTransform)
 {
