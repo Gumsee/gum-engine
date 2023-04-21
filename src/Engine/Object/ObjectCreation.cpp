@@ -1,10 +1,10 @@
-#include "Essentials/MemoryManagement.h"
 #include "Object.h"
 #include "../Physics/Physics.h"
 #include "../Managers/ObjectManager.h"
 #include "../Managers/MaterialManager.h"
 #include "../Loaders/ObjectLoader.h"
 #include <Essentials/Tools.h>
+#include <System/MemoryManagement.h>
 
 Object::Object()
 {

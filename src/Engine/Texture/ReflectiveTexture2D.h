@@ -3,6 +3,7 @@
 #include <OpenGL/Texture2D.h>
 
 #include "../General/Renderer3D.h"
+#include "../General/Camera.h"
 
 class ReflectiveTexture2D
 {

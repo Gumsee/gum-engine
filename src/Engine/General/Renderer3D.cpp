@@ -7,10 +7,8 @@
 #include "../Particle/ShaderInitializer.h"
 #include "../Managers/TextureManager.h"
 
-#include <OS/Window.h>
+#include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
-
-Renderer3D* Renderer3D::ActiveRenderer = nullptr;
 
 Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
 {
@@ -40,6 +38,8 @@ Renderer3D::Renderer3D(Box* canvas, Gum::Window* context)
     pHighDynamicRange = new HighDynamicRange(pRenderCanvas);
     this->fExposure = 1.0f;
 
+    if(ActiveRenderer == nullptr)
+        ActiveRenderer = this;
 }
 
 Renderer3D::~Renderer3D()
@@ -67,8 +67,8 @@ void Renderer3D::render()
     //Render Objects to GBuffer
     pGBuffer->bind();
     pGBuffer->getShader()->use();
-    pGBuffer->getShader()->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pGBuffer->getShader()->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pGBuffer->getShader()->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pGBuffer->getShader()->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
     pWorld->getObjectManager()->renderToGBuffer(pGBuffer->getShader());
     pGBuffer->getShader()->unuse();
     pGBuffer->unbind();
@@ -95,7 +95,7 @@ void Renderer3D::render()
         pGrid->render();
     #endif
 
-	Gum::Output::debug("Rendering ParticleSystem");
+	//Gum::Output::debug("Rendering ParticleSystem");
 	pWorld->renderParticles();
     pWorld->renderBillboards();
 
@@ -124,7 +124,7 @@ void Renderer3D::render()
     glCullFace(GL_FRONT);
     //glCullFace(GL_BACK);
     //Render the Shadowmap
-    Gum::Output::debug("Rendering to Shadowmap");
+    //Gum::Output::debug("Rendering to Shadowmap");
     pShadowMaps->prepare(*pWorld->getLightManager()->getSun()->getDirection(), 0);
     glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
     pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pShadowMaps->getShader(), true);
@@ -142,7 +142,8 @@ void Renderer3D::render()
     //Update the enviorment map
     //pEnvironmentMap->render();
 
-    pRenderCanvas->setTexture(lastTex);
+    //pRenderCanvas->setTexture(lastTex);
+    pRenderCanvas->setTexture(pFramebuffer->getTextureAttachment());
     //pRenderCanvas->setTexture(Gum::TextureManager::getTexture("/home/gumse/Projects/gumball/gum-engine-backup/examples/assets/textures/grass.jpg", true));
     //Gum::Output::print(pRenderCanvas->getSize().toString());
 

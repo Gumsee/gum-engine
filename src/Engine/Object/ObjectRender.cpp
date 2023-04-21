@@ -5,14 +5,14 @@
 void Object::render()
 {
     prepareRender();
-	glEnable(GL_STENCIL_TEST);
+	/*glEnable(GL_STENCIL_TEST);
 	glEnable(GL_DEPTH_TEST);
 	glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE); 
 
 	glStencilMask(0x00); // make sure we don't update the stencil buffer while drawing the floor
 	
 	glStencilFunc(GL_ALWAYS, 1, 0xFF); 
-	glStencilMask(0xFF); 
+	glStencilMask(0xFF); */
     renderMesh();
 
 	//renderOutline();
@@ -36,22 +36,22 @@ void Object::prepareRender()
 	if(!pProperties->hasbackface) { glDisable(GL_CULL_FACE); }
 	
 	//Texture related
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasTexture", (int)pMaterial->hasTexture());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasNormalMap", (int)pMaterial->hasNormalMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasSpecularMap", (int)pMaterial->hasSpecularMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasReflectionMap", (int)pMaterial->hasReflectionMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasRefractionMap", (int)pMaterial->hasRefractionMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasRoughnessMap", (int)pMaterial->hasRoughnessMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasDisplacementMap", (int)pMaterial->hasDisplacementMap());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("hasAmbientOcclusionMap", (int)pMaterial->hasAmbientOcclusionMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasTexture", (int)pMaterial->hasTexture());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasNormalMap", (int)pMaterial->hasNormalMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasSpecularMap", (int)pMaterial->hasSpecularMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasReflectionMap", (int)pMaterial->hasReflectionMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasRefractionMap", (int)pMaterial->hasRefractionMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasRoughnessMap", (int)pMaterial->hasRoughnessMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasDisplacementMap", (int)pMaterial->hasDisplacementMap());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("hasAmbientOcclusionMap", (int)pMaterial->hasAmbientOcclusionMap());
 
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("TextureMultiplier", pMaterial->getTextureMultiplier());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("ReflectionFactor", *pMaterial->getReflectivity());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("RefractionFactor", *pMaterial->getRefractivity());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("specularFactor", *pMaterial->getSpecularity());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("roughnessFactor", *pMaterial->getRoughness());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("color", pMaterial->getColor());
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("flipNormal", (int)pMaterial->hasFlippedNormals());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("TextureMultiplier", pMaterial->getTextureMultiplier());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("ReflectionFactor", *pMaterial->getReflectivity());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("RefractionFactor", *pMaterial->getRefractivity());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("specularFactor", *pMaterial->getSpecularity());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("roughnessFactor", *pMaterial->getRoughness());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("color", pMaterial->getColor());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("flipNormal", (int)pMaterial->hasFlippedNormals());
 }
 
 
@@ -71,8 +71,8 @@ void Object::renderMesh()
         vInstances[i]->transformChanged = false;
     }
 
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("isInstanced", (int)pProperties->isInstanced);
-	ShaderProgram::getCurrentlyBoundShader()->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("isInstanced", (int)pProperties->isInstanced);
+	ShaderProgram::getCurrentlyBoundShader()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
 
 	//////////////
 	//Only update matrices when rigidbody is active or when theres no rigidbody check for the transformchanged boolean

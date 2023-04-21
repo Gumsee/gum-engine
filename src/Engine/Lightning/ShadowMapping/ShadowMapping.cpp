@@ -14,7 +14,7 @@ ShadowMapping::ShadowMapping(Renderer3D* renderer)
     initShader();
 
 
-    Framebuffer* framebuffer1 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)), vec4(1,1,1,1));
+    Framebuffer* framebuffer1 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
     //framebuffer1->addTextureAttachment(0, "ShadowMap1");
     framebuffer1->addDepthAttachment();
     framebuffer1->addDepthTextureAttachment();
@@ -22,14 +22,14 @@ ShadowMapping::ShadowMapping(Renderer3D* renderer)
 	vFramebuffers.push_back(framebuffer1);
 	addShadowMap("ShadowMap", 0);
 
-    Framebuffer* framebuffer2 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)), vec4(1,1,1,1));
+    Framebuffer* framebuffer2 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
     framebuffer2->addTextureAttachment(0, "ShadowMap2");
     framebuffer2->addDepthAttachment();
     framebuffer2->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer2));
 	vFramebuffers.push_back(framebuffer2);
 	addShadowMap("ShadowMap2", 10);
 
-    Framebuffer* framebuffer3 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)), vec4(1,1,1,1));
+    Framebuffer* framebuffer3 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
     framebuffer3->addTextureAttachment(0, "ShadowMap3");
     framebuffer3->addDepthAttachment();
     framebuffer3->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer3));
@@ -100,8 +100,8 @@ void ShadowMapping::prepare(vec3 LightDirection, int index)
 		ShadowSize = Settings::getSetting(Settings::Names::SHADOW_SIZE);
 
 		pShader->use();
-        pShader->LoadUniform("projectionMatrix", projectionMatrix);
-        pShader->LoadUniform("viewMatrix", lightViewMatrix);
+        pShader->loadUniform("projectionMatrix", projectionMatrix);
+        pShader->loadUniform("viewMatrix", lightViewMatrix);
 		pShader->unuse();
 	}
 	glCullFace(GL_FRONT);

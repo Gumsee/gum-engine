@@ -2,6 +2,7 @@
 #include <gum-maths.h>
 #include <System/Output.h>
 #include <Essentials/Tools.h>
+#include "../../General/Tools.h"
 
 
 Bone::Bone(Mesh* in_mesh, unsigned int in_id, std::string in_name, mat4 in_o_mat, mat4 transform)

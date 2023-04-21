@@ -2,7 +2,6 @@
 #include <random>
 #include <chrono>
 #include <System/MemoryManagement.h>
-#include "Engine/Managers/LightManager.h"
 #include "LightningShader.h"
 #include "../Managers/ShaderManager.h"
 #include "../General/Renderer3D.h"
@@ -46,23 +45,23 @@ void Lightning::render(ShadowMapping *shadowmap, World* world)
 	pShader->use();
 	// for (int i = 0; i < lights->getNearestPointLights().size(); i++)
 	// {
-	// 	pShader->LoadUniform("lightPosition[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getPosition());
-	// 	pShader->LoadUniform("lightColor[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getColor());
-	// 	pShader->LoadUniform("lightAttenuation[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getAttenuation());
+	// 	pShader->loadUniform("lightPosition[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getPosition());
+	// 	pShader->loadUniform("lightColor[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getColor());
+	// 	pShader->loadUniform("lightAttenuation[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getAttenuation());
 	// }
 
 	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
 
-	pShader->LoadUniform("numLights", (int)world->getLightManager()->numPointLights());
+	pShader->loadUniform("numLights", (int)world->getLightManager()->numPointLights());
 
-	pShader->LoadUniform("SunColor", world->getLightManager()->getSun()->getColor());
-	pShader->LoadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
-	pShader->LoadUniform("viewmat", Camera::ActiveCamera->getViewMatrix());
-	pShader->LoadUniform("viewPos", Camera::ActiveCamera->getPosition());
-	pShader->LoadUniform("viewDir", Camera::ActiveCamera->getViewDirection());
-	pShader->LoadUniform("ToShadowMap", *shadowmap->getMatrix());
-	pShader->LoadUniform("ShadowMapSize", *shadowmap->getShadowMapSize());
-	pShader->LoadUniform("pixelSize", pixelSize);
+	pShader->loadUniform("SunColor", world->getLightManager()->getSun()->getColor());
+	pShader->loadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
+	pShader->loadUniform("viewmat", Camera::ActiveCamera->getViewMatrix());
+	pShader->loadUniform("viewPos", Camera::ActiveCamera->getPosition());
+	pShader->loadUniform("viewDir", Camera::ActiveCamera->getViewDirection());
+	pShader->loadUniform("ToShadowMap", *shadowmap->getMatrix());
+	pShader->loadUniform("ShadowMapSize", *shadowmap->getShadowMapSize());
+	pShader->loadUniform("pixelSize", pixelSize);
 	pRenderCanvas->renderCustom();
 
 	pShader->unuse();
@@ -131,19 +130,19 @@ void Lightning::loadLight(Light* light, int index)
 	}
 
 	pShader->use();
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
+	pShader->loadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
+	pShader->loadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
 	/*
 	const float linear = 0.7;
 	const float quadratic = 1.8;
 	const float constant = 1.0;
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Linear", linear);
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Quadratic", quadratic);
+	pShader->loadUniform("lights[" + std::to_string(index) + "].Linear", linear);
+	pShader->loadUniform("lights[" + std::to_string(index) + "].Quadratic", quadratic);
 	
 	vec3 color = light->getColor();
 	const float maxBrightness = std::max(std::max(color.x, color.y), color.z);
 	float radius = (-linear + std::sqrt(linear * linear - 4 * quadratic * (constant - (256.0f / 5.0f) * maxBrightness))) / (2.0f * quadratic);
 
-	pShader->LoadUniform("lights[" + std::to_string(index) + "].Radius", radius);*/
+	pShader->loadUniform("lights[" + std::to_string(index) + "].Radius", radius);*/
 	pShader->unuse();
 }

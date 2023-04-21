@@ -16,8 +16,8 @@ Grid::~Grid()
 void Grid::render()
 {
     pShader->use();
-    pShader->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pShader->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pShader->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
 
     glEnable(GL_BLEND);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);

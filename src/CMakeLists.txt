@@ -1,94 +1,204 @@
-set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set (CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
-set (CMAKE_CXX_EXTENSIONS ON)
-set (INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dist/${CMAKE_BUILD_TYPE}/bin/")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -g3 -Wall -Wextra -Wno-unused-parameter -Wno-reorder -Wno-pedantic")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0") #-Og
-if(BUILD_SANITIZE)
-        set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=leak") #-fsanitize=undefined,float-divide-by-zero,signed-integer-overflow,leak
-endif()
-
-message(STATUS "GumEngine: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
-
-#add_compile_options(${CMAKE_CXX_FLAGS})
-
-#
-# Directories
-#
-include_directories(${CMAKE_SOURCE_DIR}/ext/bullet3/src/)
-include_directories(${CMAKE_SOURCE_DIR}/src/)
-include_directories(/usr/include/freetype2/)
-include_directories(${GUMGUI_DIRECTORY})
-include_directories(${GUMMATH_DIRECTORY})
-include_directories(${GUMESSENTIALS_DIRECTORY})
-include_directories(${GUMOPENGL_DIRECTORY})
-
-link_directories(${CMAKE_SOURCE_DIR}/lib/)
-
 #
 # Source
 #
 file(GLOB_RECURSE SRC 
-        ./*.cpp
-        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/LinearMath/*.cpp
-        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletDynamics/*.cpp
-        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletCollision/*.cpp
-        ${CMAKE_SOURCE_DIR}/ext/bullet3/src/BulletInverseDynamics/*.cpp
+"./*.cpp"
+
+)
+add_library(${CMAKE_PROJECT_NAME} STATIC ${SRC})
+
+include_directories(${CMAKE_SOURCE_DIR}/external/)
+
+ 
+        if(OPENGL_FOUND)
+            include_directories(${OPENGL_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for OPENGL cannot not found)
+        endif() 
+        if(DEFINED GUM_OS_BSD)
+        if(X11_FOUND)
+            include_directories(${X11_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        if(DEFINED GUM_OS_LINUX)
+        if(X11_FOUND)
+            include_directories(${X11_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        if(GUMGUI_FOUND)
+            include_directories(${GUMGUI_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMGUI cannot not found)
+        endif() 
+        if(GUMESSENTIALS_FOUND)
+            include_directories(${GUMESSENTIALS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMESSENTIALS cannot not found)
+        endif() 
+        if(GUMOPENGL_FOUND)
+            include_directories(${GUMOPENGL_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMOPENGL cannot not found)
+        endif() 
+        if(GUMCODECS_FOUND)
+            include_directories(${GUMCODECS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMCODECS cannot not found)
+        endif() 
+        if(GUMDESKTOP_FOUND)
+            include_directories(${GUMDESKTOP_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMDESKTOP cannot not found)
+        endif() 
+        if(GUMSYSTEM_FOUND)
+            include_directories(${GUMSYSTEM_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMSYSTEM cannot not found)
+        endif() 
+        if(GUMGLFW_FOUND)
+            include_directories(${GUMGLFW_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMGLFW cannot not found)
+        endif() 
+        if(GUMMATHS_FOUND)
+            include_directories(${GUMMATHS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMMATHS cannot not found)
+        endif() 
+    include_directories(${CMAKE_SOURCE_DIR}/external/bullet3/src/)
+
+ 
+
+install(
+    FILES gum-engine.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
+) 
+
+file(GLOB_RECURSE HEADERS General//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/General//
+) 
+
+file(GLOB_RECURSE HEADERS Lightning//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Lightning//
+) 
+
+install(
+    FILES Lightning/ShadowMapping.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
+) 
+
+file(GLOB_RECURSE HEADERS Loaders//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Loaders//
+) 
+
+file(GLOB_RECURSE HEADERS Managers//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Managers//
+) 
+
+file(GLOB_RECURSE HEADERS Material//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Material//
+) 
+
+file(GLOB_RECURSE HEADERS Object//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Object//
+) 
+
+install(
+    FILES Object/Skeletal.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
+) 
+
+file(GLOB_RECURSE HEADERS Particle//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Particle//
+) 
+
+file(GLOB_RECURSE HEADERS Physics//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Physics//
+) 
+
+file(GLOB_RECURSE HEADERS PostProcessing//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing//
+) 
+
+file(GLOB_RECURSE HEADERS PostProcessing/Effects//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/Effects//
+) 
+
+file(GLOB_RECURSE HEADERS PostProcessing/ImageCorrection//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/ImageCorrection//
+) 
+
+file(GLOB_RECURSE HEADERS PostProcessing/OutlineRenderer//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/OutlineRenderer//
+) 
+
+file(GLOB_RECURSE HEADERS Texture//*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Texture//
 )
 
-add_library(GumEngine STATIC ${SRC})
-target_link_libraries(GumEngine ${CMAKE_THREAD_LIBS_INIT} )
 
 
-file(GLOB HEADERS "./Engine/Lightning/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Lightning/)
+install(TARGETS ${CMAKE_PROJECT_NAME}
+    EXPORT ${CMAKE_PROJECT_NAME}Targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-file(GLOB HEADERS "./Engine/Lightning/ShadowMapping/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Lightning/ShadowMapping/)
-
-file(GLOB HEADERS "./Engine/Managers/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Managers/)
-
-file(GLOB HEADERS "./Engine/Material/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Material/)
-
-file(GLOB HEADERS "./Engine/Object/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Object/)
-
-file(GLOB HEADERS "./Engine/Object/Skeletal/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Object/Skeletal/)
-
-file(GLOB HEADERS "./Engine/Particle/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Particle/)
-
-file(GLOB HEADERS "./Engine/Physics/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Physics/)
-
-file(GLOB HEADERS "./Engine/PostProcessing/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/)
-
-file(GLOB HEADERS "./Engine/PostProcessing/Effects/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/Effects/)
-
-file(GLOB HEADERS "./Engine/PostProcessing/ImageCorrection/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/ImageCorrection/)
-
-file(GLOB HEADERS "./Engine/PostProcessing/OutlineRenderer/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/PostProcessing/OutlineRenderer/)
-
-file(GLOB HEADERS "./Engine/Texture/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Texture/)
-
-file(GLOB HEADERS "./Engine/General/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/General/)
-
-file(GLOB HEADERS "./Engine/Loaders/*.h")
-install(FILES ${HEADERS} DESTINATION ${GUM_INSTALLDIR}/Engine/Loaders/)
-
-
-install(FILES "./gum-engine.h" DESTINATION ${GUM_INSTALLDIR}/ )
-
-install(TARGETS ${CMAKE_PROJECT_NAME} EXPORT
-		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+install(
+    EXPORT ${CMAKE_PROJECT_NAME}Targets
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
 )
+
+configure_package_config_file("Config.cmake.in"
+    "${CMAKE_PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+    PATH_VARS CMAKE_INSTALL_LIBDIR
+)
+
+#write_basic_package_version_file(
+#	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
+#	VERSION 1.0.0
+#	COMPATIBILITY SameMajorVersion
+#)
+
+### Install Config and ConfigVersion files
+install(
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake"
+#          "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}"
+)
+
+export(PACKAGE ${CMAKE_PROJECT_NAME})
+

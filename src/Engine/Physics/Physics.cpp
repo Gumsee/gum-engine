@@ -3,7 +3,8 @@
 #include <stdio.h>
 //#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
 
-#include <OS/IO/Mouse.h>
+#include <Desktop/IO/Mouse.h>
+#include <Desktop/Window.h>
 #include <Essentials/FPS.h>
 #include <System/Output.h>
 #include <System/MemoryManagement.h>

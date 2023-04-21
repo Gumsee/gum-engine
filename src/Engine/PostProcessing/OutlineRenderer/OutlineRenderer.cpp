@@ -1,6 +1,6 @@
 #include "OutlineRenderer.h"
 #include <OpenGL/Framebuffer.h>
-#include <OS/Window.h>
+#include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
 
 #include "OutlineRendererShader.h"
@@ -38,9 +38,9 @@ void OutlineRenderer::render(Instance *instance, Framebuffer* fb)
     glClearColor(0,0,0,0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     pShader->use();
-    pShader->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pShader->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
-    pShader->LoadUniform("transformationMatrix", instance->getMatrix());
+    pShader->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pShader->loadUniform("transformationMatrix", instance->getMatrix());
 
     instance->parentObject->getVertexArrayObject()->bind();
     glDrawElements(GL_TRIANGLES, instance->parentObject->getVertexArrayObject()->numVertices(), GL_UNSIGNED_INT, 0);

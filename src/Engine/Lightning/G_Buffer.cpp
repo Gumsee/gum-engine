@@ -119,8 +119,6 @@ void G_Buffer::initShader()
 
         Gum::ShaderManager::addShaderProgram(pShader);
     }
-    else 
-    {
-        pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");
-    }
+    
+    pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");
 }

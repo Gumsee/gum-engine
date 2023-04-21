@@ -21,7 +21,7 @@ void CombineTextures::render(Texture* texture1, Texture* texture2, float exposur
 	pFramebuffer->bind();
 
 	pShader->use();
-	pShader->LoadUniform("exposure", exposure);
+	pShader->loadUniform("exposure", exposure);
 
     texture1->bind(0);
     texture2->bind(1);

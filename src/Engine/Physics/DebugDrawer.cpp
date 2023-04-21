@@ -44,7 +44,7 @@ void DebugDrawer::drawLine(const btVector3 & from, const btVector3 & to, const b
 	glBindVertexArray(VAO);
 	shader->use();
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	shader->LoadUniform("color", vec3(color.x(), color.y(), color.z()));
+	shader->loadUniform("color", vec3(color.x(), color.y(), color.z()));
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), vertices.data(), GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);

@@ -1,11 +1,13 @@
-#include "../Examples.h"
-#include <Engine.h>
+#pragma once
+#include "Engine/General/World.h"
+#include "Engine/Managers/TextureManager.h"
+#include <gum-engine.h>
 
-World* Examples::createGBufferExample()
+World* createGBufferExample()
 {
-    World* pWorld = new World(Gum::Window->getSize());
+    World* pWorld = new World();
 	pWorld->getObjectManager()->getSkybox()->useGradiant(false); //PREFILTER MAP RENDERN BEI GRADIANT
-	pWorld->getObjectManager()->getSkybox()->setTexture(GumEngine::Textures->getTexture("Sky/spaichingen_hill_8k.hdr", true));
+	pWorld->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/spaichingen_hill_8k.hdr", true));
 
 
 	PointLight* pSpinningLight = new PointLight(vec3(10, 1, 0),   vec3(30), "light2");
@@ -13,12 +15,13 @@ World* Examples::createGBufferExample()
 
 
 
-	Object *RoughBronzeObj = new Object("shaderBall.obj", "RoughBronze");
-	RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/albedo.png"), 0);
+	//Object *RoughBronzeObj = new Object("shaderBall.obj", "RoughBronze");
+    Object *RoughBronzeObj = new Object(Mesh::generateCube(vec3(10)), "RoughBronze");
+	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/albedo.png"), 0);
 	//RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/normal.png"), 14);
-	RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/ao.png"), 7);
-	RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/roughness.png"), 8);
-	RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/metallic.png"), 9);
+	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/ao.png"), 7);
+	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/roughness.png"), 8);
+	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/metallic.png"), 9);
 	RoughBronzeObj->getMaterial()->setReflectivity(0);
 	RoughBronzeObj->setPosition(vec3(0, -1, 0));
     RoughBronzeObj->getInstance()->renderOutline = true;

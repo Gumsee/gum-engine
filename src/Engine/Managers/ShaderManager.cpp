@@ -1,6 +1,6 @@
 #include "ShaderManager.h"
-#include "Essentials/MemoryManagement.h"
-#include "OpenGL/ShaderProgram.h"
+#include <System/MemoryManagement.h>
+#include <OpenGL/ShaderProgram.h>
 #include <System/Output.h>
 #include <map>
 
@@ -48,7 +48,7 @@ namespace ShaderManager
 	// Getter
 	//
 	int numShaderPrograms()                 { return mShaderPrograms.size(); }
-	bool hasShaderProgram(std::string name) { return mShaderPrograms.find(name) != mShaderPrograms.end(); }
+	bool hasShaderProgram(std::string name) { return mShaderPrograms.find(name) != mShaderPrograms.end() && mShaders[name] != nullptr; }
 
 	ShaderProgram* getShaderProgram(std::string name) 
 	{ 

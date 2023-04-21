@@ -1,84 +1,147 @@
-set (CMAKE_EXPORT_COMPILE_COMMANDS 1)
-set (CMAKE_CXX_STANDARD 17)
-set (CMAKE_CXX_STANDARD_REQUIRED ON)
-set (CMAKE_CXX_EXTENSIONS ON)
-set (INSTALL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dist/${CMAKE_BUILD_TYPE}/bin/")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -g3 -Wall -Wextra -Wno-pedantic")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0") #Optimization
-
 message(STATUS "Examples: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
 
-#add_compile_options(-pedantic -Wall -Wextra)
+list(APPEND GUM_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-find_package(PkgConfig REQUIRED)
-find_package( Threads )
+ 
+        if(OPENGL_FOUND)
+            list(APPEND GUM_LIBRARIES ${OPENGL_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for OPENGL cannot not found)
+        endif() 
+        if(DEFINED GUM_OS_BSD)
+        if(X11_FOUND)
+            list(APPEND GUM_LIBRARIES ${X11_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        if(DEFINED GUM_OS_LINUX)
+        if(X11_FOUND)
+            list(APPEND GUM_LIBRARIES ${X11_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        list(APPEND GUM_LIBRARIES ${CMAKE_PROJECT_NAME}) 
+        if(GUMGUI_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMGUI_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMGUI cannot not found)
+        endif() 
+        if(GUMESSENTIALS_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMESSENTIALS_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMESSENTIALS cannot not found)
+        endif() 
+        if(GUMOPENGL_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMOPENGL_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMOPENGL cannot not found)
+        endif() 
+        if(GUMCODECS_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMCODECS_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMCODECS cannot not found)
+        endif() 
+        if(GUMDESKTOP_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMDESKTOP_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMDESKTOP cannot not found)
+        endif() 
+        if(GUMSYSTEM_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMSYSTEM_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMSYSTEM cannot not found)
+        endif() 
+        if(GUMGLFW_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMGLFW_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMGLFW cannot not found)
+        endif() 
+        if(GUMMATHS_FOUND)
+            list(APPEND GUM_LIBRARIES ${GUMMATHS_LIBRARIES})
+        else()
+            message(FATAL_ERROR Library for GUMMATHS cannot not found)
+        endif()
+    list(APPEND GUM_LIBRARIES glfw)
+    list(APPEND GUM_LIBRARIES freetype)
+    list(APPEND GUM_LIBRARIES assimp)
+    list(APPEND GUM_LIBRARIES BulletSoftBody)
+    list(APPEND GUM_LIBRARIES BulletDynamics)
+    list(APPEND GUM_LIBRARIES BulletCollision)
+    list(APPEND GUM_LIBRARIES LinearMath)
 
-include_directories(/usr/include/freetype2)
-include_directories(/usr/include/libxml2)
-include_directories(${CMAKE_SOURCE_DIR}/include/bullet/)
-include_directories(${CMAKE_SOURCE_DIR}/include/)
 include_directories(${CMAKE_SOURCE_DIR}/src/)
+ 
+        if(OPENGL_FOUND)
+            include_directories(${OPENGL_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for OPENGL cannot not found)
+        endif() 
+        if(DEFINED GUM_OS_BSD)
+        if(X11_FOUND)
+            include_directories(${X11_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        if(DEFINED GUM_OS_LINUX)
+        if(X11_FOUND)
+            include_directories(${X11_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for X11 cannot not found)
+        endif() 
+    endif() 
+        if(GUMGUI_FOUND)
+            include_directories(${GUMGUI_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMGUI cannot not found)
+        endif() 
+        if(GUMESSENTIALS_FOUND)
+            include_directories(${GUMESSENTIALS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMESSENTIALS cannot not found)
+        endif() 
+        if(GUMOPENGL_FOUND)
+            include_directories(${GUMOPENGL_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMOPENGL cannot not found)
+        endif() 
+        if(GUMCODECS_FOUND)
+            include_directories(${GUMCODECS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMCODECS cannot not found)
+        endif() 
+        if(GUMDESKTOP_FOUND)
+            include_directories(${GUMDESKTOP_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMDESKTOP cannot not found)
+        endif() 
+        if(GUMSYSTEM_FOUND)
+            include_directories(${GUMSYSTEM_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMSYSTEM cannot not found)
+        endif() 
+        if(GUMGLFW_FOUND)
+            include_directories(${GUMGLFW_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMGLFW cannot not found)
+        endif() 
+        if(GUMMATHS_FOUND)
+            include_directories(${GUMMATHS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMMATHS cannot not found)
+        endif() 
+    include_directories(${CMAKE_SOURCE_DIR}/external/bullet3/src/)
 
-add_definitions(-DEXAMPLES_PATH=\"${CMAKE_SOURCE_DIR}/examples/\")
+link_directories(${CMAKE_BINARY_DIR}/src/)
 
-set(GUMENGINE_LIBRARIES 
-    GumEngine
-    bullet
-    ${CMAKE_SOURCE_DIR}/lib/libMaskedOcclusionCulling.a 
-    sfml-graphics
-    sfml-network
-    sfml-audio
-    sfml-window
-    sfml-system
-    openal
-    GLEW 
-    GL
-    avformat 
-    swscale  
-    avcodec 
-    swscale 
-    avutil 
-    avdevice 
-    avfilter
-    portaudiocpp
-    fftw3f 
-    libassimp.so
-    minizip
-    libz.so
-    freetype
-    ncurses tinfo
-    xml2
-    lua5.4
-    ${CMAKE_THREAD_LIBS_INIT}
-)
+add_definitions(-DEXAMPLES_PATH=\"${CMAKE_SOURCE_DIR}/examples\")
 
-set(EXAMPLE_FILE_LIST 
-#    GUIs
-#    PhysicallyBasedRendering
-#    IrradiancePBR
-#    ShadowMapping
-#    AnimatedModel
-#    Particles
-#    Physics
-#    MazeLearning
-#    GBufferTest
-#    Billboards
-#    SphereGenerator
-#    PostProcessingEffects
-#    Ocean
-#    GumMaths
-)
+set(EXAMPLE_FILE_LIST Examples)
 
-
-#foreach(EXAMPLE ${EXAMPLE_FILE_LIST})
-#    message(STATUS "Adding target ${EXAMPLE}")
-#    add_executable(Example_${EXAMPLE} "./${EXAMPLE}/${EXAMPLE}.cpp")
-#    target_link_libraries(Example_${EXAMPLE} ${GUMENGINE_LIBRARIES})
-#endforeach()
-
-file(GLOB_RECURSE EXAMPLES_SRC "./*.cpp")
-add_executable(Examples ${EXAMPLES_SRC})
-target_link_libraries(Examples ${GUMENGINE_LIBRARIES})
-
-#add_executable(Example_PostProcessingEffects "./PostProcessingEffects/PostProcessingEffects.cpp")
-#target_link_libraries(Example_PostProcessingEffects ${GUMENGINE_LIBRARIES})
+foreach(EXAMPLE ${EXAMPLE_FILE_LIST})
+    message(STATUS "Adding target ${EXAMPLE}")
+    add_executable(Example_${EXAMPLE} "./${EXAMPLE}.cpp")
+    target_link_libraries(Example_${EXAMPLE} "${GUM_LIBRARIES}")
+endforeach()

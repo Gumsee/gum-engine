@@ -11,7 +11,7 @@
 #include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
 #include "../Texture/EnvironmentMap.h"
 
-#include "Essentials/Window.h"
+#include "Desktop/Window.h"
 #include "OcclusionMask.h"
 #include "Grid.h"
 
@@ -51,7 +51,7 @@ public:
     Renderer3D(Box* canvas, Gum::Window* context);
     ~Renderer3D();
 
-    static Renderer3D* ActiveRenderer;
+    inline static Renderer3D* ActiveRenderer = nullptr;
 
     void render();
     void update();

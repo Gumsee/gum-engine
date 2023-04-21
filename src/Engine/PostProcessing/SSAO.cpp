@@ -73,12 +73,12 @@ void SSAO::render()
 
 
 	pShader->use();
-    pShader->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
-	pShader->LoadUniform("noiseScale", noiseScale);
-	pShader->LoadUniform("kernelSize", (int)kernelSize);
-	pShader->LoadUniform("radius", (float)radius);
-	pShader->LoadUniform("far", (float)Settings::getSetting(Settings::RENDERDISTANCE));
-	pShader->LoadUniform("power", (float)power);
+    pShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+	pShader->loadUniform("noiseScale", noiseScale);
+	pShader->loadUniform("kernelSize", (int)kernelSize);
+	pShader->loadUniform("radius", (float)radius);
+	pShader->loadUniform("far", (float)Settings::getSetting(Settings::RENDERDISTANCE));
+	pShader->loadUniform("power", (float)power);
 
 	rect->render();
 	pShader->unuse();
@@ -88,7 +88,7 @@ void SSAO::render()
     pSSAOFramebuffer->getTextureAttachment(0)->bind(0);
 
 	pBlurShader->use();
-    pBlurShader->LoadUniform("NoiseSize", (int)NoiseSize);
+    pBlurShader->loadUniform("NoiseSize", (int)NoiseSize);
 	rect->render();
 	pBlurShader->unuse();
 
@@ -147,7 +147,7 @@ void SSAO::generateKernel()
     pShader->use();
     for (unsigned int i = 0; i < kernelSize; ++i)
     {
-        pShader->LoadUniform("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+        pShader->loadUniform("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
     }
     pShader->unuse();
 }

@@ -1,7 +1,6 @@
 #include "World.h"
 #include "../Managers/ShaderManager.h"
-#include "Engine/Physics/Physics.h"
-#include "Essentials/Window.h"
+#include <Desktop/Window.h>
 #include "../Particle/ParticleSystem.h"
 #include <System/MemoryManagement.h>
 
@@ -40,8 +39,8 @@ void World::renderRenderable()
 void World::renderSky()
 {
     pObjectManager->getSkybox()->getShader()->use();
-    pObjectManager->getSkybox()->getShader()->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pObjectManager->getSkybox()->getShader()->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pObjectManager->getSkybox()->getShader()->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pObjectManager->getSkybox()->getShader()->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
     pObjectManager->getSkybox()->render();
     pObjectManager->getSkybox()->getShader()->unuse();
 }
@@ -49,8 +48,8 @@ void World::renderSky()
 void World::renderParticles()
 {
     pParticleShader->use();
-    pParticleShader->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pParticleShader->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pParticleShader->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pParticleShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
 	for (size_t i = 0; i < vParticles.size(); i++)
 	{
 		vParticles[i]->update();
@@ -62,8 +61,8 @@ void World::renderParticles()
 void World::renderBillboards()
 {
 	pBillboardShader->use();
-    pBillboardShader->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-    pBillboardShader->LoadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pBillboardShader->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+    pBillboardShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
 	for (size_t i = 0; i < vBillboards.size(); i++) { vBillboards[i]->render(pBillboardShader); }
 	pBillboardShader->unuse();
 }

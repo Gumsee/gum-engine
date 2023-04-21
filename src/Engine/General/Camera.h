@@ -1,5 +1,4 @@
 #pragma once
-#include <OS/Window.h>
 #include <Essentials/SmoothFloat.h>
 #include <Maths/vec.h>
 #include <Maths/mat.h>
@@ -34,7 +33,6 @@ private:
 	int CurrentMode = 0;
     unsigned int iProjectionMode;
     vec2 v2CurrentResolution;
-    Gum::Window* pContextWindow;
 
     void mouseUpdate();
     void updateView();
@@ -54,10 +52,10 @@ public:
         ORTHOGRAPHIC
     };
 
-    Camera(const ivec2& resolution, World* world, Gum::Window* context);
+    Camera(const ivec2& resolution, World* world);
     ~Camera();
 
-	static Camera* ActiveCamera;
+	inline static Camera* ActiveCamera = nullptr;
 
     void lookAt(const vec3& lookat);
     void update();

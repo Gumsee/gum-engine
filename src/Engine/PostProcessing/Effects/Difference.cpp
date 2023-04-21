@@ -14,8 +14,8 @@ void Difference::render(Texture* texture1, Texture* texture2)
 {
 	pFramebuffer->bind();
 	pShader->use();
-	pShader->LoadUniform("Texture1", 0);
-	pShader->LoadUniform("Texture2", 1);
+	pShader->loadUniform("Texture1", 0);
+	pShader->loadUniform("Texture2", 1);
 
     texture1->bind(0);
     texture2->bind(1);

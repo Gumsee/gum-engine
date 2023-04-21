@@ -3,7 +3,7 @@
 #include <Essentials/FPS.h>
 #include "../General/Camera.h"
 #include "../General/Renderer3D.h"
-#include "Essentials/Window.h"
+#include <Desktop/Window.h>
 
 Billboard::Billboard(vec3 Position)
 {
@@ -40,10 +40,10 @@ void Billboard::render(ShaderProgram *shader)
 {
 	if(vec3::distance(Camera::ActiveCamera->getPosition(), getPosition()) < 4000)
 	{
-        shader->LoadUniform("transformationMatrix", mat4());
-        shader->LoadUniform("billboardCenter", Position);
-        shader->LoadUniform("billboardSize", Scale);
-        shader->LoadUniform("fixedSize", bFixedSize);
+        shader->loadUniform("transformationMatrix", mat4());
+        shader->loadUniform("billboardCenter", Position);
+        shader->loadUniform("billboardSize", Scale);
+        shader->loadUniform("fixedSize", bFixedSize);
 
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);

@@ -1,8 +1,9 @@
 #include "Skybox.h"
-#include "Essentials/MemoryManagement.h"
+#include <System/MemoryManagement.h>
 #include "SkyboxShaders.h"
 #include "../Managers/ShaderManager.h"
 #include "../Managers/TextureManager.h"
+#include "System/Output.h"
 #include <OpenGL/WrapperFunctions.h>
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
@@ -101,11 +102,10 @@ void SkyBox::render()
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
 	pTexture->bind(0);
-    
-    getShader()->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
-	getShader()->LoadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
-	getShader()->LoadUniform("gradiant", (int)gradiant);
-	getShader()->LoadUniform("SunDirection", *this->sunDir);
+    getShader()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+	getShader()->loadUniform("viewMatrix", Camera::ActiveCamera->getViewMatrix());
+	getShader()->loadUniform("gradiant", (int)gradiant);
+	getShader()->loadUniform("SunDirection", *this->sunDir);
 	renderMesh();
 	pTexture->unbind(0);
 
@@ -194,10 +194,10 @@ void SkyBox::makePrefilterMap()
             glClear(GL_COLOR_BUFFER_BIT);
 			prepareRender();
 
-        	PreFilteredMapShader->LoadUniform("roughness", roughness);
-            PreFilteredMapShader->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
-            PreFilteredMapShader->LoadUniform("projectionMatrix", captureProjection);
-            PreFilteredMapShader->LoadUniform("viewMatrix", captureViews[i]);
+        	PreFilteredMapShader->loadUniform("roughness", roughness);
+            PreFilteredMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+            PreFilteredMapShader->loadUniform("projectionMatrix", captureProjection);
+            PreFilteredMapShader->loadUniform("viewMatrix", captureViews[i]);
 
 			glCullFace(GL_FRONT);
 			glDisable(GL_DEPTH_TEST);
@@ -235,9 +235,9 @@ void SkyBox::makeIrradianceMap()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		prepareRender();
 
-        IrradianceMapShader->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
-	    IrradianceMapShader->LoadUniform("projectionMatrix", captureProjection);
-		IrradianceMapShader->LoadUniform("viewMatrix", captureViews[i]);
+        IrradianceMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+	    IrradianceMapShader->loadUniform("projectionMatrix", captureProjection);
+		IrradianceMapShader->loadUniform("viewMatrix", captureViews[i]);
 
 		glCullFace(GL_FRONT);
 		glDisable(GL_DEPTH_TEST);
@@ -256,8 +256,8 @@ void SkyBox::makeCubeMap(Texture* texture)
 {
     pFramebuffer->bind();
     HDRToCubeMapShader->use();
-    HDRToCubeMapShader->LoadUniform("gradiant", (int)gradiant);
-    HDRToCubeMapShader->LoadUniform("SunDirection", *this->sunDir);
+    HDRToCubeMapShader->loadUniform("gradiant", (int)gradiant);
+    HDRToCubeMapShader->loadUniform("SunDirection", *this->sunDir);
     texture->bind(0);
 	for (unsigned int i = 0; i < 6; ++i)
 	{
@@ -266,9 +266,9 @@ void SkyBox::makeCubeMap(Texture* texture)
 
 		glClear(GL_COLOR_BUFFER_BIT);
 		prepareRender();
-		HDRToCubeMapShader->LoadUniform("viewMatrix", captureViews[i]);
-		HDRToCubeMapShader->LoadUniform("projectionMatrix", captureProjection);
-		HDRToCubeMapShader->LoadUniform("transformationMatrix", getInstance(0)->getMatrix());
+		HDRToCubeMapShader->loadUniform("viewMatrix", captureViews[i]);
+		HDRToCubeMapShader->loadUniform("projectionMatrix", captureProjection);
+		HDRToCubeMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
         
 		glCullFace(GL_FRONT);
 		glDisable(GL_DEPTH_TEST);

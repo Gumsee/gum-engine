@@ -16,7 +16,7 @@ void ContrastChanger::render(Texture* texture, int contrast)
 {
 	pFramebuffer->bind();
 	pShader->use();
-	pShader->LoadUniform("Contrast", contrast);
+	pShader->loadUniform("Contrast", contrast);
 	texture->bind();
 	pRenderCanvas->renderCustom();
 	texture->unbind();

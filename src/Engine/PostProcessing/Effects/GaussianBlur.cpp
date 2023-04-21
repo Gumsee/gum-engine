@@ -48,7 +48,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	pBlurFramebufferV->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	VblurShader->use();
-	VblurShader->LoadUniform("specialVar", (float)pBlurFramebufferV->getSize().x);
+	VblurShader->loadUniform("specialVar", (float)pBlurFramebufferV->getSize().x);
 	RenderResult->bind();
 	pRenderCanvas->renderCustom();
 	RenderResult->unbind();
@@ -57,7 +57,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	pBlurFramebufferH->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	HblurShader->use();
-	HblurShader->LoadUniform("specialVar", (float)pBlurFramebufferH->getSize().y);
+	HblurShader->loadUniform("specialVar", (float)pBlurFramebufferH->getSize().y);
 	pBlurFramebufferV->getTextureAttachment(0)->bind();
 	pRenderCanvas->renderCustom();
 	pBlurFramebufferV->getTextureAttachment(0)->unbind();
@@ -66,7 +66,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	pBlurFramebufferV2->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	VblurShader->use();
-	VblurShader->LoadUniform("specialVar", (float)pBlurFramebufferV2->getSize().x);
+	VblurShader->loadUniform("specialVar", (float)pBlurFramebufferV2->getSize().x);
 	pBlurFramebufferH->getTextureAttachment(0)->bind();
 	pRenderCanvas->renderCustom();
 	pBlurFramebufferH->getTextureAttachment(0)->unbind();
@@ -75,7 +75,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	pFramebuffer->bind();
 	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	HblurShader->use();
-	HblurShader->LoadUniform("specialVar", (float)pFramebuffer->getSize().y);
+	HblurShader->loadUniform("specialVar", (float)pFramebuffer->getSize().y);
 	pBlurFramebufferV2->getTextureAttachment(0)->bind();
 	pRenderCanvas->renderCustom();
 	pBlurFramebufferV2->getTextureAttachment(0)->unbind();

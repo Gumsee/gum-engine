@@ -1,5 +1,4 @@
 #include "ObjectManager.h"
-#include "Engine/Object/Skeletal/AnimatedModel.h"
 #include "ShaderManager.h"
 #include "../General/Camera.h"
 #include "../General/Renderer3D.h"
@@ -95,8 +94,8 @@ void ObjectManager::renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* ca
         if(obj->getShader() != gbufferShader)
         {
             obj->getShader()->use();
-			obj->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
-			obj->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
+			obj->getShader()->loadUniform("viewMatrix", camera->getViewMatrix());
+			obj->getShader()->loadUniform("projectionMatrix", camera->getProjectionMatrix());
 		    obj->render();
         }
 	}
@@ -106,8 +105,8 @@ void ObjectManager::renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* ca
         if(obj->getShader() != gbufferShader)
         {
             obj->getShader()->use();
-			obj->getShader()->LoadUniform("viewMatrix", camera->getViewMatrix());
-			obj->getShader()->LoadUniform("projectionMatrix", camera->getProjectionMatrix());
+			obj->getShader()->loadUniform("viewMatrix", camera->getViewMatrix());
+			obj->getShader()->loadUniform("projectionMatrix", camera->getProjectionMatrix());
 		    obj->render();
         }
 	}

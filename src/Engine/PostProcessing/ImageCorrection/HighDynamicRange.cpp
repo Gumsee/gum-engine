@@ -31,7 +31,7 @@ void HighDynamicRange::render(Texture* texture, float exposure)
 {
   pFramebuffer->bind();
   pShader->use();
-  pShader->LoadUniform("exposure", exposure);
+  pShader->loadUniform("exposure", exposure);
 
   texture->bind();
   pRenderCanvas->renderCustom();

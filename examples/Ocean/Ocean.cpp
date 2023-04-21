@@ -36,9 +36,9 @@ World* Examples::createOceanExample()
     pWorld->addUpdateable([fTime, pOceanShader]() mutable {
         fTime += FPS::get() * 10.0f;
         pOceanShader->use();
-        pOceanShader->LoadUniform("fTime", fTime);
-        pOceanShader->LoadUniform("v3ViewDir", GumEngine::ActiveCamera->getViewDirection());
-        pOceanShader->LoadUniform("v3ViewPos", GumEngine::ActiveCamera->getPosition());
+        pOceanShader->loadUniform("fTime", fTime);
+        pOceanShader->loadUniform("v3ViewDir", GumEngine::ActiveCamera->getViewDirection());
+        pOceanShader->loadUniform("v3ViewPos", GumEngine::ActiveCamera->getPosition());
        // GumEngine::ActiveCamera->getViewDirection().print();
         pOceanShader->unuse();
     });

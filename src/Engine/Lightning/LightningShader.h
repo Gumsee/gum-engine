@@ -268,7 +268,7 @@ R"(
 	    //gl_FragColor = vec4(color, alpha);
 	    //gl_FragColor = mix(gl_FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
 	    //gl_FragColor = texture(ShadowMap, shadowmapcoords.xy);
-    	//gl_FragColor = vec4(NormalViewSpace, 1.0f);
-    	gl_FragColor = vec4(light, alpha);
+    	gl_FragColor = vec4(NormalViewSpace, alpha);
+    	//gl_FragColor = vec4(light, alpha);
 	}
 )";

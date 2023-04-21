@@ -2,21 +2,18 @@
 #include "CameraObject.h"
 #include <Essentials/Tools.h>
 #include <System/Output.h>
-#include <OS/IO/Mouse.h>
-#include <Essentials/Input/Controls.h>
+#include <Desktop/IO/Mouse.h>
+#include <Desktop/IO/Controls.h>
 #include <Essentials/Settings.h>
-#include <OS/Window.h>
+#include <Desktop/Window.h>
 #include <Essentials/FPS.h>
 #include <Maths/MatrixFunctions.h>
 #include "../Object/Object.h"
 #include "../General/World.h"
 
-Camera* Camera::ActiveCamera = nullptr;
-
-Camera::Camera(const ivec2& resolution, World* world, Gum::Window* context)
+Camera::Camera(const ivec2& resolution, World* world)
 {
     Gum::Output::log("Initializing Camera!");
-    this->pContextWindow = context;
     OffsetToPos = new SmoothFloat(10, 5);
     v3ViewDirection = vec3(0.0f, 0.0f, 1.0f);
     UP = vec3(0.0f, 1.0f, 0.0f);
@@ -46,6 +43,9 @@ Camera::Camera(const ivec2& resolution, World* world, Gum::Window* context)
         }
         pCameraObjectInstance->setPosition(v3Position);
     }
+
+    if(ActiveCamera == nullptr)
+        ActiveCamera = this;
 }
 
 Camera::~Camera()
@@ -62,8 +62,8 @@ void Camera::updateProjection(const ivec2& resolution)
     }
     else
     {
-        float halfheight = pContextWindow->getSize().y * 0.25f;
-        float halfwidth = pContextWindow->getAspectRatioWidthToHeight() * halfheight;
+        float halfheight = Framebuffer::CurrentlyBoundFramebuffer->getSize().y * 0.25f;
+        float halfwidth = Framebuffer::CurrentlyBoundFramebuffer->getAspectRatioWidthToHeight() * halfheight;
         projectionMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, 0.1f, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
     }
     OrthographicMatrix = Gum::Maths::ortho((float)resolution.y, (float)resolution.x, 0.0f, 0.0f, -100.0f, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
@@ -90,11 +90,12 @@ void Camera::update()
             }
             case Modes::THIRDPERSON:
             {
-                OffsetToPos->increaseTarget(pContextWindow->getMouse()->getMouseWheelState() * -1 * ZOOMFACTOR);
+                OffsetToPos->increaseTarget(Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * -1 * ZOOMFACTOR);
                 OffsetToPos->update();
 
-                fPitch -= -Gum::Input::Mouse::getDelta().y * 0.1f;
-                MouseAngle += -Gum::Input::Mouse::getDelta().x * 0.1f;
+                Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
+                fPitch -= -mouse->getDelta().y * 0.6f;
+                MouseAngle += -mouse->getDelta().x * 0.6f;
                 AngleAroundPos = MouseAngle;
 
                 fRoll = fPitch;
@@ -111,8 +112,8 @@ void Camera::update()
                 
                 if(iProjectionMode == ProjectionModes::ORTHOGRAPHIC)
                 {
-                    float halfheight = pContextWindow->getSize().y * (OffsetToPos->get() / OffsetToPos->getMax()) * 0.025f;
-                    float halfwidth = pContextWindow->getAspectRatioWidthToHeight() * halfheight;
+                    float halfheight = Framebuffer::CurrentlyBoundFramebuffer->getSize().y * (OffsetToPos->get() / OffsetToPos->getMax()) * 0.025f;
+                    float halfwidth = Framebuffer::CurrentlyBoundFramebuffer->getAspectRatioWidthToHeight() * halfheight;
                     projectionMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, -100.0f, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
                 }
 
@@ -122,16 +123,16 @@ void Camera::update()
             }
             case Modes::FREECAM:
             {
-                MOVEMENT_SPEED += pContextWindow->getMouse()->getMouseWheelState();
+                MOVEMENT_SPEED += Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState();
                 if (MOVEMENT_SPEED < 0) { MOVEMENT_SPEED = 0; } //Min Speed is 0
 
                 mouseUpdate();
-                if (Gum::Input::Controls::checkControl("Forward", pContextWindow->getKeyboard()))	{ moveForward(); }
-                if (Gum::Input::Controls::checkControl("Backward", pContextWindow->getKeyboard()))	{ moveBackward(); }
-                if (Gum::Input::Controls::checkControl("Left", pContextWindow->getKeyboard()))  	{ strafeLeft(); }
-                if (Gum::Input::Controls::checkControl("Right", pContextWindow->getKeyboard())) 	{ strafeRight(); }
-                if (Gum::Input::Controls::checkControl("Down", pContextWindow->getKeyboard()))  	{ moveDown(); }
-                if (Gum::Input::Controls::checkControl("Up", pContextWindow->getKeyboard()))	 	{ moveUp();	}
+                if (Gum::IO::Controls::checkControl("Forward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveForward(); }
+                if (Gum::IO::Controls::checkControl("Backward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveBackward(); }
+                if (Gum::IO::Controls::checkControl("Left", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ strafeLeft(); }
+                if (Gum::IO::Controls::checkControl("Right", Gum::Window::CurrentlyBoundWindow->getKeyboard())) 	{ strafeRight(); }
+                if (Gum::IO::Controls::checkControl("Down", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveDown(); }
+                if (Gum::IO::Controls::checkControl("Up", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	 	{ moveUp();	}
                 updateView();
                 break;
             }
@@ -150,10 +151,11 @@ void Camera::updateView()
 void Camera::mouseUpdate()
 {
     strafeDirection = vec3::cross(v3ViewDirection, UP);
-    if(Gum::Input::Mouse::getDelta() != vec2())
+    Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
+    if(mouse->getDelta() != vec2())
     {
-        rotator = Gum::Maths::rotateMatrix(UP * -Gum::Input::Mouse::getDelta().x * ROTATIONAL_SPEED) *
-                  Gum::Maths::rotateMatrix(strafeDirection * -Gum::Input::Mouse::getDelta().y * ROTATIONAL_SPEED);
+        rotator = Gum::Maths::rotateMatrix(UP * -mouse->getDelta().x * ROTATIONAL_SPEED) *
+                  Gum::Maths::rotateMatrix(strafeDirection * -mouse->getDelta().y * ROTATIONAL_SPEED);
 
         v3ViewDirection = rotator * v3ViewDirection;
         //vec3::clamp(v3ViewDirection, 0.0f, 1.0f);

@@ -1,6 +1,7 @@
 #include "ObjectLoader.h"
 #include <System/MemoryManagement.h>
 #include <Essentials/Tools.h>
+#include "../General/Tools.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>

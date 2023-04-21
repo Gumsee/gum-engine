@@ -50,7 +50,7 @@ void AnimatedModel::render()
     ShaderProgram* currentShader = ShaderProgram::getCurrentlyBoundShader();
     for(size_t i = 0; i < pSkeleton->getBoneMatrices().size(); i++)
     {
-        currentShader->LoadUniform("gBones[" + std::to_string(i) + "]", pSkeleton->getBoneMatrices()[i]);
+        currentShader->loadUniform("gBones[" + std::to_string(i) + "]", pSkeleton->getBoneMatrices()[i]);
     }
 
 
@@ -61,16 +61,16 @@ void AnimatedModel::render()
 
 
     //Load TextureObject related uniforms
-	currentShader->LoadUniform("transformationMatrix", *getTransformationMatrix());
-    currentShader->LoadUniform("isInstanced", (int)false);
+	currentShader->loadUniform("transformationMatrix", *getTransformationMatrix());
+    currentShader->loadUniform("isInstanced", (int)false);
     if(pSkeleton->getBoneMatrices().size() > 0)
     {
-        currentShader->LoadUniform("isSkeletal", (int)true);
+        currentShader->loadUniform("isSkeletal", (int)true);
     }
 
     renderMesh();
 
-    currentShader->LoadUniform("isSkeletal", (int)false);
+    currentShader->loadUniform("isSkeletal", (int)false);
 	pMaterial->unbindTextures();
     this->finishRender();
 
