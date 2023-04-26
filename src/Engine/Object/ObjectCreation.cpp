@@ -2,7 +2,6 @@
 #include "../Physics/Physics.h"
 #include "../Managers/ObjectManager.h"
 #include "../Managers/MaterialManager.h"
-#include "../Loaders/ObjectLoader.h"
 #include <Essentials/Tools.h>
 #include <System/MemoryManagement.h>
 
@@ -26,10 +25,10 @@ Object::Object(std::string modelFilePath, std::string name) : Object()
 	//Create and add Properties
 	pProperties->Name = name;
 	pProperties->pMesh = new Mesh();
-	ObjectLoader loader(ObjectManager::MODEL_ASSETS_PATH + modelFilePath, [this](Mesh* mesh) {
+	/*ObjectLoader loader(ObjectManager::MODEL_ASSETS_PATH + modelFilePath, [this](Mesh* mesh) {
 		pProperties->pMesh->addMesh(mesh);
 		Gum::_delete(mesh);
-	}, nullptr);
+	}, nullptr);*/
 
 	load();
 }

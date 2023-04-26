@@ -1,7 +1,7 @@
 #include "AnimatedModel.h"
 #include <Essentials/Tools.h>
 #include "../../Managers/ObjectManager.h"
-#include "../../Loaders/ObjectLoader.h"
+#include <Codecs/Scene3DLoader.h>
 #include <OpenGL/ShaderProgram.h>
 #include <vector>
 
@@ -12,7 +12,7 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
 	//Combine all meshes into one
 	pProperties->Name = name;
 	pProperties->pMesh = new Mesh();
-	ObjectLoader loader(ObjectManager::MODEL_ASSETS_PATH + file, [this](Mesh* mesh) {
+	/*Scene3DLoader* loader;(ObjectManager::MODEL_ASSETS_PATH + file, [this](Mesh* mesh) {
 		pProperties->pMesh->addMesh(mesh);
     }, [this](std::vector<Bone*> bones, Bone* rootbone, std::vector<SkeletalAnimation*> animations, mat4 globalInverseTransform) {
         for(size_t i = 0; i < bones.size(); i++)
@@ -22,7 +22,7 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
         }
         
         pSkeleton = new Skeleton(rootbone, globalInverseTransform);
-    });
+    });*/
 
 
 

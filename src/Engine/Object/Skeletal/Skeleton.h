@@ -1,14 +1,6 @@
 #pragma once
-
-//STL
 #include <vector>
-
-//Assimp
-#include <assimp/scene.h>
-
-//Own
-#include "SkeletalAnimation.h"
-#include "Bone.h"
+#include <gum-primitives.h>
 
 class Skeleton
 {

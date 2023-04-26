@@ -1,5 +1,5 @@
 #include <vector>
-#include <OpenGL/Mesh.h>
+#include <gum-primitives.h>
 #include <System/MemoryManagement.h>
 
 struct CameraMesh

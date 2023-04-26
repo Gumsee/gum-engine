@@ -1,7 +1,4 @@
 #include "Examples.h"
-#include <gum-engine.h>
-#include <gum-desktop.h>
-#include <gum-gui.h>
 #include <GUI/Basics/Dropdown.h>
 //#include <GUI/Extra/FileExplorer/FileExplorer.h>
 //#include <GUI/XMLGUILoader.h>
@@ -9,10 +6,12 @@
 #include "Desktop/IO/Mouse.h"
 #include "Engine/General/Camera.h"
 #include "Engine/General/Renderer3D.h"
+#include "Essentials/Tools.h"
 #include "GBufferTest.h"
 #include "BasicCube.h"
 #include "OpenGL/Framebuffer.h"
 #include "OpenGL/Texture2D.h"
+#include "System/MemoryManagement.h"
 #include "System/Output.h"
 #include <OpenGL/OpenGL.h>
 
@@ -31,36 +30,32 @@ Examples::Examples()
     std::string example_path = EXAMPLES_PATH;
 
     Gum::Display::init();
-    Gum::Window* pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
+    pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
     pMainWindow->setClearColor(vec4(0.24f, 0.39f, 0.75f, 1.0f));
     pMainWindow->setVerticalSync(true);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
     Gum::OpenGL::addFramebufferToWindow(pMainWindow);
 
-    Gum::GUI* testGUI = new Gum::GUI(pMainWindow);
+    pGUI = new Gum::GUI(pMainWindow);
 
     //ObjectManager::MODEL_ASSETS_PATH = example_path + "/assets/";
     Gum::Engine::init();
 
-    XMLLoader *pXMLGUILoader = new XMLLoader(example_path + "/assets/guis/example_interface.xml");
-    testGUI->addGUI(pXMLGUILoader->getRootGUI());
-
-    Box* pRenderCanvas = (Box*)pXMLGUILoader->getRootGUI()->findChildByID("renderview");
-
-    Box* pDebugBox = new Box(ivec2(100, 100), ivec2(200, 200));
-    testGUI->addGUI(pDebugBox);
+    XMLLoader pXMLGUILoader(example_path + "/assets/guis/example_interface.xml");
+    pGUI->addGUI(pXMLGUILoader.getRootGUI());
+    pRenderCanvas = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
 
     Settings::setSetting(Settings::SHOWDEBUGINFO, true);
 
-    Camera* pMainCamera = new Camera(pMainWindow->getSize(), new World());
+    pMainCamera = new Camera(pMainWindow->getSize(), new World());
     pMainCamera->setPosition(vec3(0,0,0));
     pMainCamera->setMode(Camera::Modes::THIRDPERSON);
     pMainCamera->setOffset(60.0f);
 
-    Renderer3D* pMainRenderer = new Renderer3D(pRenderCanvas, pMainWindow);
-    pMainWindow->onResized([testGUI, pMainRenderer](ivec2 size) {
-        testGUI->setSize(size);
+    pMainRenderer = new Renderer3D(pRenderCanvas, pMainWindow);
+    pMainWindow->onResized([this](ivec2 size) {
+        pGUI->setSize(size);
         pMainRenderer->updateFramebufferSize();
     });
 
@@ -87,25 +82,6 @@ Examples::Examples()
     pFPSGraph->setPrecision(0);
     GumEngine::GUIS->addGUI(pFPSGraph);*/
 
-
-
-
-
-    mWorlds["AnimatesModels"]           = nullptr;
-    mWorlds["Billboards"]               = nullptr;
-    mWorlds["GBuffer"]                  = nullptr;
-    mWorlds["GUIs"]                     = nullptr;
-    mWorlds["GumMaths"]                 = nullptr;
-    mWorlds["IrradiancePBR"]            = nullptr;
-    mWorlds["MazeLearning"]             = nullptr;
-    mWorlds["Ocean"]                    = nullptr;
-    mWorlds["Particles"]                = nullptr;
-    mWorlds["PhysicallyBasedRendering"] = nullptr;
-    mWorlds["Physics"]                  = nullptr;
-    mWorlds["PostProcessing"]           = nullptr;
-    mWorlds["ShadowMapping"]            = nullptr;
-    mWorlds["SphereGenerator"]          = nullptr;
-
     /*TextBox* ExamplesTab = TabsGUI->getTab("Examples");
     for(auto example : mWorlds)
     {
@@ -128,8 +104,8 @@ Examples::Examples()
         pMainCamera->update();
         pMainRenderer->render();
 
-        testGUI->render();
-        testGUI->update();
+        pGUI->render();
+        pGUI->update();
 
         //System.out.println("Mouse is: " + (Mouse.isBusy() ? "Busy" : "Available"));
         /*if(pRenderCanvas->isMouseInside() && pMainWindow->getMouse()->hasRightClick())
@@ -157,13 +133,22 @@ Examples::Examples()
 
 Examples::~Examples()
 {
+    Gum::_delete(pMainWindow);
+    Gum::_delete(pGUI);
+    Gum::_delete(pMainCamera);
+    Gum::_delete(pMainRenderer);
 
+    for(auto world : mWorlds)
+    {
+        Gum::Output::print("Deleting " + world.first);
+        Gum::_delete(world.second);
+    }
 }
 
 
 World* Examples::getExampleWorld(std::string name)
 {
-    if(mWorlds[name] == nullptr)
+    if(!Tools::mapHasKey(mWorlds, name))
     {
         //if(name == "AnimatesModels")            { mWorlds[name] = createAnimatedModelExample(); }
         //if(name == "Billboards")                { mWorlds[name] = createBillboardsExample(); }

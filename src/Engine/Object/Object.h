@@ -2,7 +2,7 @@
 #include <OpenGL/ShaderProgram.h>
 #include <OpenGL/VertexArrayObject.h>
 #include <OpenGL/Texture.h>
-#include <OpenGL/Mesh.h>
+#include <gum-primitives.h>
 #include <Essentials/Settings.h>
 #include "../Material/Material.h"
 #include "../General/Animation.h"

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui-root pos="0, 0" size="100%, 100%">
-    <box id="renderview" pos="0, 0" size="70%, 80%" max-size="-800, -400" margin="0, 0"></box>
+    <box id="renderview" pos="0, 0" size="70%, 80%" max-size="-800, -400" margin="0, 0" color="#FFFFFF"></box>
     <box id="filesmenu" pos="0, 100%" size="70%, 20%" max-size="-800, 0" min-size="0, 400" margin="0, 0" origin="0, 100%" color="#36393F"></box>
     <box id="sidemenu" pos="100%, 0" size="30%, 100%" min-size="800, 0" margin="0, 0" origin="100%, 0" color="#36393F">
         <tabs id="sidemenutabs" pos="0, 0" size="100%, 100%">

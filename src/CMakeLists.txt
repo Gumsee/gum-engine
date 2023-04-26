@@ -5,7 +5,7 @@ file(GLOB_RECURSE SRC
 "./*.cpp"
 
 )
-add_library(${CMAKE_PROJECT_NAME} STATIC ${SRC})
+add_library(${CMAKE_PROJECT_NAME}_trgt STATIC ${SRC})
 
 include_directories(${CMAKE_SOURCE_DIR}/external/)
 
@@ -48,6 +48,11 @@ include_directories(${CMAKE_SOURCE_DIR}/external/)
             include_directories(${GUMCODECS_INCLUDE_DIRS})
         else()
             message(FATAL_ERROR Library for GUMCODECS cannot not found)
+        endif() 
+        if(GUMPRIMITIVES_FOUND)
+            include_directories(${GUMPRIMITIVES_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMPRIMITIVES cannot not found)
         endif() 
         if(GUMDESKTOP_FOUND)
             include_directories(${GUMDESKTOP_INCLUDE_DIRS})
@@ -168,18 +173,51 @@ install(
 
 
 
-install(TARGETS ${CMAKE_PROJECT_NAME}
-    EXPORT ${CMAKE_PROJECT_NAME}Targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(
-    EXPORT ${CMAKE_PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
-    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+set(COMBINED_LIB ${CMAKE_BINARY_DIR}/lib${CMAKE_PROJECT_NAME}.a)
+
+add_custom_target(createcombineddir
+    COMMAND mkdir -p ${CMAKE_BINARY_DIR}/combined/
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/
+    DEPENDS ${CMAKE_PROJECT_NAME}_trgt
+    VERBATIM
 )
+
+add_custom_command( #combinedtarget ALL
+    OUTPUT ${COMBINED_LIB}
+    
+    COMMAND ar -x $<TARGET_FILE:BulletSoftBody>
+    COMMAND ar -x $<TARGET_FILE:BulletDynamics>
+    COMMAND ar -x $<TARGET_FILE:BulletCollision>
+    COMMAND ar -x $<TARGET_FILE:LinearMath>
+    COMMAND ar -x $<TARGET_FILE:${CMAKE_PROJECT_NAME}_trgt>
+    COMMAND sh -c "ar -qcs \"${COMBINED_LIB}\" *.o"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/combined/
+    DEPENDS  BulletSoftBody BulletDynamics BulletCollision LinearMath createcombineddir ${CMAKE_PROJECT_NAME}_trgt
+    COMMENT "Combining libs"
+    VERBATIM
+)
+
+add_custom_target(combinedlibtarget ALL DEPENDS ${COMBINED_LIB})
+
+# Create an library target out of the library compilation result
+add_library(${CMAKE_PROJECT_NAME} STATIC IMPORTED GLOBAL)
+add_dependencies(${CMAKE_PROJECT_NAME} combinedlibtarget)
+
+# Specify where the library is and where to find the headers
+set_target_properties(${CMAKE_PROJECT_NAME}
+    PROPERTIES
+    IMPORTED_LOCATION "${COMBINED_LIB}"
+)
+
+install(FILES ${COMBINED_LIB}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+#install(
+#    EXPORT ${CMAKE_PROJECT_NAME}Targets
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+#    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+#)
 
 configure_package_config_file("Config.cmake.in"
     "${CMAKE_PROJECT_NAME}Config.cmake"
