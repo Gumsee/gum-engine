@@ -1,5 +1,5 @@
 #include "ShaderInitializer.h"
-#include "../Managers/ShaderManager.h"
+#include "../Shaders/ShaderManager.h"
 #include "ParticleShader.h"
 #include "BillboardShader.h"
 
@@ -12,11 +12,17 @@ namespace Particles
     void initShaders()
     {
         if(pParticleShader == nullptr)
-        {            
+        {
             pParticleShader = new ShaderProgram();
             pParticleShader->addShader(new Shader(ParticleVertexShader, Shader::VERTEX_SHADER));
             pParticleShader->addShader(new Shader(ParticleFragmentShader, Shader::FRAGMENT_SHADER));
-            pParticleShader->build("ParticleShader");
+            pParticleShader->build("ParticleShader", {
+                {"vertexPosition", 0},
+                {"partPositions", 1},
+                {"partSizes", 2},
+                {"texOffset", 3},
+                {"TexCoordInfo", 4}
+            });
             pParticleShader->addTexture("textureSampler", 0);
             Gum::ShaderManager::addShaderProgram(pParticleShader);
         }
@@ -26,7 +32,7 @@ namespace Particles
             pBillboardShader = new ShaderProgram();
             pBillboardShader->addShader(new Shader(BillboardVertexShader, Shader::VERTEX_SHADER));
             pBillboardShader->addShader(new Shader(BillboardFragmentShader, Shader::FRAGMENT_SHADER));
-            pBillboardShader->build("BillboardShader");
+            pBillboardShader->build("BillboardShader", {{"vertexPosition", 0}});
             pBillboardShader->addUniform("billboardCenter");
             pBillboardShader->addUniform("billboardSize");
             pBillboardShader->addUniform("fixedSize");

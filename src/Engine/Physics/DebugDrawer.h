@@ -1,32 +1,32 @@
 #pragma once
-#include <btBulletDynamicsCommon.h>
+#include <LinearMath/btIDebugDraw.h>
+#include <OpenGL/VertexArrayObject.h>
 #include <OpenGL/ShaderProgram.h>
 
 class DebugDrawer : public btIDebugDraw
 {
 private:
-	ShaderProgram *shader;
+	inline static ShaderProgram *pShaderProgram = nullptr;
 	int m_debugMode;
 	std::vector<vec3> vertices;
 
-	GLuint VAO, VBO;
+    VertexArrayObject* pVAO;
+    VertexBufferObject<vec3> *pVBO;
 	int pointer = 0;
+
+    static void initShader();
     
 public:
-	DebugDrawer(ShaderProgram *shader);
-	virtual ~DebugDrawer();
+	DebugDrawer();
+	~DebugDrawer();
 
-	virtual void   drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor);
-	virtual void   drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
-	virtual void   drawSphere(const btVector3& p, btScalar radius, const btVector3& color);
-	virtual void   drawTriangle(const btVector3& a, const btVector3& b, const btVector3& c, const btVector3& color, btScalar alpha);
-	virtual void   drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
-	virtual void   reportErrorWarning(const char* warningString);
-	virtual void   draw3dText(const btVector3& location, const char* textString);
-	virtual void   setDebugMode(int debugMode);
-	virtual int    getDebugMode() const { return m_debugMode; }
-
-	void prepare();
-	void finish();
+	void   drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor);
+	void   drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
+	void   drawSphere(const btVector3& p, btScalar radius, const btVector3& color);
+	void   drawTriangle(const btVector3& a, const btVector3& b, const btVector3& c, const btVector3& color, btScalar alpha);
+	void   drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, btScalar distance, int lifeTime, const btVector3& color);
+	void   reportErrorWarning(const char* warningString);
+	void   draw3dText(const btVector3& location, const char* textString);
+	void   setDebugMode(int debugMode);
+	int    getDebugMode() const { return m_debugMode; }
 };
-

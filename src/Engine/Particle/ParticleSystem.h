@@ -1,6 +1,8 @@
 #pragma once
 #include <OpenGL/Texture.h>
 
+#include "OpenGL/VertexArrayObject.h"
+#include "OpenGL/VertexBufferObject.h"
 #include "Particle.h"
 #include "ParticleProperties.h"
 
@@ -9,16 +11,24 @@ class World;
 class ParticleSystem
 {
 private:
+	inline static const std::vector<float> vertices {
+		-0.5,  0.5, 0,
+		-0.5, -0.5, 0,
+		 0.5,  0.5, 0,
+		 0.5,  0.5, 0,
+		-0.5, -0.5, 0,
+		 0.5, -0.5, 0
+	};
+
 	std::vector<Particle::ParticleStage*> *ParticleStages;
 	std::vector<Particle> vParticles;
 	ParticleProperties *properties;
 	const unsigned int MAX_INSTANCES = 100000;
 
-	uint VAO;
-	uint VertexPositions;
-	uint TexOffsets;
-	uint TexCoordInfo;
-	uint partPositionsVBO;
+	VertexArrayObject* pVAO;
+	VertexBufferObject<vec4> *TexOffsets;
+	VertexBufferObject<vec2> *TexCoordInfo;
+	VertexBufferObject<Particle> *partPositionsVBO;
 	Texture *texture;
 
 	std::vector<vec2> TexCoordInfoVector;
@@ -33,7 +43,6 @@ public:
 	ParticleSystem(World* world);
 	~ParticleSystem();
 
-	void create(std::string file);
 	void render();
 	void update();
 

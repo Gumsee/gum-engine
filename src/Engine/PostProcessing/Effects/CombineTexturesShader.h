@@ -17,6 +17,7 @@ R"(
 static const std::string CombineTexturesFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
     in vec2 Texcoord;
+    out vec4 FragColor;
 
 	uniform sampler2D texture1;
 	uniform sampler2D texture2;
@@ -24,6 +25,6 @@ R"(
 
 	void main()
 	{
-		gl_FragColor = texture2D(texture1, Texcoord) + texture2D(texture2, Texcoord);
+		FragColor = texture(texture1, Texcoord) + texture(texture2, Texcoord);
 	}
 )";

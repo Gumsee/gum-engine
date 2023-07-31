@@ -10,7 +10,6 @@ R"(
     layout (location = 7) in vec3 tangentNormals;
     layout (location = 8) in ivec3 jointIndices;
     layout (location = 9) in vec3 weights;
-    layout (location = 10) in vec3 individualColor;
     out VS_OUT
     {
             vec2 Texcoord;
@@ -19,7 +18,6 @@ R"(
             mat3 TBN;
             mat4 viewmat;
             vec3 viewPos;
-            vec3 individualColor;
             float distance;
             vec3 weights;
             flat ivec3 jointIndices;
@@ -45,14 +43,8 @@ R"(
 
     void main()
     {
-        mat4 FinalTrans = transformationMatrix;
-        //Is Instanced Check
-        if(isInstanced == 1)
-        {
-            FinalTrans = TransMatrix;
-        }
-        //FinalTrans = mat4(1);
-        vs_out.individualColor = individualColor;
+        mat4 FinalTrans = TransMatrix;
+        
         vs_out.Texcoord = TextureCoords * TextureMultiplier;
         vs_out.viewmat = viewMatrix;
         vec3 FinalVertexPosition = vertexPosition;
@@ -106,24 +98,22 @@ R"(
 static const std::string GBufferFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
     layout (location = 0) out vec4 gPosition;
-    layout (location = 1) out vec4 gIndividualColor;
-    layout (location = 2) out vec4 gNormal;
-    layout (location = 3) out vec4 gAlbedoSpec;
-    layout (location = 4) out vec4 gObjectData;
+    layout (location = 1) out vec4 gNormal;
+    layout (location = 2) out vec4 gAlbedoSpec;
+    layout (location = 3) out vec4 gObjectData;
 
     in VS_OUT
     {
-            vec2 Texcoord;
-            vec3 worldNormal;
-            vec4 FragPos;
-            mat3 TBN;
-            mat4 viewmat;
-            vec3 viewPos;
-            vec3 individualColor;
-            float distance;
-            vec3 weights;
-            flat ivec3 jointIndices;
-            flat int isSkel;
+        vec2 Texcoord;
+        vec3 worldNormal;
+        vec4 FragPos;
+        mat3 TBN;
+        mat4 viewmat;
+        vec3 viewPos;
+        float distance;
+        vec3 weights;
+        flat ivec3 jointIndices;
+        flat int isSkel;
     } fs_in;
 
     flat in int frag_hasNormalMap;
@@ -226,7 +216,7 @@ R"(
         }
         vec4 FinishedColor = color;
         if(hasTexture > 0)
-            FinishedColor = texture2D(texture0, Texcoords) * color;
+            FinishedColor = texture(texture0, Texcoords) * color;
 
         int BONE_TO_CHECK = 1;
         for(int i = 0; i < 3; i++)
@@ -257,10 +247,11 @@ R"(
         if(hasAmbientOcclusionMap > 0) { AOStrength = texture(ambientOcclusionmap, Texcoords).r; }
         //float linearizedDepth = (2.0 * near) / (far + near - gl_FragCoord.z * (far - near));  
         //gl_FragDepth = fs_in.FragPos.z;
+        //gl_FragDepth = linearizedDepth;
         gPosition =             fs_in.FragPos;
-        gIndividualColor =      vec4(fs_in.individualColor, 1.0f);
         gNormal =               vec4(unitNormal, 1.0f); //vec4(fs_in.worldNormal, 1.0f);
         gAlbedoSpec =           vec4(FinishedColor.rgb, 1);
+        //gAlbedoSpec = vec4(vec3(linearizedDepth), 1.0);
         gObjectData =           vec4(roughnessStrength,specularStrength,reflFactor,AOStrength);
     }
 )";

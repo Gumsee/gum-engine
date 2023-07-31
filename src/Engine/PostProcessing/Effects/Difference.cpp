@@ -1,5 +1,5 @@
 #include "Difference.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 
 Difference::Difference(Box *canvas)
 {

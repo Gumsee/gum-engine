@@ -1,7 +1,7 @@
 #include "HighDynamicRange.h"
 #include <System/MemoryManagement.h>
 #include "HighDynamicRangeShader.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 
 HighDynamicRange::HighDynamicRange(Box *canvas)
 {
@@ -15,7 +15,7 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
         pShader->build("HighDynamicRangeShader");
 
         //Textures
-        pShader->addTexture("texture", 0);
+        pShader->addTexture("textureSampler", 0);
         pShader->addUniform("exposure");
     }
 }

@@ -5,10 +5,10 @@
 static const std::string ParticleVertexShader = Shader::SHADER_VERSION_STR + 
 R"(
     layout (location = 0) in vec3 vertexPosition;
-    layout (location = 11) in vec3 partPositions;
-    layout (location = 12) in vec2 partSizes;
-    layout (location = 13) in vec4 texOffset;
-    layout (location = 14) in vec2 TexCoordInfo;
+    layout (location = 1) in vec3 partPositions;
+    layout (location = 2) in vec2 partSizes;
+    layout (location = 3) in vec4 texOffset;
+    layout (location = 4) in vec2 TexCoordInfo;
 
     out vec2 Texcoord1;
     out vec2 Texcoord2;
@@ -41,6 +41,7 @@ R"(
     in vec2 Texcoord1;
     in vec2 Texcoord2;
     in float blend;
+    out vec4 FragColor;
 
     uniform sampler2D textureSampler;
 
@@ -49,7 +50,8 @@ R"(
         vec4 color1 = texture(textureSampler, Texcoord1);
         vec4 color2 = texture(textureSampler, Texcoord2);
         vec4 finalColor = mix(color1, color2, blend);
-        gl_FragColor = finalColor;
-        //gl_FragColor = vec4(1,0,1,1);
+        FragColor = finalColor;
+        FragColor = vec4(Texcoord1,1,1);
+        FragColor = color1;
     }
 )";

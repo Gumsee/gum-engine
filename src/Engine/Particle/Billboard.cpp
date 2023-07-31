@@ -1,8 +1,12 @@
 #include "Billboard.h"
 #include <Maths/MatrixFunctions.h>
 #include <Essentials/FPS.h>
-#include "../General/Camera.h"
-#include "../General/Renderer3D.h"
+#include "../Rendering/Camera.h"
+#include "../Rendering/Renderer.h"
+#include "OpenGL/VertexArrayObject.h"
+#include "OpenGL/VertexBufferObject.h"
+#include "System/MemoryManagement.h"
+#include "System/Output.h"
 #include <Desktop/Window.h>
 
 Billboard::Billboard(vec3 Position)
@@ -11,34 +15,24 @@ Billboard::Billboard(vec3 Position)
 	this->Position = Position;
     this->Rotation = vec3(0,0,0);
     //this->Scale = vec2(30) / Gum::Window->getRenderQuadSize(); // 30x30 pixels
-    this->Scale = vec2(0.1f, 0.1f * Renderer3D::ActiveRenderer->getAspectRatio()); //10% of the screen
+    this->Scale = vec2(0.1f, 0.1f * Renderer::getActiveRenderer()->getFramebuffer()->getAspectRatio()); //10% of the screen
 	this->tex = nullptr;
 
-	std::vector<float> vertices =
-	{
-		-0.5, 0.5, 0,
-		-0.5, -0.5, 0,
-		0.5, 0.5, 0,
-		0.5, 0.5, 0,
-		-0.5,-0.5, 0,
-		0.5, -0.5, 0
-	};
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VertexPositions);
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VertexPositions);
-
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	VertexCount = vertices.size();
+    pVAO = new VertexArrayObject();
+    VertexBufferObject<float> vbo;
+    vbo.setData(vertices);
+    pVAO->addAttribute(&vbo, 0, 3, GL_FLOAT, 0);
+    pVAO->setVertexCount(vertices.size());
 }
 
-Billboard::~Billboard() {}
+Billboard::~Billboard() 
+{
+    Gum::_delete(pVAO);
+}
 
 void Billboard::render(ShaderProgram *shader)
 {
-	if(vec3::distance(Camera::ActiveCamera->getPosition(), getPosition()) < 4000)
+	if(vec3::distance(Camera::getActiveCamera()->getPosition(), getPosition()) < 4000)
 	{
         shader->loadUniform("transformationMatrix", mat4());
         shader->loadUniform("billboardCenter", Position);
@@ -50,20 +44,16 @@ void Billboard::render(ShaderProgram *shader)
         
         if (Transparency) { glBlendFunc(GL_SRC_ALPHA, GL_ONE); }
         else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
-        glDepthMask(false);
+        //glDepthMask(false);
 
-		if(tex != nullptr)
-        	tex->bind(0);
-        glBindVertexArray(VAO);
-        glEnableVertexAttribArray(0);
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 6);
-        glDisableVertexAttribArray(0);
-        glBindVertexArray(0);
-		if(tex != nullptr)
-        	tex->unbind(0);
+		if(tex != nullptr) tex->bind(0);
+        pVAO->bind();
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, pVAO->getRenderCount());
+        pVAO->unbind();
+		if(tex != nullptr) tex->unbind(0);
 
-        glDepthMask(true);
-        glDisable(GL_BLEND);
+        //glDepthMask(true);
+        //glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
 	}
 }
@@ -77,7 +67,7 @@ bool Billboard::operator<(Billboard& that) { return this->getcameradistance() > 
 void Billboard::setTexture(Texture *tex)     { this->tex = tex; }
 void Billboard::setPosition(vec3 pos)        { this->Position = pos; }
 void Billboard::setScale(vec2 scale)         { this->Scale = scale; }
-void Billboard::setPixelSize(vec2 size)      { this->Scale = size / Renderer3D::ActiveRenderer->getRenderCanvas()->getSize(); } 
+void Billboard::setPixelSize(vec2 size)      { this->Scale = size / Renderer::getActiveRenderer()->getRenderCanvas()->getSize(); } 
 void Billboard::useFixedSize(bool fixedsize) { this->bFixedSize = fixedsize; }
 
 //
@@ -85,5 +75,5 @@ void Billboard::useFixedSize(bool fixedsize) { this->bFixedSize = fixedsize; }
 //
 vec3 Billboard::getPosition()                { return Position; }
 mat4* Billboard::getTransformationMatrix()   { return &TransMatrix; }
-float Billboard::getcameradistance()         { return vec3::distance(Position, Camera::ActiveCamera->getPosition()); }
+float Billboard::getcameradistance()         { return vec3::distance(Position, Camera::getActiveCamera()->getPosition()); }
 Texture* Billboard::getTexture()             { return tex; }

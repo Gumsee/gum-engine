@@ -1,9 +1,9 @@
 #pragma once
-#include "../General/World.h"
+#include "../3D/World3D.h"
 
 class WorldLoader
 {
 public:
-    static World* loadWorld(std::string filepath, std::string assetspath);
-    static void saveWorld(std::string filepath, World* world);
+    static World3D* loadWorld(std::string filepath, std::string assetspath);
+    static void saveWorld(std::string filepath, World3D* world);
 };

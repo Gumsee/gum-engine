@@ -1,5 +1,5 @@
 #include "CombineFramebuffer.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 
 
 CombineFramebuffer::CombineFramebuffer(Box *canvas)

@@ -5,7 +5,7 @@
 
 #include "../Lightning/G_Buffer.h"
 
-class Renderer3D;
+class Renderer;
 
 class SSAO
 {
@@ -14,7 +14,7 @@ private:
 	ShaderProgram *pShader;
 	ShaderProgram *pBlurShader;
 
-	Renderer3D* pRenderer;
+	Renderer* pRenderer;
 
 	Box *rect;
 	G_Buffer *gbuffer;
@@ -40,7 +40,7 @@ private:
     void initShader();
 
 public:
-	SSAO(Box *gui, G_Buffer *gbuffer, Renderer3D* renderer);
+	SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer);
 	~SSAO();
 
 	void render();

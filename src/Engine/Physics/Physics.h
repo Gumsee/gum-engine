@@ -1,14 +1,8 @@
 #pragma once
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
-//#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
-#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
-#include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <BulletDynamics/ConstraintSolver/btConstraintSolver.h>
-#include "DebugDrawer.h"
+#include <gum-maths.h>
 
 struct Instance;
-
+class btRigidBody;
 
 class Physics
 {
@@ -16,14 +10,14 @@ class Physics
 private:
 	enum ConstraintType { _6DOF };
 
-	btDefaultCollisionConfiguration* collisionConfiguration;
-	btCollisionDispatcher* dispatcher;
-	btDbvtBroadphase* overlappingPairCache;
-	btGhostPairCallback* m_ghostPairCallback;
-	btSequentialImpulseConstraintSolver* solver;
-	btDiscreteDynamicsWorld *pDynamicWorld;
+	void* collisionConfiguration;
+	void* dispatcher;
+	void* overlappingPairCache;
+	void* m_ghostPairCallback;
+	void* solver;
+	void* pDynamicWorld;
 	//btMultiBodyDynamicsWorld *pDynamicWorld;
-	DebugDrawer* pDebugDrawer;
+	//DebugDrawer* pDebugDrawer;
 	Instance* pOnHoverObjectInstance;
 
 	vec3 vWindDir;
@@ -35,13 +29,13 @@ public:
 
 	void update();
 	void addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type);
-	void addDebugDrawer(ShaderProgram *shader);
+	void addDebugDrawer();
 	void drawDebug();
 	void addWall(vec3 pos, vec3 size);
 
 	//Getter
-	DebugDrawer *getDebugDrawer();
-	btDiscreteDynamicsWorld *getWorld();
+	//DebugDrawer *getDebugDrawer();
+	void* getWorld();
 	Instance* getMouseOnObjectInstance();
 	vec3 getWindDir();
 

@@ -1,24 +1,22 @@
 #pragma once
+#include "OpenGL/Renderable.h"
 #include <GUI/Primitives/Box.h>
 #include <OpenGL/ShaderProgram.h>
 #include <OpenGL/Framebuffer.h>
 
-#include "../../Object/Object.h"
+#include <OpenGL/Object3DInstance.h>
 
 class OutlineRenderer
 {
 private:
-    ShaderProgram* pShader, *pProcessingShader;
-    Framebuffer* pFramebuffer, *pProcessingFramebuffer;
+    ShaderProgram* pShader;
     Box* pCanvas;
 
 public:
     OutlineRenderer(Box* rendercanvas);
     ~OutlineRenderer();
 
-    void render(Instance *instance, Framebuffer* fb);
+    void render(Renderable* renderable, mat4 transform);
  
     void initShader();
-    Framebuffer* getFramebuffer();
-    Texture2D* getResultTexture();
 };

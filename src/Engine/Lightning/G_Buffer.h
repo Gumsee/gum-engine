@@ -1,4 +1,5 @@
 #pragma once
+#include <GUI/Primitives/Box.h>
 #include <OpenGL/Framebuffer.h>
 #include <OpenGL/Texture.h>
 #include <OpenGL/ShaderProgram.h>
@@ -6,7 +7,8 @@
 
 class G_Buffer
 {
-private:    
+private:
+    Box* pRenderCanvas;
     Framebuffer* gBuffer;
 	long long microseconds;
 	int depthBuffer;
@@ -16,7 +18,7 @@ private:
     void initShader();
 
 public:
-    G_Buffer(ivec2 resolution);
+    G_Buffer(Box* canvas);
     ~G_Buffer();
 
     void bind();
@@ -26,7 +28,6 @@ public:
 	int getDepthBuffer();
     ShaderProgram *getShader();
     Texture *getPositionMap();
-	Texture *getIndividualColorMap();
     Texture *getNormalMap();
     Texture *getDiffuseMap();
 	Texture *getObjectDataMap();

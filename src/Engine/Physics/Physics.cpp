@@ -1,5 +1,12 @@
 #include "Physics.h"
 #include <bullet/LinearMath/btAlignedAllocator.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+//#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletDynamics/ConstraintSolver/btConstraintSolver.h>
+#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include <stdio.h>
 //#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
 
@@ -9,72 +16,90 @@
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
 
-#include "../General/Camera.h"
-#include "../Managers/ShaderManager.h"
+#include "../Rendering/Camera.h"
+#include "../Shaders/ShaderManager.h"
+#include "../3D/Object/CollisionObject.h"
+#include "DebugDrawer.h"
 
 Physics::Physics()
 {
-	pDebugDrawer = nullptr;
+	//pDebugDrawer = nullptr;
 	this->vRayHitPosition = vec3(0,0,0);
 	this->vWindDir = vec3(0,0,0);
     
 	Gum::Output::log("Initializing Physics! \t\t\t!!!IN WORK!!!");
 	Gum::Output::debug("Physics: Creating collisionConfiguarion");
-	collisionConfiguration = new btDefaultCollisionConfiguration();
+	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
 	//Gum::Output::debug("Physics: Creating collisionDispatcher");
-	dispatcher = new btCollisionDispatcher(collisionConfiguration);
+	btCollisionDispatcher* dispatcher = new btCollisionDispatcher(collisionConfiguration);
 
 	///btDbvtBroadphase is a good general purpose broadphase. You can also try out btAxis3Sweep.
 	//Gum::Output::debug("Physics: Creating BroadphaseInterface");
-	overlappingPairCache = new btDbvtBroadphase();
-	m_ghostPairCallback = new btGhostPairCallback();
+	btDbvtBroadphase* overlappingPairCache = new btDbvtBroadphase();
+	btGhostPairCallback* m_ghostPairCallback = new btGhostPairCallback();
 	overlappingPairCache->getOverlappingPairCache()->setInternalGhostPairCallback(m_ghostPairCallback);
 
 	///the default constraint solver. For parallel processing you can use a different solver (see Extras/BulletMultiThreaded)
 	//Gum::Output::debug("Physics: Creating SequentialImpulseConstraintSolver");
-	solver = new btSequentialImpulseConstraintSolver();
+	btSequentialImpulseConstraintSolver* solver = new btSequentialImpulseConstraintSolver();
 	//btMultiBodyConstraintSolver* solver = new btMultiBodyConstraintSolver();
 
 	//Gum::Output::debug("Physics: Creating Dynamic world");
-	pDynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
+	btDiscreteDynamicsWorld* dynamicWorld = new btDiscreteDynamicsWorld(dispatcher, overlappingPairCache, solver, collisionConfiguration);
 
-	pDynamicWorld->setGravity(btVector3(0, -9.81, 0));
-	pDynamicWorld->getSolverInfo().m_globalCfm = 1e-3;
-	pDynamicWorld->setForceUpdateAllAabbs(false);    
+	dynamicWorld->setGravity(btVector3(0, -9.81, 0));
+	dynamicWorld->getSolverInfo().m_globalCfm = 1e-3;
+	dynamicWorld->setForceUpdateAllAabbs(false);
+    /*pDynamicWorld->setInternalTickCallback([](btDynamicsWorld* world, float timeStep){
+        for(int i = 0; i < world->getDispatcher()->getNumManifolds(); i++)
+        {
+            btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+            CollisionObject* collObj = (CollisionObject*)contactManifold->getBody0()->getUserPointer();
+            collObj->updateOnCollision();
+        }
+    });*/
+
+    this->collisionConfiguration = collisionConfiguration;
+    this->dispatcher = dispatcher;
+    this->overlappingPairCache = overlappingPairCache;
+    this->m_ghostPairCallback = m_ghostPairCallback;
+    this->solver = solver;
+    this->pDynamicWorld = dynamicWorld;
 
 
 	//Setting default Debugging Shader
-	addDebugDrawer(Gum::ShaderManager::getShaderProgram("PhysicsDebuggingShader"));
+	addDebugDrawer();
 
 	Gum::Output::log("Initialized Physics!");
 }
 
 Physics::~Physics()
 {
-	Gum::_delete(collisionConfiguration);
-	Gum::_delete(dispatcher);
-	Gum::_delete(overlappingPairCache);
-	Gum::_delete(m_ghostPairCallback);
-	Gum::_delete(solver);
-	Gum::_delete(pDynamicWorld);
-	Gum::_delete(pDebugDrawer);
+	Gum::_delete<btDefaultCollisionConfiguration>(collisionConfiguration);
+	Gum::_delete<btCollisionDispatcher>(dispatcher);
+	Gum::_delete<btDbvtBroadphase>(overlappingPairCache);
+	Gum::_delete<btGhostPairCallback>(m_ghostPairCallback);
+	Gum::_delete<btSequentialImpulseConstraintSolver>(solver);
+	Gum::_delete<btDiscreteDynamicsWorld>(pDynamicWorld);
+	//Gum::_delete(pDebugDrawer);
 }
 
 void Physics::update()
 {
 	Gum::Output::debug("Updating Physics");
-	pDynamicWorld->stepSimulation(FPS::get(), 100, 1.0f/240);
+    btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
+	world->stepSimulation(FPS::get(), 100, 1.0f/240);
 
-	vec3 out_origin = Camera::ActiveCamera->getPosition();
+	vec3 out_origin = Camera::getActiveCamera()->getPosition();
 	vec3 out_end = out_origin + Gum::Window::CurrentlyBoundWindow->getMouse()->getRayDirection()*1000.0f;
 
 	btCollisionWorld::ClosestRayResultCallback RayCallback(
 		btVector3(out_origin.x, out_origin.y, out_origin.z), 
 		btVector3(out_end.x, out_end.y, out_end.z)
 	);
-	pDynamicWorld->rayTest(
+	world->rayTest(
 		btVector3(out_origin.x, out_origin.y, out_origin.z), 
 		btVector3(out_end.x, out_end.y, out_end.z), 
 		RayCallback
@@ -98,13 +123,12 @@ void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType 
 
 
 
-void Physics::addDebugDrawer(ShaderProgram *shader)
+void Physics::addDebugDrawer()
 {
-	Gum::_delete(pDebugDrawer);
-	pDebugDrawer = new DebugDrawer(shader);
+	DebugDrawer* pDebugDrawer = new DebugDrawer();
 
 	//btIDebugDraw *draw = new DebugDrawer();
-	pDynamicWorld->setDebugDrawer(pDebugDrawer);
+	((btDiscreteDynamicsWorld*)pDynamicWorld)->setDebugDrawer(pDebugDrawer);
 	
 	pDebugDrawer->setDebugMode(btIDebugDraw::DebugDrawModes::DBG_DrawAabb | btIDebugDraw::DebugDrawModes::DBG_DrawWireframe | btIDebugDraw::DebugDrawModes::DBG_DrawText);
 	//drawer->setDebugMode(btIDebugDraw::DebugDrawModes::DBG_DrawWireframe);
@@ -116,9 +140,16 @@ void Physics::drawDebug()
 {
 	if(Settings::getSetting(Settings::Names::SHOWDEBUGINFO)) 
 	{
-		pDebugDrawer->prepare();
+        btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
+		//pDebugDrawer->prepare();
 		glLineWidth(1);
-		pDynamicWorld->debugDrawWorld();
+		world->debugDrawWorld();
+        btCollisionObjectArray objs = world->getCollisionWorld()->getCollisionObjectArray();
+        for(int i = 0; i < objs.size(); i++)
+        {
+            CollisionObject* collObj = (CollisionObject*)objs[i]->getUserPointer();
+            collObj->updateOnCollision();
+        }
 
 		//pDebugDrawer->finish();
 	}
@@ -135,7 +166,9 @@ void Physics::addWall(vec3 pos, vec3 size)
 	Transform.setIdentity();
 	Transform.setOrigin(btVector3(pos.x, pos.y, pos.z));
 	btDefaultMotionState* myMotionState = new btDefaultMotionState(Transform);
-	pDynamicWorld->addRigidBody(new btRigidBody(0, myMotionState, ColShape, localInertia));
+
+    btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
+	world->addRigidBody(new btRigidBody(0, myMotionState, ColShape, localInertia));
 }
 
 
@@ -144,8 +177,8 @@ void Physics::addWall(vec3 pos, vec3 size)
 //
 // Getter
 //
-btDiscreteDynamicsWorld* Physics::getWorld()  	{ return this->pDynamicWorld; }
-DebugDrawer* Physics::getDebugDrawer()		 	{ return this->pDebugDrawer; }
+void* Physics::getWorld()                       { return this->pDynamicWorld; }
+//DebugDrawer* Physics::getDebugDrawer()		 	{ return this->pDebugDrawer; }
 Instance* Physics::getMouseOnObjectInstance() 	{ return this->pOnHoverObjectInstance; }
 vec3 Physics::getWindDir() 					    { return this->vWindDir; }
 

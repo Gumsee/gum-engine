@@ -2,8 +2,8 @@
 #include <OpenGL/Framebuffer.h>
 #include <OpenGL/Texture2D.h>
 
-#include "../General/Renderer3D.h"
-#include "../General/Camera.h"
+#include "../3D/Renderer3D.h"
+#include "../Rendering/Camera.h"
 
 class ReflectiveTexture2D
 {
@@ -23,7 +23,7 @@ public:
     
     //Getter
 	Texture2D *getTexture();
-	Texture2D *getDepthTexture();
+	TextureDepth *getDepthTexture();
 	float getHeight();
 	vec4 *getClippingPlane();
 

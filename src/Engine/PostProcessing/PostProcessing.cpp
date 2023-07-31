@@ -1,6 +1,6 @@
 #include "PostProcessing.h"
 #include "PostProcessingShader.h"
-#include "../Managers/ShaderManager.h"
+#include "../Shaders/ShaderManager.h"
 
 namespace Gum {
 namespace PostProcessing

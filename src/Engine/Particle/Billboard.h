@@ -1,19 +1,27 @@
 #pragma once
+#include "OpenGL/VertexArrayObject.h"
 #include <OpenGL/Texture.h>
 #include <OpenGL/ShaderProgram.h>
 
 class Billboard
 {
 private:
+	inline static const std::vector<float> vertices {
+		-0.5,  0.5, 0,
+		-0.5, -0.5, 0,
+		 0.5,  0.5, 0,
+		 0.5,  0.5, 0,
+		-0.5, -0.5, 0,
+		 0.5, -0.5, 0
+	};
+
 	vec3 Position;
 	vec3 Rotation;
 	vec2 Scale;
 	bool Transparency = false;
     bool bFixedSize = true;
 
-	GLuint VAO;
-	GLuint VertexPositions;
-	int VertexCount = 0;
+	VertexArrayObject* pVAO;
 
 	Texture *tex;
 	mat4 TransMatrix;

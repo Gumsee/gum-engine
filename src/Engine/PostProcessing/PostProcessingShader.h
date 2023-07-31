@@ -28,6 +28,7 @@ R"(
     in vec2 Texcoord;
     in vec3 surfaceNormal;
     in vec3 toLightVector;
+    out vec4 FragColor;
 
     uniform sampler2D textureSampler;
     uniform vec3 Color;
@@ -36,7 +37,7 @@ R"(
 
     void main(void)
     {
-        vec4 TextureColor = texture2D(textureSampler, Texcoord).rgba;
-        gl_FragColor = TextureColor;
+        vec4 TextureColor = texture(textureSampler, Texcoord).rgba;
+        FragColor = TextureColor;
     }
 )";

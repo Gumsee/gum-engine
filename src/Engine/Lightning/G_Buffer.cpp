@@ -1,6 +1,6 @@
 #include "G_Buffer.h"
 #include "GBufferShader.h"
-#include "../Managers/ShaderManager.h"
+#include "../Shaders/ShaderManager.h"
 #include <System/MemoryManagement.h>
 
 /*
@@ -10,17 +10,18 @@
     3 DiffuseMap;
     4 ObjectDataMap;
 */
-G_Buffer::G_Buffer(ivec2 resolution)
+G_Buffer::G_Buffer(Box* canvas)
 {
-    gBuffer = new Framebuffer(resolution);
-    gBuffer->addTextureAttachment(0, "G_BufferPositionMap",   GL_RGBA, GL_RGBA32F, GL_FLOAT);
-    gBuffer->addTextureAttachment(1, "G_BufferIndividualMap", GL_RGBA, GL_RGBA);
-    gBuffer->addTextureAttachment(2, "G_BufferNormalMap",     GL_RGBA, GL_RGBA32F, GL_FLOAT);
-    gBuffer->addTextureAttachment(3, "G_BufferDiffuseMap",    GL_RGBA, GL_RGBA);
-    gBuffer->addTextureAttachment(4, "G_BufferObjectDataMap", GL_RGBA, GL_RGBA);
+    pRenderCanvas = canvas;
 
-    gBuffer->addDepthAttachment();
-    //gBuffer->addDepthTextureAttachment();
+    gBuffer = new Framebuffer(pRenderCanvas->getSize());
+    gBuffer->addTextureAttachment(0, "G_BufferPositionMap",   GL_RGBA, GL_RGBA32F, GL_FLOAT);
+    gBuffer->addTextureAttachment(1, "G_BufferNormalMap",     GL_RGBA, GL_RGBA32F, GL_FLOAT);
+    gBuffer->addTextureAttachment(2, "G_BufferDiffuseMap",    GL_RGBA, GL_RGBA);
+    gBuffer->addTextureAttachment(3, "G_BufferObjectDataMap", GL_RGBA, GL_RGBA);
+
+    //gBuffer->addDepthAttachment();
+    gBuffer->addDepthTextureAttachment();
     //gBuffer->addDepthStencilTextureAttachment("GBufferDepthTextureAttachment");
 
     pShader = nullptr;
@@ -38,12 +39,14 @@ void G_Buffer::bind()
     start = std::chrono::high_resolution_clock::now();
     gBuffer->bind();
     glClearColor(0.0, 0.0, 0.0, 1.0);
-    glClearDepth(1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    //glClearDepth(1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
-    glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
-    glDepthFunc(GL_LESS);
+    //glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
+    //glDepthFunc(GL_LESS);
+    glDisable(GL_STENCIL_TEST);
+    //glDepthMask(GL_FALSE);
 }
 
 void G_Buffer::unbind()
@@ -61,10 +64,9 @@ void G_Buffer::unbind()
 int G_Buffer::getDepthBuffer()              { return this->gBuffer->getDepthAttachmentID(); }
 ShaderProgram *G_Buffer::getShader()        { return this->pShader; }
 Texture* G_Buffer::getPositionMap()         { return this->gBuffer->getTextureAttachment(0); }
-Texture* G_Buffer::getIndividualColorMap()  { return this->gBuffer->getTextureAttachment(1); }
-Texture* G_Buffer::getNormalMap()           { return this->gBuffer->getTextureAttachment(2); }
-Texture* G_Buffer::getDiffuseMap()          { return this->gBuffer->getTextureAttachment(3); }
-Texture* G_Buffer::getObjectDataMap()       { return this->gBuffer->getTextureAttachment(4); }
+Texture* G_Buffer::getNormalMap()           { return this->gBuffer->getTextureAttachment(1); }
+Texture* G_Buffer::getDiffuseMap()          { return this->gBuffer->getTextureAttachment(2); }
+Texture* G_Buffer::getObjectDataMap()       { return this->gBuffer->getTextureAttachment(3); }
 Texture* G_Buffer::getDepthMap()            { return this->gBuffer->getDepthTextureAttachment(); }
 long long G_Buffer::getExecutionTime()      { return this->microseconds; }
 Framebuffer* G_Buffer::getFramebuffer()     { return this->gBuffer; }
@@ -117,7 +119,7 @@ void G_Buffer::initShader()
         pShader->addTexture("Enviorment", 15);
         pShader->addTexture("ShadowMap", 16);
 
-        Gum::ShaderManager::addShaderProgram(pShader);
+        Gum::ShaderManager::addShaderProgram(pShader, "GBufferShader");
     }
     
     pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");

@@ -1,5 +1,5 @@
 #include "GaussianBlur.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 #include <System/MemoryManagement.h>
 
 

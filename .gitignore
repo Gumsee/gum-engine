@@ -8,6 +8,11 @@
 *.out
 *.log
 *.cmake
+*.hdr
+*.png
+*.tga
+*.jpg
+*.exr
 libGumEngine.a
 libEngineAll.a
 Makefile

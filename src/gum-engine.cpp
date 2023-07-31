@@ -1,10 +1,12 @@
 #include "gum-engine.h"
 #include "Engine/PostProcessing/PostProcessing.h"
 #include "Engine/Particle/ShaderInitializer.h"
-#include "Engine/Managers/MaterialManager.h"
-#include "Engine/Managers/ShaderManager.h"
-#include "Engine/Managers/LightManager.h"
-#include "Engine/Managers/TextureManager.h"
+#include "Engine/Material/MaterialManager.h"
+#include "Engine/Shaders/ShaderManager.h"
+#include "Engine/Lightning/LightManager.h"
+#include "Engine/Texture/TextureManager.h"
+#include "Engine/Shaders/SimpleShader.h"
+#include "Engine/Shaders/ThicklinesShader.h"
 
 namespace Gum { 
 namespace Engine
@@ -14,6 +16,8 @@ namespace Engine
         Gum::MaterialManager::init();
         Gum::PostProcessing::initShaders();
         Gum::Particles::initShaders();
+        initSimpleShader();
+        initThicklinesShader();
     }
 
 	void cleanup()

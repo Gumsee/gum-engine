@@ -3,8 +3,9 @@
 
 static std::string SSAOFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
-    varying vec2 vary_Texcoord;
+    in vec2 Texcoord;
     //out float FragColor;
+    out vec4 FragColor;
 
     uniform sampler2D texPosition;
     uniform sampler2D texNormal;
@@ -21,14 +22,14 @@ R"(
     const float bias = 0.025f; 
     void main() 
     { 
-        vec4 posMap =      texture(texPosition, vary_Texcoord); 
+        vec4 posMap =      texture(texPosition, Texcoord); 
         vec3 fragPos = posMap.xyz;
         float alpha = posMap.a;
-        if (alpha <= 0) { gl_FragColor = vec4(0,0,0,0); }
+        if (alpha <= 0) { FragColor = vec4(0,0,0,0); }
         else
         {
-            vec3 normal =       texture(texNormal, vary_Texcoord).xyz; 
-            vec3 randomVec =    texture(texNoise, vary_Texcoord * noiseScale).xyz; 
+            vec3 normal =       texture(texNormal, Texcoord).xyz; 
+            vec3 randomVec =    texture(texNoise, Texcoord * noiseScale).xyz; 
             // create TBN change-of-basis matrix: from tangent-space to view-space 
             vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal)); 
             vec3 bitangent = cross(normal, tangent); 
@@ -38,11 +39,11 @@ R"(
             for(int i = 0; i < kernelSize; ++i) 
             { 
                 // get sample position 
-                vec3 sample = TBN * samples[i]; // from tangent to view-space 
-                sample = fragPos + sample * radius;  
+                vec3 samplepos = TBN * samples[i]; // from tangent to view-space 
+                samplepos = fragPos + samplepos * radius;  
                 
                 // project sample position (to sample texture) (to get position on screen/texture) 
-                vec4 offset = vec4(sample, 1.0); 
+                vec4 offset = vec4(samplepos, 1.0); 
                 offset = projectionMatrix * offset; // from view to clip-space 
                 offset.xyz /= offset.w; // perspective divide 
                 offset.xyz = offset.xyz * 0.5 + 0.5; // transform to range 0.0 - 1.0 
@@ -50,11 +51,11 @@ R"(
                 // get sample depth 
                 vec3 occluderPos = texture(texPosition, offset.xy).xyz;
                 float rangeCheck = smoothstep(0.0, 1.0, radius / length(fragPos - occluderPos)); 
-                occlusion       += (occluderPos.z >= sample.z + bias ? 1.0 : 0.0) * rangeCheck; 
+                occlusion       += (occluderPos.z >= samplepos.z + bias ? 1.0 : 0.0) * rangeCheck; 
             } 
             occlusion = 1.0 - (occlusion / kernelSize); 
             occlusion = pow(occlusion, power); 
-            gl_FragColor = vec4(occlusion,occlusion,occlusion, alpha);
+            FragColor = vec4(occlusion,occlusion,occlusion, alpha);
         }
     }
 )";
@@ -62,8 +63,9 @@ R"(
 
 static std::string SSAOBlurFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
-    varying vec2 vary_Texcoord;
+    in vec2 Texcoord;
     //out float FragColor;
+    out vec4 FragColor;
 
     uniform int NoiseSize;
     uniform sampler2D ssaoInput;
@@ -79,10 +81,10 @@ R"(
             for (int j = -halfsize; j < halfsize; ++j) 
             {
                 vec2 offset = vec2(float(i), float(j)) * texelSize;
-                result += texture(ssaoInput, vary_Texcoord + offset).r;
+                result += texture(ssaoInput, Texcoord + offset).r;
             }
         }
         float color = result / float(NoiseSize * NoiseSize);
-        gl_FragColor = vec4(color,color,color,1.0f);
+        FragColor = vec4(color,color,color,1.0f);
     }
 )";

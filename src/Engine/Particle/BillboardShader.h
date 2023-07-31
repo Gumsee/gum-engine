@@ -37,12 +37,13 @@ R"(
 static const std::string BillboardFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
     in vec2 Texcoord;
+    out vec4 FragColor;
 
     uniform sampler2D textureSampler;
 
     void main(void)
     {
         vec4 color = texture(textureSampler, Texcoord);
-        gl_FragColor = color;
+        FragColor = color;
     }
 )";

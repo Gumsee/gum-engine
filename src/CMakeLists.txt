@@ -5,7 +5,7 @@ file(GLOB_RECURSE SRC
 "./*.cpp"
 
 )
-add_library(${CMAKE_PROJECT_NAME} STATIC ${SRC})
+add_library(${CMAKE_PROJECT_NAME}_trgt STATIC ${SRC})
 
 include_directories(${CMAKE_SOURCE_DIR}/external/)
 
@@ -49,6 +49,11 @@ include_directories(${CMAKE_SOURCE_DIR}/external/)
         else()
             message(FATAL_ERROR Library for GUMCODECS cannot not found)
         endif() 
+        if(GUMPRIMITIVES_FOUND)
+            include_directories(${GUMPRIMITIVES_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMPRIMITIVES cannot not found)
+        endif() 
         if(GUMDESKTOP_FOUND)
             include_directories(${GUMDESKTOP_INCLUDE_DIRS})
         else()
@@ -78,108 +83,173 @@ install(
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
 ) 
 
-file(GLOB_RECURSE HEADERS General//*.h)
+file(GLOB HEADERS Engine/2D/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/General//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/2D/
 ) 
 
-file(GLOB_RECURSE HEADERS Lightning//*.h)
+file(GLOB HEADERS Engine/3D/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Lightning//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/
 ) 
 
-install(
-    FILES Lightning/ShadowMapping.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
-) 
-
-file(GLOB_RECURSE HEADERS Loaders//*.h)
+file(GLOB HEADERS Engine/3D/Object/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Loaders//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Object/
 ) 
 
-file(GLOB_RECURSE HEADERS Managers//*.h)
+file(GLOB HEADERS Engine/3D/Object/Skeletal/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Managers//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Object/Skeletal/
 ) 
 
-file(GLOB_RECURSE HEADERS Material//*.h)
+file(GLOB HEADERS Engine/3D/Lightning/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Material//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Lightning/
 ) 
 
-file(GLOB_RECURSE HEADERS Object//*.h)
+file(GLOB HEADERS Engine/General/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Object//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/General/
 ) 
 
-install(
-    FILES Object/Skeletal.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
-) 
-
-file(GLOB_RECURSE HEADERS Particle//*.h)
+file(GLOB HEADERS Engine/Rendering/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Particle//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Rendering/
 ) 
 
-file(GLOB_RECURSE HEADERS Physics//*.h)
+file(GLOB HEADERS Engine/Lightning/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Physics//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Lightning/
 ) 
 
-file(GLOB_RECURSE HEADERS PostProcessing//*.h)
+file(GLOB HEADERS Engine/Lightning/ShadowMapping/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Lightning/ShadowMapping/
 ) 
 
-file(GLOB_RECURSE HEADERS PostProcessing/Effects//*.h)
+file(GLOB HEADERS Engine/Loaders/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/Effects//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Loaders/
 ) 
 
-file(GLOB_RECURSE HEADERS PostProcessing/ImageCorrection//*.h)
+file(GLOB HEADERS Engine/Managers/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/ImageCorrection//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Managers/
 ) 
 
-file(GLOB_RECURSE HEADERS PostProcessing/OutlineRenderer//*.h)
+file(GLOB HEADERS Engine/Material/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/PostProcessing/OutlineRenderer//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Material/
 ) 
 
-file(GLOB_RECURSE HEADERS Texture//*.h)
+file(GLOB HEADERS Engine/Particle/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Texture//
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Particle/
+) 
+
+file(GLOB HEADERS Engine/Physics/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Physics/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/Effects/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/ImageCorrection/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/ImageCorrection/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/OutlineRenderer/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/OutlineRenderer/
+) 
+
+file(GLOB HEADERS Engine/Texture/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Texture/
+) 
+
+file(GLOB HEADERS Engine/Shaders/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Shaders/
 )
 
 
 
-install(TARGETS ${CMAKE_PROJECT_NAME}
-    EXPORT ${CMAKE_PROJECT_NAME}Targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
-install(
-    EXPORT ${CMAKE_PROJECT_NAME}Targets
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
-    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+set(COMBINED_LIB ${CMAKE_BINARY_DIR}/lib${CMAKE_PROJECT_NAME}.a)
+
+add_custom_target(createcombineddir
+    COMMAND mkdir -p ${CMAKE_BINARY_DIR}/combined/
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/
+    DEPENDS ${CMAKE_PROJECT_NAME}_trgt
+    VERBATIM
 )
+
+add_custom_command( #combinedtarget ALL
+    OUTPUT ${COMBINED_LIB}
+    
+    COMMAND ar -x $<TARGET_FILE:BulletSoftBody>
+    COMMAND ar -x $<TARGET_FILE:BulletDynamics>
+    COMMAND ar -x $<TARGET_FILE:BulletCollision>
+    COMMAND ar -x $<TARGET_FILE:LinearMath>
+    COMMAND ar -x $<TARGET_FILE:${CMAKE_PROJECT_NAME}_trgt>
+    COMMAND sh -c "ar -qcs \"${COMBINED_LIB}\" *.o"
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/combined/
+    DEPENDS  BulletSoftBody BulletDynamics BulletCollision LinearMath createcombineddir ${CMAKE_PROJECT_NAME}_trgt
+    COMMENT "Combining libs"
+    VERBATIM
+)
+
+add_custom_target(combinedlibtarget ALL DEPENDS ${COMBINED_LIB})
+
+# Create an library target out of the library compilation result
+add_library(${CMAKE_PROJECT_NAME} STATIC IMPORTED GLOBAL)
+add_dependencies(${CMAKE_PROJECT_NAME} combinedlibtarget)
+
+# Specify where the library is and where to find the headers
+set_target_properties(${CMAKE_PROJECT_NAME}
+    PROPERTIES
+    IMPORTED_LOCATION "${COMBINED_LIB}"
+)
+
+install(FILES ${COMBINED_LIB}
+    DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+#install(
+#    EXPORT ${CMAKE_PROJECT_NAME}Targets
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+#    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+#)
 
 configure_package_config_file("Config.cmake.in"
     "${CMAKE_PROJECT_NAME}Config.cmake"

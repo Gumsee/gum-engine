@@ -1,27 +1,28 @@
 #include "DebugDrawer.h"
+#include "PhysicsDebugShader.h"
+#include "../Shaders/ShaderManager.h"
+#include "../Rendering/Camera.h"
+#include "System/MemoryManagement.h"
+#include "System/Output.h"
+#include <btBulletDynamicsCommon.h>
 
 
 
-DebugDrawer::DebugDrawer(ShaderProgram *shader)
+DebugDrawer::DebugDrawer()
 {
-	this->shader = shader;
+    
+    pVAO = new VertexArrayObject();
+    pVBO = new VertexBufferObject<vec3>();
+    pVAO->addAttribute(pVBO, 0, 3, GL_FLOAT, sizeof(vec3), 0);
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)offsetof(vec3, x));
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-
-	vertices.resize(100000);
+    initShader();
 }
 
 
 DebugDrawer::~DebugDrawer()
 {
+    Gum::_delete(pVAO);
+    Gum::_delete(pVBO);
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor)
@@ -33,47 +34,50 @@ void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btV
 	//glVertex3d(to.getX(), to.getY(), to.getZ());
 	//glEnd();
 	//
+    Gum::Output::print("drawing line1");
 }
 
 void DebugDrawer::drawLine(const btVector3 & from, const btVector3 & to, const btVector3 & color)
 {
+    //Gum::Output::print(vec3(from.x(), from.y(), from.z()).toString() + " " + vec3(to.x(), to.y(), to.z()).toString());
 	vertices.clear();
 	vertices.push_back(vec3(from.x(), from.y(), from.z()));
 	vertices.push_back(vec3(to.x(), to.y(), to.z()));
+    pVBO->setData(vertices, GL_STATIC_DRAW);
 
-	glBindVertexArray(VAO);
-	shader->use();
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	shader->loadUniform("color", vec3(color.x(), color.y(), color.z()));
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vec3), vertices.data(), GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
+	pVAO->bind();
+	pShaderProgram->use();
+	pShaderProgram->loadUniform("color", vec4(color.x(), color.y(), color.z(), 1.0f));
+    pShaderProgram->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    pShaderProgram->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
 	glDrawArrays(GL_LINES, 0, vertices.size());
-	glDisableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	shader->unuse();
-	glBindVertexArray(0);
+	pShaderProgram->unuse();
+	pVAO->unbind();
 }
 
 void DebugDrawer::drawSphere(const btVector3 & p, btScalar radius, const btVector3 & color)
 {
+    Gum::Output::print("drawing sphere");
 }
 
 void DebugDrawer::drawTriangle(const btVector3 & a, const btVector3 & b, const btVector3 & c, const btVector3 & color, btScalar alpha)
 {
+    Gum::Output::print("drawing triangle");
 }
 
 void DebugDrawer::drawContactPoint(const btVector3 & PointOnB, const btVector3 & normalOnB, btScalar distance, int lifeTime, const btVector3 & color)
 {
+    Gum::Output::print("drawContactPoint");
 }
 
 void DebugDrawer::reportErrorWarning(const char * warningString)
 {
+    Gum::Output::print("reportErrorWarning");
 }
 
 void DebugDrawer::draw3dText(const btVector3 & location, const char * textString)
 {
+    Gum::Output::print("draw3dText");
 }
 
 void DebugDrawer::setDebugMode(int debugMode)
@@ -81,24 +85,15 @@ void DebugDrawer::setDebugMode(int debugMode)
 	this->m_debugMode = debugMode;
 }
 
-void DebugDrawer::prepare()
+void DebugDrawer::initShader()
 {
-	vertices.clear();
-}
-
-void DebugDrawer::finish()
-{
-	glBindVertexArray(VAO);
-	shader->use();
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices[0]), &vertices[0], GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glDrawArrays(GL_LINES, 0, vertices.size());
-	glDisableVertexAttribArray(0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	shader->unuse();
-	glBindVertexArray(0);
+    if(pShaderProgram == nullptr)
+	{
+		pShaderProgram = new ShaderProgram();
+        pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::VERTEX_SHADER));
+        pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::FRAGMENT_SHADER));
+        pShaderProgram->build("PhysicsDebuggingpShaderProgram");
+        pShaderProgram->addUniform("color");
+        Gum::ShaderManager::addShaderProgram(pShaderProgram);
+    }
 }

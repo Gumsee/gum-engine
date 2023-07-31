@@ -1,6 +1,6 @@
 #include "CombineTextures.h"
 #include "CombineTexturesShader.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 #include <System/MemoryManagement.h>
 
 ShaderProgram* CombineTextures::pShader = nullptr;

@@ -11,22 +11,19 @@ R"(
 	uniform mat4 projectionMatrix;
 	uniform mat4 transformationMatrix;
 
-    const float scale = 0.008f;
-
 	void main()
 	{
-        vec4 worldPosition = transformationMatrix * vec4(vertexPosition, 1.0f);
-        vec4 positionRelativeToCam = projectionMatrix * viewMatrix * worldPosition;
-		gl_Position = positionRelativeToCam;
+		gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(vertexPosition, 1.0f);
 	}
 )";
 
 static const std::string OutlineRendererFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
+    out vec4 FragColor;
+
 	void main()
 	{
-		vec4 color = vec4(1,1,1,1);
-		gl_FragColor = color;
+		FragColor = vec4(1,1,1,1);
 	}
 )";
 
@@ -46,6 +43,7 @@ R"(
 static const std::string OutlineRendererProcessingFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
 	in vec2 Texcoord;
+    out vec4 FragColor;
     uniform sampler2D textureSampler;
 
 	void main()
@@ -58,12 +56,12 @@ R"(
 		{
 			for (int j = -2; j < 2; j+=2) 
 			{
-				vec3 sample = texelFetch(textureSampler, ivec2(gl_FragCoord) + ivec2(i, j), 0).rgb;
-				if(sample == vec3(0,0,0))
+				vec3 texsample = texelFetch(textureSampler, ivec2(gl_FragCoord) + ivec2(i, j), 0).rgb;
+				if(texsample == vec3(0,0,0))
 				{
 					hasBlack = true;
 				}
-				if(sample == vec3(1,1,1))
+				if(texsample == vec3(1,1,1))
 				{
 					hasWhite = true;
 				}
@@ -71,8 +69,8 @@ R"(
 		}
 
 		if(hasWhite && hasBlack)
-			gl_FragColor = vec4(0.36, 0.38, 0.64, 1.0);
+			FragColor = vec4(0.36, 0.38, 0.64, 1.0);
 		else
-			gl_FragColor = vec4(0,0,0, 0.0);
+			FragColor = vec4(0,0,0, 0.0);
 	}
 )";

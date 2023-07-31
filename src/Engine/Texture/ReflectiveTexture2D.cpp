@@ -47,7 +47,7 @@ void ReflectiveTexture2D::render(Camera* camera)
 }
 
 Texture2D* ReflectiveTexture2D::getTexture()      { return (Texture2D*)pFrameBuffer->getTextureAttachment(); }
-Texture2D* ReflectiveTexture2D::getDepthTexture() { return pFrameBuffer->getDepthTextureAttachment(); }
+TextureDepth* ReflectiveTexture2D::getDepthTexture() { return pFrameBuffer->getDepthTextureAttachment(); }
 float ReflectiveTexture2D::getHeight()            { return fHeight; }
 vec4* ReflectiveTexture2D::getClippingPlane()     { return &v4Plane; }
 

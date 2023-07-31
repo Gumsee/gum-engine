@@ -1,5 +1,5 @@
 #include "ContrastChanger.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 
 
 ContrastChanger::ContrastChanger(Box *canvas)

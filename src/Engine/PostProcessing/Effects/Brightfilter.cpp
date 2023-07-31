@@ -1,5 +1,5 @@
 #include "Brightfilter.h"
-#include "../../Managers/ShaderManager.h"
+#include "../../Shaders/ShaderManager.h"
 
 Brightfilter::Brightfilter(Box* canvas)
 {

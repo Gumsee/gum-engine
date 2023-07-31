@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <OpenGL/Framebuffer.h>
 
-#include "../General/Renderer3D.h"
+#include "../3D/Renderer3D.h"
 
 class ClipPlaneTexture2D
 {

@@ -3,15 +3,15 @@
 
 #include <System/MemoryManagement.h>
 #include <OpenGL/WrapperFunctions.h>
-#include "../Managers/ShaderManager.h"
-#include "../General/Camera.h"
-#include "../General/Renderer3D.h"
+#include "../Shaders/ShaderManager.h"
+#include "../Rendering/Camera.h"
+#include "../Rendering/Renderer.h"
 
 #include <random>
 #include <chrono>
 #include <iostream>
 
-SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer3D* renderer) 
+SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer) 
 {
 	this->pRenderer = renderer;
 	this->rect = gui;
@@ -73,7 +73,7 @@ void SSAO::render()
 
 
 	pShader->use();
-    pShader->loadUniform("projectionMatrix", Camera::ActiveCamera->getProjectionMatrix());
+    pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
 	pShader->loadUniform("noiseScale", noiseScale);
 	pShader->loadUniform("kernelSize", (int)kernelSize);
 	pShader->loadUniform("radius", (float)radius);

@@ -1,5 +1,5 @@
 #include "Particle.h"
-#include "../General/Camera.h"
+#include "../Rendering/Camera.h"
 
 #include <Essentials/FPS.h>
 #include <gum-maths.h>
@@ -132,7 +132,7 @@ void Particle::setTextureOffset(vec2 &offset, int index, int NumberofRows, int N
 	offset.y = (float)row / (float)NumberofRows;
 }
 
-float Particle::getcameradistance() 			{ return vec3::distance(v3Position, Camera::ActiveCamera->getPosition()); }
+float Particle::getcameradistance() 			{ return vec3::distance(v3Position, Camera::getActiveCamera()->getPosition()); }
 float Particle::getBlend() 						{ return blend; }
 vec3 Particle::getPosition() 					{ return v3Position; }
 vec2 Particle::getTexCoords1() 					{ return TexCoords1; }

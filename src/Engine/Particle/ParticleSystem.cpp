@@ -2,7 +2,11 @@
 #include <algorithm>
 #include <gum-maths.h>
 
-#include "../General/World.h"
+#include "../Rendering/World.h"
+#include "OpenGL/VertexArrayObject.h"
+#include "OpenGL/VertexBufferObject.h"
+#include "Particle.h"
+#include "System/Output.h"
 
 #include <GL/glew.h>
 
@@ -11,6 +15,23 @@ ParticleSystem::ParticleSystem(World* world)
 	pWorld = world;
 	properties = new ParticleProperties();
 	ParticleStages = new std::vector<Particle::ParticleStage*>();
+
+    pVAO = new VertexArrayObject();
+
+    VertexBufferObject<float> vertexBuffer;
+    vertexBuffer.setData(vertices);
+    pVAO->addAttribute(&vertexBuffer, 0, 3, GL_FLOAT, 0, 0);
+    
+    partPositionsVBO = new VertexBufferObject<Particle>();
+    partPositionsVBO->setData(vParticles, GL_STREAM_DRAW);
+    pVAO->addAttribute(partPositionsVBO, 1, 3, GL_FLOAT, sizeof(Particle), offsetof(Particle, v3Position), 1);
+    pVAO->addAttribute(partPositionsVBO, 2, 2, GL_FLOAT, sizeof(Particle), offsetof(Particle, v2Scale), 1);
+	
+    TexOffsets = new VertexBufferObject<vec4>();
+    pVAO->addAttribute(TexOffsets, 3, 4, GL_FLOAT, sizeof(vec4), 0, 1);
+	
+    TexCoordInfo = new VertexBufferObject<vec2>();
+    pVAO->addAttribute(TexCoordInfo, 4, 2, GL_FLOAT, sizeof(vec2), 0, 1);
 }
 
 
@@ -18,97 +39,24 @@ ParticleSystem::~ParticleSystem()
 {
 }
 
-void ParticleSystem::create(std::string file)
-{
-	std::vector<float> vertices =
-	{
-		-0.5,  0.5, 0,
-		-0.5, -0.5, 0,
-		 0.5,  0.5, 0,
-		 0.5,  0.5, 0,
-		-0.5, -0.5, 0,
-		 0.5, -0.5, 0
-	};
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VertexPositions);
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VertexPositions);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	glGenBuffers(1, &partPositionsVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, partPositionsVBO);
-	glBufferData(GL_ARRAY_BUFFER, vParticles.size() * sizeof(Particle), vParticles.data(), GL_STREAM_DRAW);
-	glEnableVertexAttribArray(11);
-    glVertexAttribPointer(11, 3, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(offsetof(Particle, v3Position) + offsetof(vec3, x)));
-	glVertexAttribDivisor(11, 1);
-
-	glEnableVertexAttribArray(12);
-    glVertexAttribPointer(12, 2, GL_FLOAT, GL_FALSE, sizeof(Particle), (void*)(offsetof(Particle, v2Scale) + offsetof(vec2, x)));
-    glVertexAttribDivisor(12, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	
-	
-	glGenBuffers(1, &TexOffsets);
-	glBindBuffer(GL_ARRAY_BUFFER, TexOffsets);
-	glBufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * sizeof(vec4), 0, GL_STREAM_DRAW);
-	glEnableVertexAttribArray(13);
-    glVertexAttribPointer(13, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), (void*)offsetof(vec4, x));
-	glVertexAttribDivisor(13, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
-	
-	glGenBuffers(1, &TexCoordInfo);
-	glBindBuffer(GL_ARRAY_BUFFER, TexCoordInfo);
-	glBufferData(GL_ARRAY_BUFFER, MAX_INSTANCES * sizeof(vec2), 0, GL_STREAM_DRAW);
-	glEnableVertexAttribArray(14);
-    glVertexAttribPointer(14, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)offsetof(vec2, x));
-	glVertexAttribDivisor(14, 1);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-
-	glBindVertexArray(0);
-}
-
 void ParticleSystem::render()
 {
 	if (vParticles.size() > 0)
 	{
 		glDisable(GL_CULL_FACE);
-
-		glBindVertexArray(VAO);
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(11);
-		glEnableVertexAttribArray(12);
-		glEnableVertexAttribArray(13);
-		glEnableVertexAttribArray(14);
-
 		glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-
-		glActiveTexture(GL_TEXTURE0);
-		texture->bind();
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 
+        pVAO->bind();
+		texture->bind();
 		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 6, vParticles.size());
-
 		texture->unbind();
+        pVAO->unbind();
 
 		glDepthMask(GL_TRUE);
 		glDisable(GL_BLEND);
-
-		glDisableVertexAttribArray(14);
-		glDisableVertexAttribArray(13);
-		glDisableVertexAttribArray(12);
-		glDisableVertexAttribArray(11);
-		glDisableVertexAttribArray(0);
-		glBindVertexArray(0);
-
 		glEnable(GL_CULL_FACE);
 	}
 }
@@ -143,20 +91,9 @@ void ParticleSystem::update()
 			}
 	}
 	
-	glBindVertexArray(VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, partPositionsVBO);
-	glBufferData(GL_ARRAY_BUFFER, vParticles.size() * sizeof(Particle), vParticles.data(), GL_STREAM_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, vParticles.size() * sizeof(Particle), vParticles.data());
-
-	glBindBuffer(GL_ARRAY_BUFFER, TexOffsets);
-	glBufferData(GL_ARRAY_BUFFER, TexOffsetsVector.size() * sizeof(vec4), TexOffsetsVector.data(), GL_STREAM_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, TexOffsetsVector.size() * sizeof(vec4), TexOffsetsVector.data());
-
-	glBindBuffer(GL_ARRAY_BUFFER, TexCoordInfo);
-	glBufferData(GL_ARRAY_BUFFER, TexCoordInfoVector.size() * sizeof(vec2), TexCoordInfoVector.data(), GL_STREAM_DRAW);
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, TexCoordInfoVector.size() * sizeof(vec2), &TexCoordInfoVector[0]);
-
-	glBindVertexArray(0);
+    partPositionsVBO->setData(vParticles, GL_STREAM_DRAW);
+    TexOffsets->setData(TexOffsetsVector, GL_STREAM_DRAW);
+    TexCoordInfo->setData(TexCoordInfoVector, GL_STREAM_DRAW);
 }
 
 void ParticleSystem::addParticle(vec3 position, float lifetime)

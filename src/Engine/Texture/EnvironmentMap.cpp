@@ -1,8 +1,8 @@
 #include "EnvironmentMap.h"
 #include <OpenGL/WrapperFunctions.h>
-#include "../Managers/ShaderManager.h"
-#include "../General/Renderer3D.h"
-#include "../General/World.h"
+#include "../Shaders/ShaderManager.h"
+#include "../3D/Renderer3D.h"
+#include "../3D/World3D.h"
 
 EnvironmentMap::EnvironmentMap(Renderer3D* renderer)
 {
@@ -60,9 +60,9 @@ void EnvironmentMap::render()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		
-		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShader()->use();
+		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShaderProgram()->use();
 		pRenderer->getWorld()->getObjectManager()->getSkybox()->render();
-		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShader()->unuse();
+		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShaderProgram()->unuse();
 
         //GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
 		pRenderer->getWorld()->getObjectManager()->render(ObjectManager::ExceptionTypes::WITHOUTSKYBOX, Gum::ShaderManager::getShaderProgram("ReflectionlessBasicShader"));
