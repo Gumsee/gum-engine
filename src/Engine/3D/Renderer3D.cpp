@@ -13,40 +13,19 @@
 #include <System/MemoryManagement.h>
 
 Renderer3D::Renderer3D(Box* canvas, World3D* world)
+    : Renderer(canvas)
 {
-    pRenderCanvas = canvas;
     pWorld = world;
-
-    pRenderCanvas->invertTexcoordY(true);
 	pGBuffer      = new G_Buffer(pRenderCanvas);
-	//pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
+	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
 	pLightning    = new Lightning(pRenderCanvas, this);
     pShadowMaps   = new ShadowMapping(this);
     #ifdef DEBUG
     pGrid         = new Grid();
     #endif
 
-    pIDRenderer = new IDRenderer(pRenderCanvas);
-
-    //Setting up Occlusion Culling
-    Gum::Output::log("Creating Occlusion Culling Object");
-    pOcclusionMask = new OcclusionMask(canvas->getSize().x, canvas->getSize().y);
-	//pEnvironmentMap = new EnvironmentMap(pObjectManager);
-
-
-    pFramebuffer = new Framebuffer(canvas->getSize());
-    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", GL_RGBA, GL_RGBA16F);
-    pFramebuffer->addDepthTextureAttachment();
-    //pFramebuffer->addDepthStencilTextureAttachment();
-
-    pHighDynamicRange = new HighDynamicRange(pRenderCanvas);
-    this->fExposure = 1.0f;
-
     pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
     pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
-
-    if(ActiveRenderer == nullptr)
-        ActiveRenderer = this;
 }
 
 Renderer3D::~Renderer3D()
@@ -61,14 +40,9 @@ Renderer3D::~Renderer3D()
 }
 
 
-void Renderer3D::render()
+void Renderer3D::renderInternal()
 {
-	start = std::chrono::high_resolution_clock::now();
-
     //GumEngine::DefaultOutlineRenderer->resetFramebuffer();
-
-    //Render Occlusion Mask via CPU
-    pOcclusionMask->render();
     
     //Render Objects to GBuffer
     pGBuffer->bind();
@@ -122,22 +96,6 @@ void Renderer3D::render()
     pWorld->getPhysics()->drawDebug();
     pFramebuffer->unbind();
 
-
-
-
-    //Apply postprocessing effects here
-    Texture* lastTex = pFramebuffer->getTextureAttachment();
-    //Texture* lastTex = pLightning->getFramebuffer()->getTextureAttachment();
-    //for(int i = 0; i < vPostProcessingEffects.size(); i++)
-    {
-    //    vPostProcessingEffects[i]->render(lastTex);
-    //    lastTex = vPostProcessingEffects[i]->getResultTexture();
-    }
-
-
-    pHighDynamicRange->render(lastTex, this->fExposure);
-    lastTex = pHighDynamicRange->getResultTexture();
-
     glCullFace(GL_FRONT);
     //glCullFace(GL_BACK);
     //Render the Shadowmap
@@ -158,28 +116,11 @@ void Renderer3D::render()
     //Renders scene with all objects inside
     //Update the enviorment map
     //pEnvironmentMap->render();
-
-    pRenderCanvas->setTexture(lastTex);
-    //pRenderCanvas->setTexture(pFramebuffer->getTextureAttachment());
-    //pRenderCanvas->setTexture(Gum::TextureManager::getTexture("/home/gumse/Projects/gumball/gum-engine-backup/examples/assets/textures/grass.jpg", true));
-    //Gum::Output::print(pRenderCanvas->getSize().toString());
-
-	auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 }
 
-void Renderer3D::renderIDs()
+void Renderer3D::renderIDsInternal()
 {
-    pIDRenderer->bind();
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
-    
-    pIDRenderer->getMeshShader()->use();
-    pIDRenderer->getMeshShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pIDRenderer->getMeshShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pIDRenderer->getMeshShader(), true);
-
     pWorld->renderRenderableIDs();
 }
 
@@ -190,33 +131,25 @@ void Renderer3D::update()
 
 void Renderer3D::updateFramebufferSize()
 {
-    pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
-    pFramebuffer->setSize(pRenderCanvas->getSize());
-    pIDRenderer->setSize(pRenderCanvas->getSize());
-    if(Camera::getActiveCamera() != nullptr)
-        Camera::getActiveCamera()->updateProjection(pRenderCanvas->getSize());
+    Renderer::updateFramebufferSize();
 
+    pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
     pWorld->updateProjection();
 }
 
 
-void Renderer3D::addPostProcessingEffect(PostProcessingEffect* effect) { vPostProcessingEffects.push_back(effect); }
+//
+// Getter
+//
+SSAO* Renderer3D::getSSAO()                     { return this->pSSAO; }
+G_Buffer* Renderer3D::getGBuffer()              { return this->pGBuffer; }
+EnvironmentMap* Renderer3D::getEnvironmentMap() { return this->pEnvironmentMap; }
+ShadowMapping* Renderer3D::getShadowMapping()   { return this->pShadowMaps; }
+World3D* Renderer3D::getWorld()                 { return this->pWorld; }
 
-//Getter
-long long Renderer3D::getExecutionTime() const                         { return this->microseconds; }
-SSAO* Renderer3D::getSSAO()                                            { return this->pSSAO; }
-G_Buffer* Renderer3D::getGBuffer()                                     { return this->pGBuffer; }
-EnvironmentMap* Renderer3D::getEnvironmentMap()                        { return this->pEnvironmentMap; }
-ShadowMapping* Renderer3D::getShadowMapping()                          { return this->pShadowMaps; }
-Box* Renderer3D::getRenderCanvas()                                     { return this->pRenderCanvas; }
-float Renderer3D::getExposure() const                                  { return this->fExposure; }
-World3D* Renderer3D::getWorld()                                          { return this->pWorld; }
-Framebuffer* Renderer3D::getFramebuffer()                              { return this->pFramebuffer; }
-IDRenderer* Renderer3D::getIDRenderer()                                { return this->pIDRenderer; }
-
-//Setter
-void Renderer3D::setExposure(const float& exposure)                    { this->fExposure = exposure; }
-void Renderer3D::setRenderCanvas(Box* canvas)                          { this->pRenderCanvas = canvas; }
+//
+// Setter
+//
 void Renderer3D::setWorld(World3D* world) 
 { 
     this->pWorld = world; 

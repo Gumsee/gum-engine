@@ -31,15 +31,15 @@ protected:
 
     virtual void renderInternal() {};
     virtual void renderIDsInternal() {};
-    virtual void updateFramebufferSize();
 
 public:
     Renderer(Box* canvas);
     ~Renderer();
 
 
-    void render();
     virtual void update() {};
+    virtual void updateFramebufferSize();
+    void render();
     void renderIDs();
     void makeActive();
 

@@ -42,11 +42,11 @@ void Renderer::render()
     //Apply postprocessing effects here
     Texture* lastTex = pFramebuffer->getTextureAttachment();
     //Texture* lastTex = pLightning->getFramebuffer()->getTextureAttachment();
-    //for(int i = 0; i < vPostProcessingEffects.size(); i++)
+    /*for(int i = 0; i < vPostProcessingEffects.size(); i++)
     {
-    //    vPostProcessingEffects[i]->render(lastTex);
-    //    lastTex = vPostProcessingEffects[i]->getResultTexture();
-    }
+        vPostProcessingEffects[i]->render(lastTex);
+        lastTex = vPostProcessingEffects[i]->getResultTexture();
+    }*/
 
 
     pHighDynamicRange->render(lastTex, this->fExposure);
@@ -80,6 +80,8 @@ void Renderer::updateFramebufferSize()
 {
     pFramebuffer->setSize(pRenderCanvas->getSize());
     pIDRenderer->setSize(pRenderCanvas->getSize());
+    if(Camera::getActiveCamera() != nullptr)
+        Camera::getActiveCamera()->updateProjection(pRenderCanvas->getSize());
 }
 
 

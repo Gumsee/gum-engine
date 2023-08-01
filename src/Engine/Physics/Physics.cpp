@@ -1,5 +1,5 @@
 #include "Physics.h"
-#include <bullet/LinearMath/btAlignedAllocator.h>
+#include <LinearMath/btAlignedAllocator.h>
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
 //#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>

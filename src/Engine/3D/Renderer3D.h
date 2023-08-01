@@ -1,43 +1,24 @@
 #pragma once
-#include <chrono>
-
-#include <OpenGL/Framebuffer.h>
-#include <GUI/Primitives/Box.h>
-
 #include "../Lightning/G_Buffer.h"
-
 #include "../PostProcessing/SSAO.h"
-#include "../PostProcessing/Effects/PostProcessingEffect.h"
-#include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
 #include "../Texture/EnvironmentMap.h"
 
-#include "Desktop/Window.h"
-#include "../Rendering/IDRenderer.h"
-#include "../Rendering/OcclusionMask.h"
+#include "../Rendering/Renderer.h"
 #include "Grid.h"
 
 class World3D;
 class ShadowMapping;
 class Lightning;
 
-class Renderer3D
+class Renderer3D : public Renderer
 {
 private:
-	Framebuffer* pFramebuffer;
-    HighDynamicRange* pHighDynamicRange;
-    IDRenderer* pIDRenderer;
-    float fExposure;
-    Box* pRenderCanvas;
-
-    std::vector<PostProcessingEffect*> vPostProcessingEffects;
-
     World3D* pWorld;
     #ifdef DEBUG
         Grid* pGrid;
     #endif
 
 	//Occlusion Culling
-	OcclusionMask *pOcclusionMask;
 	EnvironmentMap *pEnvironmentMap;
 	ShadowMapping *pShadowMaps;
 	SSAO *pSSAO;
@@ -47,38 +28,24 @@ private:
     ShaderProgram* pParticleShader;
     ShaderProgram* pBillboardShader;
 
-	long long microseconds;
-	std::chrono::high_resolution_clock::time_point start;
+
+    void renderInternal()  override;
+    void renderIDsInternal()  override;
 
 public:
     Renderer3D(Box* canvas, World3D* world);
     ~Renderer3D();
 
-    inline static Renderer3D* ActiveRenderer = nullptr;
-
-    void render();
-    void renderIDs();
-    void update();
-
-    void addPostProcessingEffect(PostProcessingEffect* effect);
-
-    void updateFramebufferSize();
+    void update() override;
+    void updateFramebufferSize() override;
 
     //Setter
-    void setExposure(const float& exposure);
-    void setResolution(const ivec2& resolution);
-    void setRenderCanvas(Box* canvas);
     void setWorld(World3D* world);
 
     //Getter
-	long long getExecutionTime() const;
     SSAO* getSSAO();
     G_Buffer* getGBuffer();
     EnvironmentMap* getEnvironmentMap();
     ShadowMapping* getShadowMapping();
-    Box* getRenderCanvas();
-    float getExposure() const;
     World3D* getWorld();
-    Framebuffer* getFramebuffer();
-    IDRenderer* getIDRenderer();
 };
