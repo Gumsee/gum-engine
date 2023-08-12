@@ -10,6 +10,16 @@ class ParticleSystem;
 
 class World
 {
+public: 
+    enum Type
+    {
+        WORLD2D,
+        WORLD3D,
+    };
+
+private:
+    Type iType;
+
 protected:
 	//std::vector<std::function<void()>> vUpdateables;
 	std::vector<Renderable*> vRenderables;
@@ -19,8 +29,8 @@ protected:
     Physics* pPhysics;
 
 public:
-    World();
-    ~World();
+    World(const Type& type);
+    virtual ~World();
 
     virtual void update();
     virtual void renderSky() {};
@@ -38,4 +48,5 @@ public:
     //Getter
     Camera* getCamera(const unsigned int& index = 0);
     Physics* getPhysics();
+    Type getType() const;
 };

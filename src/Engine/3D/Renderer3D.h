@@ -33,7 +33,7 @@ private:
     void renderIDsInternal()  override;
 
 public:
-    Renderer3D(Box* canvas, World3D* world);
+    Renderer3D(Box* canvas);
     ~Renderer3D();
 
     void update() override;

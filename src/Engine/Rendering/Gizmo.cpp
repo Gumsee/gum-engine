@@ -9,7 +9,7 @@ Gizmo::Gizmo()
 {
     pPositionVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINE_STRIP);
     VertexBufferObject<mat4> *pTransMatricesVBO = new VertexBufferObject<mat4>();
-    pTransMatricesVBO->setData({m4Transformation});
+    pTransMatricesVBO->setData({mTransformation});
 
     VertexBufferObject<vec3> *pColorsVBO = new VertexBufferObject<vec3>();
     pColorsVBO->setData({vec3(1,0,1), vec3(0,1,0)});

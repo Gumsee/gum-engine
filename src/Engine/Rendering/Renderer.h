@@ -12,8 +12,16 @@
 
 class Renderer
 {
+public: 
+    enum Type
+    {
+        RENDERER2D,
+        RENDERER3D,
+    };
+
 private:
     inline static Renderer* pActiveRenderer = nullptr;
+    Type iType;
 
 protected:
 	Framebuffer* pFramebuffer;
@@ -33,8 +41,8 @@ protected:
     virtual void renderIDsInternal() {};
 
 public:
-    Renderer(Box* canvas);
-    ~Renderer();
+    Renderer(Box* canvas, const Type& type);
+    virtual ~Renderer();
 
 
     virtual void update() {};
@@ -54,6 +62,7 @@ public:
 	long long getExecutionTime() const;
     Box* getRenderCanvas();
     float getExposure() const;
+    Type getType() const;
     Framebuffer* getFramebuffer();
     IDRenderer* getIDRenderer();
     static Renderer* getActiveRenderer();

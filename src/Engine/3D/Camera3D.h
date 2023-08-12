@@ -38,8 +38,6 @@ public:
     Camera3D(const ivec2& resolution, World3D* world);
     ~Camera3D();
 
-	inline static Camera* ActiveCamera = nullptr;
-
     void lookAt(const vec3& lookat);
     void update() override;
     void updateProjection(const ivec2& resolution) override;

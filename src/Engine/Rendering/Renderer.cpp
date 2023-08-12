@@ -2,8 +2,9 @@
 #include "Camera.h"
 #include <System/MemoryManagement.h>
 
-Renderer::Renderer(Box* canvas)
+Renderer::Renderer(Box* canvas, const Type& type)
 {
+    iType = type;
     pRenderCanvas = canvas;
     pRenderCanvas->invertTexcoordY(true);
 
@@ -27,6 +28,7 @@ Renderer::~Renderer()
     Gum::_delete(pOcclusionMask);
     Gum::_delete(pFramebuffer);
     Gum::_delete(pHighDynamicRange);
+    Gum::_delete(pIDRenderer);
 }
 
 
@@ -94,6 +96,7 @@ void Renderer::addPostProcessingEffect(PostProcessingEffect* effect) { vPostProc
 long long Renderer::getExecutionTime() const      { return this->microseconds; }
 Box* Renderer::getRenderCanvas()                  { return this->pRenderCanvas; }
 float Renderer::getExposure() const               { return this->fExposure; }
+Renderer::Type Renderer::getType() const          { return this->iType; }
 Framebuffer* Renderer::getFramebuffer()           { return this->pFramebuffer; }
 IDRenderer* Renderer::getIDRenderer()             { return this->pIDRenderer; }
 Renderer* Renderer::getActiveRenderer()           { return pActiveRenderer; }

@@ -17,7 +17,7 @@ ShadowMapping::ShadowMapping(Renderer3D* renderer)
 
     Framebuffer* framebuffer1 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
     framebuffer1->addTextureAttachment(0, "ShadowMap1");
-    framebuffer1->addDepthAttachment();
+    //framebuffer1->addDepthAttachment();
     framebuffer1->addDepthTextureAttachment();
     //framebuffer1->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer1));
 	vFramebuffers.push_back(framebuffer1);

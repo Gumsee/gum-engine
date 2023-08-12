@@ -30,7 +30,7 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
     bool isActive = mass == 0.0f;
     btTransform Transform;
     Transform.setIdentity();
-    Transform.setOrigin(btVector3(v3Position.x, v3Position.y, v3Position.z));
+    Transform.setOrigin(btVector3(vPosition.x, vPosition.y, vPosition.z));
 
     btDefaultMotionState* defaultMotionState = new btDefaultMotionState(Transform);
 
@@ -131,12 +131,12 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
 
         btTriangleMesh *trimesh = new btTriangleMesh();
         btVector3 vertex[3];
-        for (unsigned int i = 0; i < pObject->getMesh()->numIndices(); i+=3)
+        for (unsigned int i = 0; i < pParent->getMesh()->numIndices(); i+=3)
         {
             for(unsigned int j = 0; j < 3; j++)
             {
-                int index = pObject->getMesh()->getIndex(i+j);
-                Vertex vert = pObject->getMesh()->getVertex(index);
+                int index = pParent->getMesh()->getIndex(i+j);
+                Vertex vert = pParent->getMesh()->getVertex(index);
                 vertex[j] = btVector3(vert.position.x, vert.position.y, vert.position.z);
             }
             trimesh->addTriangle(vertex[0], vertex[1], vertex[2]);
@@ -162,13 +162,13 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
         btRigidBody* body = (btRigidBody*)pRigidbody->getBody();
 		body->getMotionState()->getWorldTransform(transform);
         this->qRotation = quat(transform.getRotation().getX(), transform.getRotation().getY(), transform.getRotation().getZ(), transform.getRotation().getW());
-        this->v3Position = vec3(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
+        this->vPosition = vec3(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
 		//transform.setOrigin(transform.getOrigin() - btVector3(rigidbodyOffset.x, rigidbodyOffset.y, rigidbodyOffset.z));		
-		transform.getOpenGLMatrix(&m4Transformation[0][0]);
+		transform.getOpenGLMatrix(&mTransformation[0][0]);
 		//transform.setOrigin(transform.getOrigin() + btVector3(rigidbodyOffset.x, rigidbodyOffset.y, rigidbodyOffset.z));
-		m4Transformation *= Gum::Maths::scaleMatrix(v3Scale);
-        if(pObject != nullptr)
-            pObject->applyTransformationMatrix(this);
+		mTransformation *= Gum::Maths::scaleMatrix(vScale);
+        if(pParent != nullptr)
+            pParent->applyTransformationMatrix(this);
     });
     
     ((btDiscreteDynamicsWorld*)world->getPhysics()->getWorld())->addRigidBody(body);
@@ -186,7 +186,7 @@ void PhysicsObjectInstance::onTransformUpdate()
     btRigidBody* body = ((btRigidBody*)pRigidbody->getBody());
     btTransform transform; 
     body->getMotionState()->getWorldTransform(transform); 
-    transform.setFromOpenGLMatrix(&(m4Transformation)[0][0]); 
+    transform.setFromOpenGLMatrix(&(mTransformation)[0][0]); 
     body->setWorldTransform(transform);
     body->getMotionState()->setWorldTransform(transform); 
 }
@@ -195,7 +195,7 @@ bool PhysicsObjectInstance::isCollidingWithRay(vec3 ray)
 {
 	bool Answer = false;
 	float Radius = 5.0f;
-	Answer = vec3::distance(v3Position, ray) < Radius;
+	Answer = vec3::distance(vPosition, ray) < Radius;
 	return Answer;
 }
 

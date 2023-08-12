@@ -7,7 +7,7 @@
 #include <OpenGL/VertexArrayObject.h>
 #include <OpenGL/VertexBufferObject.h>
 
-class CurveRenderer : public Transformable, public Renderable
+class CurveRenderer : public Transformable<3U>, public Renderable
 {
 private:
     inline static ShaderProgram *pShader = nullptr;

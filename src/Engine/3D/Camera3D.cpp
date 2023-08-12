@@ -27,9 +27,6 @@ Camera3D::Camera3D(const ivec2& resolution, World3D* world)
     {
         //Add billboard
     }
-
-    if(ActiveCamera == nullptr)
-        ActiveCamera = this;
 }
 
 Camera3D::~Camera3D()
@@ -58,14 +55,14 @@ void Camera3D::update()
     {
         case CONTROLLED:
         {
-            v3ActualPosition = v3Position;
+            v3ActualPosition = vPosition;
             updateView();
             break;
         }
         case FIRSTPERSON:
         {
             mouseUpdate();
-            v3ActualPosition = v3Position;
+            v3ActualPosition = vPosition;
             updateView();
             break;
         }
@@ -84,12 +81,12 @@ void Camera3D::update()
             fRoll = fPitch;
             Gum::Maths::clamp(fPitch, -89.99f, 89.99f);
 
-            v3ActualPosition.x = v3Position.x - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos);
-            v3ActualPosition.y = v3Position.y + pOffsetToPos->get() * Gum::Maths::sindeg(fPitch);
-            v3ActualPosition.z = v3Position.z - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::cosdeg(fAngleAroundPos);
+            v3ActualPosition.x = vPosition.x - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos);
+            v3ActualPosition.y = vPosition.y + pOffsetToPos->get() * Gum::Maths::sindeg(fPitch);
+            v3ActualPosition.z = vPosition.z - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::cosdeg(fAngleAroundPos);
 
             //viewMat = Math::view(v3ActualPosition, v3Position, UP);
-            v3ViewDirection = vec3::normalize(v3Position - v3ActualPosition);
+            v3ViewDirection = vec3::normalize(vPosition - v3ActualPosition);
             updateView();
 
             
@@ -98,9 +95,9 @@ void Camera3D::update()
             mRotator = Gum::Maths::rotateMatrix(v3Up * fAngleAroundPos) * Gum::Maths::rotateMatrix(v3StrafeDirection * fRoll);
             break;
         }
-        /*case Modes::FREECAM:
+        case Modes::FREECAM:
         {
-            MOVEMENT_SPEED += Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState();
+            /*MOVEMENT_SPEED += Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState();
             if (MOVEMENT_SPEED < 0) { MOVEMENT_SPEED = 0; } //Min Speed is 0
 
             mouseUpdate();
@@ -110,12 +107,12 @@ void Camera3D::update()
             if (Gum::IO::Controls::checkControl("Right", Gum::Window::CurrentlyBoundWindow->getKeyboard())) 	{ strafeRight(); }
             if (Gum::IO::Controls::checkControl("Down", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveDown(); }
             if (Gum::IO::Controls::checkControl("Up", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	 	{ moveUp();	}
-            updateView();
+            updateView();*/
             break;
-        }*/
+        }
         case STATIC:
             break;
-    }
+        }
 }
 
 void Camera3D::mouseUpdate()

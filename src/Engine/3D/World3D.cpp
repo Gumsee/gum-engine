@@ -1,11 +1,12 @@
 #include "World3D.h"
 #include "../Shaders/ShaderManager.h"
-#include "../Particle/ParticleSystem.h"
 #include <System/MemoryManagement.h>
 #include <Desktop/Window.h>
+#include "Camera3D.h"
 
 
 World3D::World3D()
+    : World(WORLD3D)
 {
     pLightManager = new LightManager(this); 
     pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection()); 
@@ -42,5 +43,5 @@ void World3D::renderSky()
 //
 // Getter
 //
-LightManager* World3D::getLightManager()                      { return this->pLightManager; }
-ObjectManager* World3D::getObjectManager()                    { return this->pObjectManager; }
+LightManager* World3D::getLightManager()   { return this->pLightManager; }
+ObjectManager* World3D::getObjectManager() { return this->pObjectManager; }

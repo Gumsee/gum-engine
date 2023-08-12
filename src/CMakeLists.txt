@@ -89,6 +89,12 @@ install(
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/2D/
 ) 
 
+file(GLOB HEADERS Engine/2D/Layer/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/2D/Layer/
+) 
+
 file(GLOB HEADERS Engine/3D/*.h)
 install(
     FILES ${HEADERS}

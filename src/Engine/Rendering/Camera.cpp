@@ -55,6 +55,7 @@ mat4 Camera::getPerspective() const             { return this->mPerspectiveMatri
 vec3 Camera::getViewDirection() const			{ return this->v3ViewDirection; }
 vec3 Camera::getPosition() const			    { return this->v3ActualPosition; }
 float Camera::getFOV() const                    { return this->fFOV; }
+float Camera::getZoom() const                   { return this->fZoomfactor; }
 Camera::Type Camera::getType() const            { return this->iType; }
 Camera* Camera::getActiveCamera()               { return pActiveCamera; }
 

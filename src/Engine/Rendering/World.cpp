@@ -1,4 +1,5 @@
 #include "World.h"
+#include "Camera.h"
 #include "../Shaders/ShaderManager.h"
 #include "../Particle/ParticleSystem.h"
 #include "OpenGL/ShaderProgram.h"
@@ -6,8 +7,9 @@
 #include <Desktop/Window.h>
 
 
-World::World()
+World::World(const Type& type)
 {
+    iType = type;
     pPhysics = new Physics();
 }
 
@@ -65,5 +67,10 @@ void World::addRenderable(Renderable* renderable)           { this->vRenderables
 void World::addBillboard(Billboard* billboard)              { this->vBillboards.push_back(billboard); }
 void World::addParticles(ParticleSystem* particles)         { this->vParticles.push_back(particles); }
 
+
+//
+// Getter
+//
 Camera* World::getCamera(const unsigned int& index)         { return this->vCamera[index]; }
 Physics* World::getPhysics()                                { return this->pPhysics; }
+World::Type World::getType() const                          { return this->iType; }

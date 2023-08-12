@@ -3,19 +3,21 @@
 #include "Camera3D.h"
 #include "../Shaders/ShaderManager.h"
 #include "OpenGL/VertexArrayObject.h"
+#include "System/MemoryManagement.h"
 #include "System/Output.h"
 
 Grid::Grid()
 {
     pVAO = new VertexArrayObject();
-    VertexBufferObject<float> *vbo = new VertexBufferObject<float>();
-    pVAO->addAttribute(vbo, 0, 2, GL_FLOAT);
+    VertexBufferObject<float> vbo;
+    vbo.setData({}); //TODO
+    pVAO->addAttribute(&vbo, 0, 2, GL_FLOAT);
     initShader();
 }
 
 Grid::~Grid()
 {
-
+    Gum::_delete(pVAO);
 }
 
 void Grid::render()

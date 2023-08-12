@@ -4,7 +4,7 @@
 #include <OpenGL/Renderable.h>
 #include <Primitives/Transformable.h>
 
-class Gizmo : public Transformable, public Renderable
+class Gizmo : public Transformable<3U>, public Renderable
 {
 private:
     VertexArrayObject* pPositionVAO;

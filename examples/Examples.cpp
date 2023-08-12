@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 
     Gum::Display::init();
     pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
-    pMainWindow->setClearColor(vec4(0.24f, 0.39f, 0.75f, 1.0f));
+    pMainWindow->setClearColor(color(61, 99, 191, 255));
     pMainWindow->setVerticalSync(true);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
@@ -76,7 +76,7 @@ int main(int argc, char** argv)
     pGUI->addGUI(pXMLGUILoader.getRootGUI());
     pRenderCanvas = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
 
-    pMainRenderer = new Renderer3D(pRenderCanvas, new World3D());
+    pMainRenderer = new Renderer3D(pRenderCanvas);
     pMainRenderer->setWorld(getExampleWorld("BasicCube"));
     pMainRenderer->setExposure(1.0f);
 

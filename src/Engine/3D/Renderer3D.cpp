@@ -12,10 +12,10 @@
 #include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
 
-Renderer3D::Renderer3D(Box* canvas, World3D* world)
-    : Renderer(canvas)
+Renderer3D::Renderer3D(Box* canvas)
+    : Renderer(canvas, RENDERER3D)
 {
-    pWorld = world;
+    pWorld = nullptr;
 	pGBuffer      = new G_Buffer(pRenderCanvas);
 	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
 	pLightning    = new Lightning(pRenderCanvas, this);
@@ -42,6 +42,8 @@ Renderer3D::~Renderer3D()
 
 void Renderer3D::renderInternal()
 {
+    if(pWorld == nullptr)
+        return;
     //GumEngine::DefaultOutlineRenderer->resetFramebuffer();
     
     //Render Objects to GBuffer
@@ -120,12 +122,18 @@ void Renderer3D::renderInternal()
 
 void Renderer3D::renderIDsInternal()
 {
+    if(pWorld == nullptr)
+        return;
+
     pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pIDRenderer->getMeshShader(), true);
     pWorld->renderRenderableIDs();
 }
 
 void Renderer3D::update()
 {
+    if(pWorld == nullptr)
+        return;
+
     pWorld->update();
 }
 
@@ -134,7 +142,9 @@ void Renderer3D::updateFramebufferSize()
     Renderer::updateFramebufferSize();
 
     pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
-    pWorld->updateProjection();
+
+    if(pWorld != nullptr)
+        pWorld->updateProjection();
 }
 
 

@@ -9,7 +9,7 @@
 #include "../3D/Object/PhysicsObjectInstance.h"
 
 
-World3D* WorldLoader::loadWorld(std::string filepath, std::string assetspath)
+World* WorldLoader::loadWorld(std::string filepath, std::string assetspath)
 {
     World3D* world = new World3D();
 
@@ -33,8 +33,9 @@ World3D* WorldLoader::loadWorld(std::string filepath, std::string assetspath)
     return world;
 }
 
-void WorldLoader::saveWorld(std::string filepath, World3D* world)
+void WorldLoader::saveWorld(std::string filepath, World* worldarg)
 {
+    World3D* world = (World3D*)worldarg;
     XMLNode* rootNode = new XMLNode("world");
 
     //

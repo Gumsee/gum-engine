@@ -14,14 +14,13 @@
 CurveRenderer::CurveRenderer(Curve* curve)
 {
     pCurve = curve;
-    v3Scale = vec3(1,1,1);
     this->iNumSegments = 40;
 
     pShader = Gum::ShaderManager::getShaderProgram("SimpleShader");
     pIDShader = Gum::ShaderManager::getShaderProgram("ThicklinesShader");
 
     pTransMatricesVBO = new VertexBufferObject<mat4>();
-    pTransMatricesVBO->setData({m4Transformation});
+    pTransMatricesVBO->setData({mTransformation});
 
     pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINE_STRIP);
     pPointsBuffer = new VertexBufferObject<vec3>();
@@ -61,7 +60,7 @@ void CurveRenderer::onProjectionUpdate()
 
 void CurveRenderer::onTransformUpdate()
 {
-    pTransMatricesVBO->setData({m4Transformation});
+    pTransMatricesVBO->setData({mTransformation});
 }
 
 void CurveRenderer::prerender()
@@ -71,7 +70,7 @@ void CurveRenderer::prerender()
     //pShader->loadUniform("segmentCount", iNumSegments);
     //pShader->loadUniform("stripCount", 1);
     pShader->loadUniform("color", vec4(1,0,1,1));
-    pShader->loadUniform("transformationMatrix", m4Transformation);
+    pShader->loadUniform("transformationMatrix", mTransformation);
     pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
 }
 
@@ -91,7 +90,7 @@ void CurveRenderer::renderID()
 {
     pIDShader->use();
     pIDShader->loadUniform("color", pCurve->getIndividualColor());
-    pIDShader->loadUniform("transformationMatrix", m4Transformation);
+    pIDShader->loadUniform("transformationMatrix", mTransformation);
     pIDShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pVAO->bind();
     glDrawArrays(GL_LINE_STRIP, 0, pVAO->numVertices());

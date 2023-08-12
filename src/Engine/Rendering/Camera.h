@@ -4,7 +4,8 @@
 #include <Maths/vec.h>
 #include <Maths/mat.h>
 
-class Camera : public Transformable
+
+class Camera : public Transformable<3U>
 {
 public: 
     enum Type
@@ -31,7 +32,7 @@ protected:
 
 public:
     Camera(const ivec2& resolution, const Type& type);
-    ~Camera();
+    virtual ~Camera();
 
     virtual void update() {};
     virtual void updateProjection(const ivec2& resolution) {};
@@ -57,6 +58,7 @@ public:
     float getSpeed() const;
     float getFOV() const;
     Type getType() const;
+    virtual float getZoom() const;
     static Camera* getActiveCamera();
     
 
