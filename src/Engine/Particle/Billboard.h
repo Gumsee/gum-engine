@@ -1,7 +1,7 @@
 #pragma once
-#include "OpenGL/VertexArrayObject.h"
-#include <OpenGL/Texture.h>
-#include <OpenGL/ShaderProgram.h>
+#include "Graphics/VertexArrayObject.h"
+#include <Graphics/Texture.h>
+#include <Graphics/ShaderProgram.h>
 
 class Billboard
 {

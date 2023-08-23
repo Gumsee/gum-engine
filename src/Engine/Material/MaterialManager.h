@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/Material.h>
+#include <Graphics/Material.h>
 
 namespace Gum {
 namespace MaterialManager

@@ -7,8 +7,8 @@
 
 //Own
 #include "Skeleton.h"
-#include <OpenGL/Object3D.h>
-#include <OpenGL/Material.h>
+#include <Graphics/Object3D.h>
+#include <Graphics/Material.h>
 
 class AnimatedModel : public Object3D
 {

@@ -1,8 +1,9 @@
 #include "SSAO.h"
+#include "Graphics/Texture.h"
 #include "SSAOShader.h"
 
 #include <System/MemoryManagement.h>
-#include <OpenGL/WrapperFunctions.h>
+#include <Graphics/WrapperFunctions.h>
 #include "../Shaders/ShaderManager.h"
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
@@ -30,11 +31,11 @@ SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer)
 
 
     pSSAOFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOFramebuffer->addTextureAttachment(0, "SSAOTexture", GL_RGBA, GL_RGBA16F, GL_FLOAT);
+    pSSAOFramebuffer->addTextureAttachment(0, "SSAOTexture", Texture::Datatypes::FLOAT);
 
     
     pSSAOBlurFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOBlurFramebuffer->addTextureAttachment(0, "SSAOBlurTexture", GL_RGBA, GL_RGBA16F, GL_FLOAT);
+    pSSAOBlurFramebuffer->addTextureAttachment(0, "SSAOBlurTexture", Texture::Datatypes::FLOAT);
 
     pNoiseTexture = new Texture2D("SSAONoiseTexture");
 
@@ -218,7 +219,7 @@ void SSAO::initShader()
 	{
 		pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
-        pShader->addShader(new Shader(SSAOFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("SSAOShader");
         pShader->addTexture("texPosition", 0);
         pShader->addTexture("texNormal", 1);
@@ -239,7 +240,7 @@ void SSAO::initShader()
     {
         pBlurShader = new ShaderProgram();
         pBlurShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
-        pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::FRAGMENT_SHADER));
+        pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pBlurShader->build("SSAOBlurShader");
         pBlurShader->addTexture("ssaoInput", 0);
         pBlurShader->addUniform("NoiseSize");

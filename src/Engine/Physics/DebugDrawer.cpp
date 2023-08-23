@@ -90,8 +90,8 @@ void DebugDrawer::initShader()
     if(pShaderProgram == nullptr)
 	{
 		pShaderProgram = new ShaderProgram();
-        pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::VERTEX_SHADER));
-        pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::FRAGMENT_SHADER));
+        pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShaderProgram->build("PhysicsDebuggingpShaderProgram");
         pShaderProgram->addUniform("color");
         Gum::ShaderManager::addShaderProgram(pShaderProgram);

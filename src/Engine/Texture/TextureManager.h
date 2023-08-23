@@ -1,6 +1,6 @@
 #pragma once
-#include <OpenGL/Texture2D.h>
-#include <OpenGL/TextureHDR.h>
+#include <Graphics/Texture2D.h>
+#include <Graphics/TextureHDR.h>
 
 #include <map>
 #include <vector>

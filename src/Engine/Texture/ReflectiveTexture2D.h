@@ -1,6 +1,6 @@
 #pragma once
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/Texture2D.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/Texture2D.h>
 
 #include "../3D/Renderer3D.h"
 #include "../Rendering/Camera.h"

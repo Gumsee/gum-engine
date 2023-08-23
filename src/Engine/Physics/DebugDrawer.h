@@ -1,7 +1,7 @@
 #pragma once
 #include <LinearMath/btIDebugDraw.h>
-#include <OpenGL/VertexArrayObject.h>
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/VertexArrayObject.h>
+#include <Graphics/ShaderProgram.h>
 
 class DebugDrawer : public btIDebugDraw
 {

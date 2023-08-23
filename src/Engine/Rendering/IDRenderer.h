@@ -1,6 +1,6 @@
 #pragma once
-#include <OpenGL/ShaderProgram.h>
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/Framebuffer.h>
 #include <GUI/Primitives/Box.h>
 
 class IDRenderer : private Framebuffer

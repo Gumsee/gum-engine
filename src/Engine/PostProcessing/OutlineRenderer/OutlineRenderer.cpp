@@ -1,5 +1,5 @@
 #include "OutlineRenderer.h"
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/Framebuffer.h>
 #include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
 
@@ -37,8 +37,8 @@ void OutlineRenderer::initShader()
     if(pShader == nullptr)
     {
         pShader = new ShaderProgram();
-        pShader->addShader(new Shader(OutlineRendererVertexShader, Shader::VERTEX_SHADER));
-        pShader->addShader(new Shader(OutlineRendererFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(OutlineRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(OutlineRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("OutlineRendererShader");
     }
 }

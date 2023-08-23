@@ -1,7 +1,7 @@
 #pragma once
-#include "OpenGL/ShaderProgram.h"
-#include "OpenGL/VertexArrayObject.h"
-#include <OpenGL/Renderable.h>
+#include "Graphics/ShaderProgram.h"
+#include "Graphics/VertexArrayObject.h"
+#include <Graphics/Renderable.h>
 #include <Primitives/Transformable.h>
 
 class Gizmo : public Transformable<3U>, public Renderable

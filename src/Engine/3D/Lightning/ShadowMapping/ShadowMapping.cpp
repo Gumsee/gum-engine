@@ -6,7 +6,7 @@
 
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
-#include <OpenGL/WrapperFunctions.h>
+#include <Graphics/WrapperFunctions.h>
 
 
 ShadowMapping::ShadowMapping(Renderer3D* renderer)
@@ -183,8 +183,8 @@ void ShadowMapping::initShader()
     else
     {
         pShader = new ShaderProgram();
-        pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::VERTEX_SHADER));
-        pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("ShadowMapShader");
         pShader->addUniform("TextureMultiplier");
         pShader->addUniform("Displacement");

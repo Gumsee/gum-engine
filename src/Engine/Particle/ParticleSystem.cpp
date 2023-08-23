@@ -3,8 +3,8 @@
 #include <gum-maths.h>
 
 #include "../Rendering/World.h"
-#include "OpenGL/VertexArrayObject.h"
-#include "OpenGL/VertexBufferObject.h"
+#include "Graphics/VertexArrayObject.h"
+#include "Graphics/VertexBufferObject.h"
 #include "Particle.h"
 #include "System/Output.h"
 

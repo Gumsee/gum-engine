@@ -6,7 +6,7 @@ IDRenderer::IDRenderer(Box* canvas)
 {
     pCanvas = canvas;
 
-    addTextureAttachment(0, "IndividualMap", GL_RGBA, GL_RGBA);
+    addTextureAttachment(0, "IndividualMap");
 
     initShaders();
 }
@@ -31,8 +31,8 @@ void IDRenderer::initShaders()
     if(pMeshIDShader == nullptr)
     {
         pMeshIDShader = new ShaderProgram();
-        pMeshIDShader->addShader(new Shader(MeshIDVertexShader, Shader::VERTEX_SHADER));
-        pMeshIDShader->addShader(new Shader(MeshIDFragmentShader, Shader::FRAGMENT_SHADER));
+        pMeshIDShader->addShader(new Shader(MeshIDVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pMeshIDShader->addShader(new Shader(MeshIDFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pMeshIDShader->build("CurveIDShader", { {"vertices", 0}, {"TransMatrix", 3}, {"individualColor", 10} });
     }
 }

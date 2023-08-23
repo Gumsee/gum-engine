@@ -2,7 +2,7 @@
 #include <Essentials/Tools.h>
 #include "../ObjectManager.h"
 #include <Codecs/Scene3DLoader.h>
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/ShaderProgram.h>
 #include <vector>
 
 

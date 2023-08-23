@@ -90,8 +90,8 @@ void TileMap::initShader()
     if(!Gum::ShaderManager::hasShaderProgram("SpriteShader"))
     {
         pSpriteShader = new ShaderProgram();
-        pSpriteShader->addShader(new Shader(SpriteVertexShader, Shader::VERTEX_SHADER));
-        pSpriteShader->addShader(new Shader(SpriteFragmentShader, Shader::FRAGMENT_SHADER));
+        pSpriteShader->addShader(new Shader(SpriteVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pSpriteShader->addShader(new Shader(SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         pSpriteShader->build("SpriteShader", {{"vertices", 0}, {"TransMatrix", 1}});
         pSpriteShader->addUniform("color");

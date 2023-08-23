@@ -1,8 +1,8 @@
 #pragma once
 #include "Layer.h"
-#include <OpenGL/VertexArrayObject.h>
-#include <OpenGL/ShaderProgram.h>
-#include <OpenGL/Renderable.h>
+#include <Graphics/VertexArrayObject.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/Renderable.h>
 
 class ScreenPlane : public Layer
 {

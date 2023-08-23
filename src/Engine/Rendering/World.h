@@ -3,7 +3,7 @@
 
 #include "../Particle/Billboard.h"
 #include "../Physics/Physics.h"
-#include <OpenGL/Renderable.h>
+#include <Graphics/Renderable.h>
 
 class Camera;
 class ParticleSystem;

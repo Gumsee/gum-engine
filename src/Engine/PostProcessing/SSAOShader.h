@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/Shader.h>
+#include <Graphics/Shader.h>
 
 static std::string SSAOFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(

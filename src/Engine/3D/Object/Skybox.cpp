@@ -1,12 +1,13 @@
 #include "Skybox.h"
 #include <System/MemoryManagement.h>
-#include "OpenGL/Framebuffer.h"
-#include "OpenGL/ShaderProgram.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/ShaderProgram.h"
+#include "Graphics/Texture.h"
 #include "SkyboxShaders.h"
 #include "../../Shaders/ShaderManager.h"
 #include "../../Texture/TextureManager.h"
 #include "System/Output.h"
-#include <OpenGL/WrapperFunctions.h>
+#include <Graphics/WrapperFunctions.h>
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 {
@@ -37,7 +38,7 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
     pTexture->unbind(0);
 
     pBRDFFramebuffer = new Framebuffer(v2BRDFResolution);
-    pBRDFFramebuffer->addTextureAttachment(0, "SkyboxBRDFLUTMap", GL_RG, GL_RG16F, GL_FLOAT);
+    pBRDFFramebuffer->addTextureAttachment(0, "SkyboxBRDFLUTMap", Texture::Datatypes::FLOAT, 2U);
     pBRDFFramebuffer->getTextureAttachment(0)->bind(0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

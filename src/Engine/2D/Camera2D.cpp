@@ -1,5 +1,5 @@
 #include "Camera2D.h"
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/Framebuffer.h>
 #include <Desktop/Window.h>
 #include <Essentials/Settings.h>
 #include <Maths/MatrixFunctions.h>

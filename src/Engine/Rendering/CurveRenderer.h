@@ -2,10 +2,10 @@
 #include <Primitives/Transformable.h>
 #include <Primitives/Curve.h>
 #include <Primitives/UniqueID.h>
-#include <OpenGL/Renderable.h>
-#include <OpenGL/ShaderProgram.h>
-#include <OpenGL/VertexArrayObject.h>
-#include <OpenGL/VertexBufferObject.h>
+#include <Graphics/Renderable.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/VertexArrayObject.h>
+#include <Graphics/VertexBufferObject.h>
 
 class CurveRenderer : public Transformable<3U>, public Renderable
 {

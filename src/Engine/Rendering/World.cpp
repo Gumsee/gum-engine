@@ -2,7 +2,7 @@
 #include "Camera.h"
 #include "../Shaders/ShaderManager.h"
 #include "../Particle/ParticleSystem.h"
-#include "OpenGL/ShaderProgram.h"
+#include "Graphics/ShaderProgram.h"
 #include <System/MemoryManagement.h>
 #include <Desktop/Window.h>
 

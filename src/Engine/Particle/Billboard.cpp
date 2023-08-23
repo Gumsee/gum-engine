@@ -3,8 +3,8 @@
 #include <Essentials/FPS.h>
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
-#include "OpenGL/VertexArrayObject.h"
-#include "OpenGL/VertexBufferObject.h"
+#include "Graphics/VertexArrayObject.h"
+#include "Graphics/VertexBufferObject.h"
 #include "System/MemoryManagement.h"
 #include "System/Output.h"
 #include <Desktop/Window.h>

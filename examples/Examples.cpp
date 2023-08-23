@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     pMainWindow->setVerticalSync(true);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
-    Gum::OpenGL::addFramebufferToWindow(pMainWindow);
+    Gum::Graphics::addFramebufferToWindow(pMainWindow);
 
     pGUI = new Gum::GUI(pMainWindow);
 

@@ -1,10 +1,10 @@
 #pragma once
-#include "OpenGL/Renderable.h"
+#include "Graphics/Renderable.h"
 #include <GUI/Primitives/Box.h>
-#include <OpenGL/ShaderProgram.h>
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/Framebuffer.h>
 
-#include <OpenGL/Object3DInstance.h>
+#include <Graphics/Object3DInstance.h>
 
 class OutlineRenderer
 {

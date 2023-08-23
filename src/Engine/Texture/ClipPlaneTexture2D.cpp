@@ -18,7 +18,6 @@ void ClipPlaneTexture2D::render()
 {
 	glEnable(GL_CLIP_DISTANCE0);
 	pFramebuffer->bind();
-	glClearDepth(1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//GumEngine::ActiveCamera->invertPitch();

@@ -1,8 +1,8 @@
 #include "Gizmo.h"
 #include "GizmoShader.h"
 #include "Camera.h"
-#include "OpenGL/VertexArrayObject.h"
-#include "OpenGL/VertexBufferObject.h"
+#include "Graphics/VertexArrayObject.h"
+#include "Graphics/VertexBufferObject.h"
 #include "System/Output.h"
 
 Gizmo::Gizmo()
@@ -59,8 +59,8 @@ void Gizmo::initShader()
     if(pShader == nullptr)
     {
         pShader = new ShaderProgram();
-        pShader->addShader(new Shader(GizmoVertexShader, Shader::VERTEX_SHADER));
-        pShader->addShader(new Shader(GizmoFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("GizmoShader", { {"vertices", 0}, {"colors", 1}, {"TransMatrix", 2} });
     }
 }

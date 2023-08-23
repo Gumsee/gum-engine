@@ -1,7 +1,7 @@
 #include "ShaderManager.h"
 #include "Essentials/Tools.h"
 #include <System/MemoryManagement.h>
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/ShaderProgram.h>
 #include <System/Output.h>
 #include <map>
 

@@ -1,7 +1,7 @@
 #pragma once
-#include <OpenGL/ShaderProgram.h>
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/Texture.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/Texture.h>
 #include <Desktop/Window.h>
 
 #include "ShadowBox.h"

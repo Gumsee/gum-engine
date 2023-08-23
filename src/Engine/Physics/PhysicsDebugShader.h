@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/Shader.h>
+#include <Graphics/Shader.h>
 
 static const std::string PhysicsDebuggingVertexShader = Shader::SHADER_VERSION_STR + R"(
     layout (location = 0) in vec3 vertexPosition;

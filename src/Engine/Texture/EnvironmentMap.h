@@ -1,6 +1,6 @@
 #pragma once
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/TextureCube.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/TextureCube.h>
 
 class Renderer3D;
 

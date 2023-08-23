@@ -15,10 +15,10 @@ G_Buffer::G_Buffer(Box* canvas)
     pRenderCanvas = canvas;
 
     gBuffer = new Framebuffer(pRenderCanvas->getSize());
-    gBuffer->addTextureAttachment(0, "G_BufferPositionMap",   GL_RGBA, GL_RGBA32F, GL_FLOAT);
-    gBuffer->addTextureAttachment(1, "G_BufferNormalMap",     GL_RGBA, GL_RGBA32F, GL_FLOAT);
-    gBuffer->addTextureAttachment(2, "G_BufferDiffuseMap",    GL_RGBA, GL_RGBA);
-    gBuffer->addTextureAttachment(3, "G_BufferObjectDataMap", GL_RGBA, GL_RGBA);
+    gBuffer->addTextureAttachment(0, "G_BufferPositionMap", Texture::Datatypes::FLOAT);
+    gBuffer->addTextureAttachment(1, "G_BufferNormalMap", Texture::Datatypes::FLOAT);
+    gBuffer->addTextureAttachment(2, "G_BufferDiffuseMap");
+    gBuffer->addTextureAttachment(3, "G_BufferObjectDataMap");
 
     //gBuffer->addDepthAttachment();
     gBuffer->addDepthTextureAttachment();
@@ -77,8 +77,8 @@ void G_Buffer::initShader()
     if(!Gum::ShaderManager::hasShaderProgram("GBufferShader"))
     {
         pShader = new ShaderProgram();
-        pShader->addShader(new Shader(GBufferVertexShader, Shader::VERTEX_SHADER));
-        pShader->addShader(new Shader(GBufferFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         pShader->build("GBufferShader");
         pShader->addUniform("color");

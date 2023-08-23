@@ -1,9 +1,9 @@
 #pragma once
 #include <Essentials/FPS.h>
 #include "../Camera3D.h"
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/TextureCube.h>
-#include <OpenGL/Object3D.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/TextureCube.h>
+#include <Graphics/Object3D.h>
 #include <GUI/Primitives/Box.h>
 
 class SkyBox : public Object3D

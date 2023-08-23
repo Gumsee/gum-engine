@@ -2,7 +2,7 @@
 #include "GridShader.h"
 #include "Camera3D.h"
 #include "../Shaders/ShaderManager.h"
-#include "OpenGL/VertexArrayObject.h"
+#include "Graphics/VertexArrayObject.h"
 #include "System/MemoryManagement.h"
 #include "System/Output.h"
 
@@ -43,8 +43,8 @@ void Grid::initShader()
     else
     {
         pShader = new ShaderProgram();
-        pShader->addShader(new Shader(GridVertexShader, Shader::VERTEX_SHADER));
-        pShader->addShader(new Shader(GridFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("GridShader");
 
 

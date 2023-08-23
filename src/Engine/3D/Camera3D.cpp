@@ -1,5 +1,5 @@
 #include "Camera3D.h"
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/Framebuffer.h>
 #include <Essentials/Tools.h>
 #include <Desktop/IO/Mouse.h>
 #include <Essentials/Settings.h>

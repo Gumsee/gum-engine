@@ -8,7 +8,6 @@ ReflectiveTextureCube::ReflectiveTextureCube(ivec2 resolution)
     pFramebuffer = new Framebuffer(resolution);
     pFramebuffer->addDepthAttachment();
     pFramebuffer->bind();
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
     pFramebuffer->unbind();
 
 	pResultTexture = new TextureCube("ReflectionTextureCube");
@@ -37,7 +36,7 @@ void ReflectiveTextureCube::render()
 		//shader->loadUniform("viewMatrix", ViewMatrix);
 		//shader->loadUniform("projectionMatrix", projectionMatrix);
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pResultTexture->getID() , 0);
+		//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pResultTexture->getID() , 0);
 
 		rotateView(i);
         //#error "eeh"

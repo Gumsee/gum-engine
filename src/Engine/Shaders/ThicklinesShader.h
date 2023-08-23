@@ -67,9 +67,9 @@ static void initThicklinesShader()
 {
     ShaderProgram* shader;
     shader = new ShaderProgram();
-    shader->addShader(new Shader(ThicklinesVertexShader, Shader::VERTEX_SHADER));
-    shader->addShader(new Shader(ThicklinesGeometryShader, Shader::GEOMETRY_SHADER));
-    shader->addShader(new Shader(ThicklinesFragmentShader, Shader::FRAGMENT_SHADER));
+    shader->addShader(new Shader(ThicklinesVertexShader, Shader::TYPES::VERTEX_SHADER));
+    shader->addShader(new Shader(ThicklinesGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+    shader->addShader(new Shader(ThicklinesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
     shader->build("ThicklinesShader", { {"vertices", 0}, {"TransMatrix", 3} });
     shader->addUniform("color");

@@ -1,6 +1,6 @@
 #pragma once
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/ShaderProgram.h>
 #include <GUI/Primitives/Box.h>
 
 class PostProcessingEffect

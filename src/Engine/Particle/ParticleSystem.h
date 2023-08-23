@@ -1,8 +1,8 @@
 #pragma once
-#include <OpenGL/Texture.h>
+#include <Graphics/Texture.h>
 
-#include "OpenGL/VertexArrayObject.h"
-#include "OpenGL/VertexBufferObject.h"
+#include "Graphics/VertexArrayObject.h"
+#include "Graphics/VertexBufferObject.h"
 #include "Particle.h"
 #include "ParticleProperties.h"
 

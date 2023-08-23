@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/ShaderProgram.h>
 
 namespace Gum {
 namespace Particles 

@@ -87,7 +87,7 @@ void Lightning::initShader()
     {
         pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
-        pShader->addShader(new Shader(LightningFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("LightningShader");
 
         //Textures

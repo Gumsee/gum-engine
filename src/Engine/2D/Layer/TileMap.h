@@ -2,7 +2,7 @@
 #include "Layer.h"
 #include <Essentials/Settings.h>
 #include <functional>
-#include <OpenGL/Sprite2D.h>
+#include <Graphics/Sprite2D.h>
 
 typedef std::function<void(Sprite2D*)> AddSpriteCallback;
 

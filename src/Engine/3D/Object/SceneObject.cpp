@@ -1,7 +1,7 @@
 #include "SceneObject.h"
 #include "../World3D.h"
 #include "../../Material/MaterialManager.h"
-#include "OpenGL/ShaderProgram.h"
+#include "Graphics/ShaderProgram.h"
 #include "System/MemoryManagement.h"
 
 SceneObject::SceneObject(Mesh *mesh, std::string name) : Object3D(mesh, name)

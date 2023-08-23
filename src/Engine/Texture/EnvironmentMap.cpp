@@ -1,5 +1,5 @@
 #include "EnvironmentMap.h"
-#include <OpenGL/WrapperFunctions.h>
+#include <Graphics/WrapperFunctions.h>
 #include "../Shaders/ShaderManager.h"
 #include "../3D/Renderer3D.h"
 #include "../3D/World3D.h"

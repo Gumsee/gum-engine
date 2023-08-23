@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include <GL/glew.h>
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/Framebuffer.h>
 
 #include "../3D/Renderer3D.h"
 

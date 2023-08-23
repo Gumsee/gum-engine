@@ -1,5 +1,5 @@
 #include "PhysicsObjectInstance.h"
-#include <OpenGL/Object3DInstance.h>
+#include <Graphics/Object3DInstance.h>
 #include <System/Output.h>
 #include <btBulletCollisionCommon.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>

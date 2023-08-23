@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/Object3DInstance.h>
+#include <Graphics/Object3DInstance.h>
 #include "CollisionObject.h"
 #include "../World3D.h"
 

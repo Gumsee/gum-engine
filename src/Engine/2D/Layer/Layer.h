@@ -1,7 +1,7 @@
 #pragma once
 #include <Essentials/Settings.h>
 #include <functional>
-#include <OpenGL/Sprite2D.h>
+#include <Graphics/Sprite2D.h>
 
 class Layer : public Renderable
 {

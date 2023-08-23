@@ -11,7 +11,7 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
     {
         pShader = new ShaderProgram();
         pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
-        pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::FRAGMENT_SHADER));
+        pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("HighDynamicRangeShader");
 
         //Textures

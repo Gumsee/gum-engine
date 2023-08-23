@@ -11,7 +11,7 @@ Renderer::Renderer(Box* canvas, const Type& type)
     pIDRenderer = new IDRenderer(pRenderCanvas);
 
     pFramebuffer = new Framebuffer(canvas->getSize());
-    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", GL_RGBA, GL_RGBA16F);
+    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", Texture::Datatypes::FLOAT);
     pFramebuffer->addDepthTextureAttachment();
     //pFramebuffer->addDepthStencilTextureAttachment();
 

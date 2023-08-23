@@ -2,7 +2,7 @@
 #include "../Lightning/DirectionalLight.h"
 #include "../Lightning/SpotLight.h"
 #include "../Lightning/PointLight.h"
-#include <OpenGL/Texture2D.h>
+#include <Graphics/Texture2D.h>
 #include <vector>
 
 class World;

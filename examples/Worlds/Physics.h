@@ -2,7 +2,7 @@
 #include "Engine/3D/Object/PhysicsObjectInstance.h"
 #include "Engine/3D/Object/SceneObject.h"
 #include <gum-engine.h>
-#include <OpenGL/Object3D.h>
+#include <Graphics/Object3D.h>
 
 World3D* createPhysicsExample()
 {

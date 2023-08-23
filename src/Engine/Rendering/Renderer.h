@@ -1,7 +1,7 @@
 #pragma once
 #include <chrono>
 
-#include <OpenGL/Framebuffer.h>
+#include <Graphics/Framebuffer.h>
 #include <GUI/Primitives/Box.h>
 
 #include "../PostProcessing/Effects/PostProcessingEffect.h"

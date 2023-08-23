@@ -1,6 +1,6 @@
 #pragma once
 #include <functional>
-#include <OpenGL/Object3D.h>
+#include <Graphics/Object3D.h>
 
 #include "../Rendering/World.h"
 #include "../Particle/Billboard.h"

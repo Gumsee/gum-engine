@@ -1,5 +1,5 @@
 #pragma once
-#include <OpenGL/Texture3D.h>
+#include <Graphics/Texture3D.h>
 #include <vector>
 
 class PerlinNoise3D : public Texture3D

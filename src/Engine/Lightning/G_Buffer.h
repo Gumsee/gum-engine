@@ -1,8 +1,8 @@
 #pragma once
 #include <GUI/Primitives/Box.h>
-#include <OpenGL/Framebuffer.h>
-#include <OpenGL/Texture.h>
-#include <OpenGL/ShaderProgram.h>
+#include <Graphics/Framebuffer.h>
+#include <Graphics/Texture.h>
+#include <Graphics/ShaderProgram.h>
 #include <chrono>
 
 class G_Buffer

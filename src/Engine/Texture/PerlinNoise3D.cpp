@@ -2,7 +2,7 @@
 #include <cstdio>
 #include <cmath>
 #include <cstdlib>
-#include <OpenGL/WrapperFunctions.h>
+#include <Graphics/WrapperFunctions.h>
 
 PerlinNoise3D::PerlinNoise3D(ivec3 size, float seed, std::string name)
 {
