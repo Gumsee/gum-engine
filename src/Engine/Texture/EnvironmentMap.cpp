@@ -3,79 +3,71 @@
 #include "../Shaders/ShaderManager.h"
 #include "../3D/Renderer3D.h"
 #include "../3D/World3D.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/TextureCube.h"
+#include "Graphics/Variables.h"
 
-EnvironmentMap::EnvironmentMap(Renderer3D* renderer)
+EnvironmentMap::EnvironmentMap(const ivec2& resolution, std::string name, const unsigned short& datatype)
+ : TextureCube(name, datatype)
 {
-    this->pRenderer = renderer;
-	pResultTexture = new TextureCube("EnvironmentMap");
-    pResultTexture->bind(0);
-    for (unsigned int i = 0; i < 6; ++i)
-    {
-        gumTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, ivec2(Settings::getSetting(Settings::Names::REFLECTION_SIZE)), 0, GL_RGB, GL_FLOAT, nullptr);
-    }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR); 
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    pResultTexture->unbind(0);
+    pFramebuffer = new Framebuffer(resolution);
 
+    clampToEdge();
+    setFiltering(Texture::FilteringTypes::LINEAR);
+    setSize(resolution);
 
-    pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::REFLECTION_SIZE), Settings::getSetting(Settings::Names::REFLECTION_SIZE)));
     pFramebuffer->addDepthAttachment();
-    pFramebuffer->bind();
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-    pFramebuffer->unbind();
-	
+    pFramebuffer->addCubeTextureAttachment(0, this);
 
-	captureProjection = Gum::Maths::perspective(90.0f, 1.0f, 0.1f, 1000.0f);
-	captureViews.reserve(6);
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f,  0.0f,  0.0f), vec3(0.0f, 1.0f,  0.0f)));
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(1.0f,  0.0f,  0.0f), vec3(0.0f, 1.0f,  0.0f)));
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, -1.0f,  0.0f), vec3(0.0f,  0.0f, 1.0f)));
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  1.0f,  0.0f), vec3(0.0f,  0.0f,  -1.0f)));
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  0.0f,  1.0f), vec3(0.0f, 1.0f,  0.0f)));
-	captureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f,  0.0f, -1.0f), vec3(0.0f, 1.0f,  0.0f)));
+	
+    pCaptureCamera = new Camera3D(pFramebuffer->getSize(), nullptr);
+    pCaptureCamera->setFOV(90.0f);
+	/*vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f,  0.0f,  0.0f), vec3(0.0f, 1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 1.0f,  0.0f,  0.0f), vec3(0.0f, 1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f, -1.0f,  0.0f), vec3(0.0f, 0.0f,  1.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  1.0f,  0.0f), vec3(0.0f, 0.0f, -1.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  0.0f,  1.0f), vec3(0.0f, 1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  0.0f, -1.0f), vec3(0.0f, 1.0f,  0.0f)));*/
+
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f,  0.0f,  0.0f), vec3(0.0f, -1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 1.0f,  0.0f,  0.0f), vec3(0.0f, -1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  1.0f,  0.0f), vec3(0.0f,  0.0f, -1.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f, -1.0f,  0.0f), vec3(0.0f,  0.0f,  1.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  0.0f, -1.0f), vec3(0.0f, -1.0f,  0.0f)));
+	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  0.0f,  1.0f), vec3(0.0f, -1.0f,  0.0f)));
 }
 
 EnvironmentMap::~EnvironmentMap()
 {
 }
 
-void EnvironmentMap::render()
+void EnvironmentMap::render(std::function<void()> renderfunc)
 {
-	glViewport(0, 0, Settings::getSetting(Settings::Names::REFLECTION_SIZE), Settings::getSetting(Settings::Names::REFLECTION_SIZE)); // don't forget to configure the viewport to the capture dimensions.
+	Camera* oldcam = Camera::getActiveCamera();
+    Framebuffer* oldFramebuffer = Framebuffer::CurrentlyBoundFramebuffer;
     pFramebuffer->bind();
+    pCaptureCamera->makeActive();
 
-	//mat4 oldview = GumEngine::ActiveCamera->getViewMatrix();
-	//mat4 oldproj = GumEngine::ActiveCamera->getProjectionMatrix();
-
-    for (unsigned int i = 0; i < captureViews.size(); ++i)
+    for (unsigned int i = 0; i < vCaptureViews.size(); ++i)
     {
-		/*GumEngine::ActiveCamera->viewMat = captureViews[i];
-		GumEngine::ActiveCamera->projectionMatrix = captureProjection;
-		GumEngine::Shaders->update("viewMatrix");
-		GumEngine::Shaders->update("projectionMatrix");*/
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, pResultTexture->getID(), 0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		pCaptureCamera->overrideViewMatrix(vCaptureViews[i]);
+        pFramebuffer->attachTexture(0, this, Framebuffer::TextureTargets::CUBEMAP_POSITIVE_X + i, iCurrentMipmapLevel);
+        pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 
-		
-		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShaderProgram()->use();
-		pRenderer->getWorld()->getObjectManager()->getSkybox()->render();
-		pRenderer->getWorld()->getObjectManager()->getSkybox()->getShaderProgram()->unuse();
-
-        //GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
-		pRenderer->getWorld()->getObjectManager()->render(ObjectManager::ExceptionTypes::WITHOUTSKYBOX, Gum::ShaderManager::getShaderProgram("ReflectionlessBasicShader"));
+        renderfunc();
     }
 
-	/*GumEngine::ActiveCamera->viewMat = oldview;
-	GumEngine::ActiveCamera->projectionMatrix = oldproj;
-	GumEngine::Shaders->update("viewMatrix");
-	GumEngine::Shaders->update("projectionMatrix");*/
-
-    pFramebuffer->unbind(pRenderer->getRenderCanvas()->getSize());
+    oldcam->makeActive();
+    oldFramebuffer->bind();
 }
 
 //	GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
 
-Texture* EnvironmentMap::getTexture() { return this->pResultTexture; }
+void EnvironmentMap::setSize(const ivec2& size)
+{
+    TextureCube::setSize(size);
+    pFramebuffer->setSize(size);
+}
+ivec2 EnvironmentMap::getSize() const         { return pFramebuffer->getSize(); }
+
+Framebuffer* EnvironmentMap::getFramebuffer() { return pFramebuffer; }

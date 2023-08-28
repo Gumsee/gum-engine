@@ -11,12 +11,8 @@ PerlinNoise::PerlinNoise(ivec2 size, float seed, std::string name)
 	this->v2Size = size;
     this->seed = seed;
 
-    bind(0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    unbind(0);
+    repeat();
+    setFiltering(FilteringTypes::LINEAR);
     this->regenerate();
     this->bLoaded = true;
 }

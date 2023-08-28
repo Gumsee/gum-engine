@@ -16,9 +16,9 @@ ClipPlaneTexture2D::~ClipPlaneTexture2D()
 
 void ClipPlaneTexture2D::render()
 {
-	glEnable(GL_CLIP_DISTANCE0);
+	//glEnable(GL_CLIP_DISTANCE0);
 	pFramebuffer->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 
 	//GumEngine::ActiveCamera->invertPitch();
 	v4Pplane = vec4(0, -1, 0, this->fHeight);
@@ -35,7 +35,7 @@ void ClipPlaneTexture2D::render()
 
 	//GumEngine::ActiveCamera->invertPitch();
 	pFramebuffer->unbind();
-	glDisable(GL_CLIP_DISTANCE0);
+	//glDisable(GL_CLIP_DISTANCE0);
 }
 
 //Getter

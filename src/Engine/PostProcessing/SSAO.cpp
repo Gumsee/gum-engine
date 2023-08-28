@@ -1,5 +1,6 @@
 #include "SSAO.h"
 #include "Graphics/Texture.h"
+#include "Graphics/Variables.h"
 #include "SSAOShader.h"
 
 #include <System/MemoryManagement.h>
@@ -31,13 +32,13 @@ SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer)
 
 
     pSSAOFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOFramebuffer->addTextureAttachment(0, "SSAOTexture", Texture::Datatypes::FLOAT);
+    pSSAOFramebuffer->addTextureAttachment(0, "SSAOTexture", Gum::Graphics::Datatypes::FLOAT);
 
     
     pSSAOBlurFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOBlurFramebuffer->addTextureAttachment(0, "SSAOBlurTexture", Texture::Datatypes::FLOAT);
+    pSSAOBlurFramebuffer->addTextureAttachment(0, "SSAOBlurTexture", Gum::Graphics::Datatypes::FLOAT);
 
-    pNoiseTexture = new Texture2D("SSAONoiseTexture");
+    pNoiseTexture = new Texture2D("SSAONoiseTexture", Gum::Graphics::Datatypes::FLOAT);
 
 	generateKernel();
 }
@@ -62,7 +63,7 @@ void SSAO::render()
 
 
 	pSSAOFramebuffer->bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
+	pSSAOFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH); 
 
     gbuffer->getPositionMap()->bind(0);
 	gbuffer->getNormalMap()->bind(1);
@@ -85,7 +86,7 @@ void SSAO::render()
 	pShader->unuse();
 
 	pSSAOBlurFramebuffer->bind();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);    
+	pSSAOBlurFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
     pSSAOFramebuffer->getTextureAttachment(0)->bind(0);
 
 	pBlurShader->use();
@@ -135,21 +136,15 @@ void SSAO::generateKernel()
         ssaoNoise.push_back(randomFloats(generator) * 2.0 - 1.0);
     }  
     pNoiseTexture->setSize(ivec2(NoiseSize, NoiseSize));
-    pNoiseTexture->bind(0);
-    if(!gumTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, ivec2(NoiseSize), 0, GL_RG, GL_FLOAT, &ssaoNoise[0]))
-			Gum::Output::error("SSAO::generateKernel: glTexImage Failed.");
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    pNoiseTexture->unbind(0);
+    pNoiseTexture->setNumChannels(2);
+    pNoiseTexture->setData(&ssaoNoise[0]);
+    pNoiseTexture->setFiltering(Texture::FilteringTypes::NEAREST_NEIGHBOR);
+    pNoiseTexture->repeat();
 
     
     pShader->use();
     for (unsigned int i = 0; i < kernelSize; ++i)
-    {
         pShader->loadUniform("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
-    }
     pShader->unuse();
 }
 

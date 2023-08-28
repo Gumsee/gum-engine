@@ -33,7 +33,7 @@ public:
 	void updateLightViewMatrix(vec3 direction, vec3 center);
 	void updateOrthoProjectionMatrix(float width, float height, float length);
 
-    Texture2D* createDepthTextureAttachment(Framebuffer* framebuffer);
+    TextureDepth* createDepthTextureAttachment(Framebuffer* framebuffer);
 	
 
 	//Getter

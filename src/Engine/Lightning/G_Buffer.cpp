@@ -1,6 +1,8 @@
 #include "G_Buffer.h"
 #include "GBufferShader.h"
 #include "../Shaders/ShaderManager.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/Graphics.h"
 #include <System/MemoryManagement.h>
 
 /*
@@ -15,8 +17,8 @@ G_Buffer::G_Buffer(Box* canvas)
     pRenderCanvas = canvas;
 
     gBuffer = new Framebuffer(pRenderCanvas->getSize());
-    gBuffer->addTextureAttachment(0, "G_BufferPositionMap", Texture::Datatypes::FLOAT);
-    gBuffer->addTextureAttachment(1, "G_BufferNormalMap", Texture::Datatypes::FLOAT);
+    gBuffer->addTextureAttachment(0, "G_BufferPositionMap", Gum::Graphics::Datatypes::FLOAT);
+    gBuffer->addTextureAttachment(1, "G_BufferNormalMap", Gum::Graphics::Datatypes::FLOAT);
     gBuffer->addTextureAttachment(2, "G_BufferDiffuseMap");
     gBuffer->addTextureAttachment(3, "G_BufferObjectDataMap");
 
@@ -38,14 +40,10 @@ void G_Buffer::bind()
 {
     start = std::chrono::high_resolution_clock::now();
     gBuffer->bind();
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    //glClearDepth(1.0f);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);// | GL_STENCIL_BUFFER_BIT);
-    glEnable(GL_BLEND);
-    glEnable(GL_DEPTH_TEST);
+    gBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
     //glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
     //glDepthFunc(GL_LESS);
-    glDisable(GL_STENCIL_TEST);
+    Gum::Graphics::disableFeature(Gum::Graphics::Features::STENCIL_TESTING);
     //glDepthMask(GL_FALSE);
 }
 

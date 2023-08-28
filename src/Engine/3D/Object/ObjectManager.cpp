@@ -3,6 +3,7 @@
 #include "../../Shaders/ShaderManager.h"
 #include "../Camera3D.h"
 #include "../Renderer3D.h"
+#include "Graphics/ShaderProgram.h"
 #include "System/Output.h"
 #include <System/MemoryManagement.h>
 #include <string>
@@ -57,7 +58,7 @@ void ObjectManager::render(int exception, ShaderProgram *shader, bool noPrepare)
 			obj.second->clean();
 		}*/
 	}
-	glUseProgram(0);
+    ShaderProgram::unuse();
 }
 
 
@@ -82,7 +83,7 @@ void ObjectManager::renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* ca
 		    obj->render();
         }
 	}
-	glUseProgram(0);
+    ShaderProgram::unuse();
 }
 
 
@@ -149,19 +150,11 @@ Object3DInstance* ObjectManager::getInstanceByID(const unsigned int& id)
 //
 unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer) const
 {
-	renderer->getGBuffer()->getFramebuffer()->bind();
-	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	//unsigned int check = glGetError();
-	glReadBuffer(GL_COLOR_ATTACHMENT1);
+	vec2 pos = Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition();
+	pos.y = renderer->getRenderCanvas()->getSize().y - pos.y;
+    color col = renderer->getGBuffer()->getFramebuffer()->getPixel(pos);
 
-	vec2 pos = Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition() / renderer->getRenderCanvas()->getSize();
-	pos.y = 1 - pos.y;
-	pos *= renderer->getRenderCanvas()->getSize();
-	unsigned char data[4];
-	glReadPixels(pos.x, pos.y, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, data); //slow
-	renderer->getGBuffer()->getFramebuffer()->unbind();
-	int pickedID = data[0] + data[1] * 256 + data[2] * 256*256;
-
+	int pickedID = col.r + col.g * 256 + col.b * 256*256;
 	return pickedID;
 }
 

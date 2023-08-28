@@ -1,5 +1,6 @@
 #include "GaussianBlur.h"
 #include "../../Shaders/ShaderManager.h"
+#include "Graphics/Framebuffer.h"
 #include <System/MemoryManagement.h>
 
 
@@ -46,7 +47,7 @@ GaussianBlur::~GaussianBlur()
 void GaussianBlur::render(Texture* RenderResult)
 {
 	pBlurFramebufferV->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	pBlurFramebufferV->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	VblurShader->use();
 	VblurShader->loadUniform("specialVar", (float)pBlurFramebufferV->getSize().x);
 	RenderResult->bind();
@@ -55,7 +56,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	VblurShader->unuse();
 
 	pBlurFramebufferH->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	pBlurFramebufferH->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	HblurShader->use();
 	HblurShader->loadUniform("specialVar", (float)pBlurFramebufferH->getSize().y);
 	pBlurFramebufferV->getTextureAttachment(0)->bind();
@@ -64,7 +65,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	HblurShader->unuse();
 
 	pBlurFramebufferV2->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	pBlurFramebufferV2->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	VblurShader->use();
 	VblurShader->loadUniform("specialVar", (float)pBlurFramebufferV2->getSize().x);
 	pBlurFramebufferH->getTextureAttachment(0)->bind();
@@ -73,7 +74,7 @@ void GaussianBlur::render(Texture* RenderResult)
 	VblurShader->unuse();
 
 	pFramebuffer->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	HblurShader->use();
 	HblurShader->loadUniform("specialVar", (float)pFramebuffer->getSize().y);
 	pBlurFramebufferV2->getTextureAttachment(0)->bind();

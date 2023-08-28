@@ -1,5 +1,6 @@
 #include "Renderer3D.h"
 
+#include "Graphics/Graphics.h"
 #include "World3D.h"
 #include "../Shaders/ShaderManager.h"
 #include "Lightning/Lightning.h"
@@ -58,8 +59,7 @@ void Renderer3D::renderInternal()
     //SSAO
     //pSSAO->render();
     pFramebuffer->bind();
-    glClearColor(0.02, 0.31, 0.53,1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
     pWorld->renderSky();
 
 	//pShadowMaps->getResultTexture(0)->bind(16);
@@ -98,12 +98,9 @@ void Renderer3D::renderInternal()
     pWorld->getPhysics()->drawDebug();
     pFramebuffer->unbind();
 
-    glCullFace(GL_FRONT);
-    //glCullFace(GL_BACK);
     //Render the Shadowmap
-    //Gum::Output::debug("Rendering to Shadowmap");
     pShadowMaps->prepare(*pWorld->getLightManager()->getSun()->getDirection(), 0);
-    glPolygonMode( GL_FRONT_AND_BACK, GL_FILL );
+    Gum::Graphics::renderWireframe(false);
     pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pShadowMaps->getShader(), true);
 
     //ShadowMaps->prepare(*Lights->getSun()->getDirection(), 1);
@@ -112,7 +109,6 @@ void Renderer3D::renderInternal()
     //ShadowMaps->prepare(*Lights->getSun()->getDirection(), 2);
     //Objects->render(0, ShadowMaps->getShader());
     pShadowMaps->finish();
-    glCullFace(GL_BACK);
 
 
     //Renders scene with all objects inside

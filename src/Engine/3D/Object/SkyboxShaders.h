@@ -38,6 +38,7 @@ R"(
         FragColor = vec4(envColor, 1.0f);
         //FragColor = vec4(Texcoord, 1.0f);
         //FragColor = vec4(1,0,0, 1.0f);
+        //FragColor = textureLod(dayTexture, Texcoord, 1.2);
 	}
 )";
 
@@ -358,5 +359,6 @@ R"(
         
 		FragColor = vec4(prefilteredColor, 1.0);
         //FragColor = vec4(1,0,0,1);
+        //FragColor = texture(cubeMap, Texcoord);
 	}
 )";

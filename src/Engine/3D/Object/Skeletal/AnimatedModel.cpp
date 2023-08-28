@@ -1,6 +1,7 @@
 #include "AnimatedModel.h"
 #include <Essentials/Tools.h>
 #include "../ObjectManager.h"
+#include "Graphics/Variables.h"
 #include <Codecs/Scene3DLoader.h>
 #include <Graphics/ShaderProgram.h>
 #include <vector>
@@ -29,8 +30,8 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
 
 	load();
 
-    pVertexArrayObject->addAttribute(pVertexVBO, 8, 3, GL_INT, sizeof(Vertex), offsetof(Vertex, JointIDs));
-    pVertexArrayObject->addAttribute(pVertexVBO, 9, 3, GL_FLOAT, sizeof(Vertex), offsetof(Vertex, Weights));
+    pVertexArrayObject->addAttribute(pVertexVBO, 8, 3, Gum::Graphics::Datatypes::INTEGER, sizeof(Vertex), offsetof(Vertex, JointIDs));
+    pVertexArrayObject->addAttribute(pVertexVBO, 9, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(Vertex), offsetof(Vertex, Weights));
 
     
 

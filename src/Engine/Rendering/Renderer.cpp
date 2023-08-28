@@ -1,5 +1,8 @@
 #include "Renderer.h"
 #include "Camera.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/Graphics.h"
+#include "Graphics/Variables.h"
 #include <System/MemoryManagement.h>
 
 Renderer::Renderer(Box* canvas, const Type& type)
@@ -11,7 +14,8 @@ Renderer::Renderer(Box* canvas, const Type& type)
     pIDRenderer = new IDRenderer(pRenderCanvas);
 
     pFramebuffer = new Framebuffer(canvas->getSize());
-    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", Texture::Datatypes::FLOAT);
+    pFramebuffer->setClearColor(color(5, 79, 135, 255));
+    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", Gum::Graphics::Datatypes::FLOAT);
     pFramebuffer->addDepthTextureAttachment();
     //pFramebuffer->addDepthStencilTextureAttachment();
 
@@ -63,9 +67,8 @@ void Renderer::render()
 void Renderer::renderIDs()
 {
     pIDRenderer->bind();
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glEnable(GL_DEPTH_TEST);
+	pIDRenderer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
     
     pIDRenderer->getMeshShader()->use();
     pIDRenderer->getMeshShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());

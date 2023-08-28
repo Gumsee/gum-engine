@@ -1,5 +1,6 @@
 #include "ScreenPlane.h"
 #include "../../Shaders/ShaderManager.h"
+#include "Graphics/VertexArrayObject.h"
 
 ScreenPlane::ScreenPlane()
 {
@@ -7,12 +8,12 @@ ScreenPlane::ScreenPlane()
 
     if(pVertexArrayObject == nullptr)
     {
-        pVertexArrayObject = new VertexArrayObject();
+        pVertexArrayObject = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::TRIANGLES);
 
         pVertexArrayObject->bind();
         VertexBufferObject<float> pVertexVBO;
-		pVertexVBO.setData(afSkyVertices);
-        pVertexArrayObject->addAttribute(&pVertexVBO, 0, 2, GL_FLOAT, 0, 0);
+		pVertexVBO.setData(afSkyVertices, Gum::Graphics::DataState::STATIC);
+        pVertexArrayObject->addAttribute(&pVertexVBO, 0, 2, Gum::Graphics::Datatypes::FLOAT, 0, 0);
         pVertexArrayObject->setVertexCount(pVertexVBO.getLength());
 
         ElementBufferObject *indexBuffer = new ElementBufferObject();
@@ -31,7 +32,7 @@ void ScreenPlane::render()
 {
     pParallaxSkyShader->use();
     pVertexArrayObject->bind();
-    glDrawElementsInstanced(pVertexArrayObject->getPrimitiveType(), pVertexArrayObject->getRenderCount(), GL_UNSIGNED_INT, 0, iNumLayers);
+    pVertexArrayObject->renderIndexed(iNumLayers);
     pVertexArrayObject->unbind();
 }
 

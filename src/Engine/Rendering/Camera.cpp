@@ -66,3 +66,4 @@ Camera* Camera::getActiveCamera()               { return pActiveCamera; }
 void Camera::setZoomFactor(const float& factor) { fZoomfactor = factor; updateProjection(v2CurrentResolution); }
 void Camera::setZoomSpeed(const float& speed)   { fZoomSpeed = speed; updateProjection(v2CurrentResolution); }
 void Camera::setFOV(const float& fov)           { fFOV = fov; updateProjection(v2CurrentResolution); }
+void Camera::overrideViewMatrix(mat4 matrix)    { this->mViewMatrix = matrix; }

@@ -1,6 +1,6 @@
 #pragma once
 #include <Essentials/FPS.h>
-#include "../Camera3D.h"
+#include "../../Texture/EnvironmentMap.h"
 #include <Graphics/Framebuffer.h>
 #include <Graphics/TextureCube.h>
 #include <Graphics/Object3D.h>
@@ -12,15 +12,10 @@ private:
 	bool gradiant;
 	bool isSpinning = false;
 
-	ivec2 v2Resolution;
-	ivec2 v2BRDFResolution;
-    ivec2 v2PreFilterResolution;
-    TextureCube *pTexture;
-
-	Framebuffer* pFramebuffer;
-    Framebuffer* pIrradianceFramebuffer;
+	EnvironmentMap* pTexture;
+    EnvironmentMap* pIrradianceMap;
 	Framebuffer* pBRDFFramebuffer;
-	Framebuffer* pPreFilterMap;
+	EnvironmentMap* pPreFilterMap;
 	unsigned int captureRBOPreFiltered;
 
 	ShaderProgram *HDRToCubeMapShader;
@@ -36,8 +31,6 @@ private:
 	void makeBRDFMap();
 	void updateTexture();
 
-	mat4 captureProjection;
-    std::vector<mat4> captureViews;
 	vec3 *sunDir;
 
     void initShaders();
@@ -47,7 +40,6 @@ public:
 	~SkyBox();
 
 	void render();
-	void update();
 
 	/*Bind textures to Cube map
 	* 1 GL_TEXTURE_CUBE_MAP_POSITIVE_X = Right

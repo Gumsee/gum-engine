@@ -1,4 +1,6 @@
 #include "DebugDrawer.h"
+#include "Graphics/Variables.h"
+#include "Graphics/VertexArrayObject.h"
 #include "PhysicsDebugShader.h"
 #include "../Shaders/ShaderManager.h"
 #include "../Rendering/Camera.h"
@@ -11,9 +13,9 @@
 DebugDrawer::DebugDrawer()
 {
     
-    pVAO = new VertexArrayObject();
+    pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);
     pVBO = new VertexBufferObject<vec3>();
-    pVAO->addAttribute(pVBO, 0, 3, GL_FLOAT, sizeof(vec3), 0);
+    pVAO->addAttribute(pVBO, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
 
     initShader();
 }
@@ -43,14 +45,15 @@ void DebugDrawer::drawLine(const btVector3 & from, const btVector3 & to, const b
 	vertices.clear();
 	vertices.push_back(vec3(from.x(), from.y(), from.z()));
 	vertices.push_back(vec3(to.x(), to.y(), to.z()));
-    pVBO->setData(vertices, GL_STATIC_DRAW);
+    pVBO->setData(vertices, Gum::Graphics::DataState::STATIC);
+    pVAO->setVertexCount(vertices.size());
 
 	pVAO->bind();
 	pShaderProgram->use();
 	pShaderProgram->loadUniform("color", vec4(color.x(), color.y(), color.z(), 1.0f));
     pShaderProgram->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pShaderProgram->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-	glDrawArrays(GL_LINES, 0, vertices.size());
+    pVAO->render(1);
 	pShaderProgram->unuse();
 	pVAO->unbind();
 }

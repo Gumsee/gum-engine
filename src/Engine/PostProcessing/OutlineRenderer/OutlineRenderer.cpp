@@ -3,6 +3,8 @@
 #include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
 
+#include "Graphics/Graphics.h"
+#include "Graphics/Variables.h"
 #include "OutlineRendererShader.h"
 #include "../../Shaders/ShaderManager.h"
 #include "../../Rendering/Camera.h"
@@ -22,14 +24,14 @@ OutlineRenderer::~OutlineRenderer()
 
 void OutlineRenderer::render(Renderable* renderable, mat4 transform)
 {
-    glDisable(GL_DEPTH_TEST);
+    Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
     pShader->use();
     pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pShader->loadUniform("transformationMatrix", transform);
 
     renderable->render();
-    glEnable(GL_DEPTH_TEST);
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
 }
 
 void OutlineRenderer::initShader()

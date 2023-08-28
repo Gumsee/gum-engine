@@ -1,6 +1,7 @@
 #include "Gizmo.h"
 #include "GizmoShader.h"
 #include "Camera.h"
+#include "Graphics/Variables.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"
 #include "System/Output.h"
@@ -9,17 +10,17 @@ Gizmo::Gizmo()
 {
     pPositionVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINE_STRIP);
     VertexBufferObject<mat4> *pTransMatricesVBO = new VertexBufferObject<mat4>();
-    pTransMatricesVBO->setData({mTransformation});
+    pTransMatricesVBO->setData({mTransformation}, Gum::Graphics::DataState::STATIC);
 
     VertexBufferObject<vec3> *pColorsVBO = new VertexBufferObject<vec3>();
-    pColorsVBO->setData({vec3(1,0,1), vec3(0,1,0)});
+    pColorsVBO->setData({vec3(1,0,1), vec3(0,1,0)}, Gum::Graphics::DataState::STATIC);
 
     VertexBufferObject<vec3> *pVertexVBO = new VertexBufferObject<vec3>();
-    pVertexVBO->setData({vec3(1,1,1), vec3(2,2,2)});
+    pVertexVBO->setData({vec3(1,1,1), vec3(2,2,2)}, Gum::Graphics::DataState::STATIC);
 
-    pPositionVAO->addAttribute(pVertexVBO, 0, 3, GL_FLOAT, sizeof(vec3), 0);
-    pPositionVAO->addAttribute(pColorsVBO, 1, 3, GL_FLOAT, sizeof(vec3), 0);
-    pPositionVAO->addAttributeMat4(pTransMatricesVBO, 2, GL_FLOAT, 1);
+    pPositionVAO->addAttribute(pVertexVBO, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
+    pPositionVAO->addAttribute(pColorsVBO, 1, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
+    pPositionVAO->addAttributeMat4(pTransMatricesVBO, 2, Gum::Graphics::Datatypes::FLOAT, 1);
     pPositionVAO->setVertexCount(2);
 
     initShader();
@@ -45,7 +46,7 @@ void Gizmo::render()
     pShader->use();
     pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pPositionVAO->bind();
-    glDrawArrays(GL_LINE_STRIP, 0, pPositionVAO->getRenderCount());
+    pPositionVAO->render(1);
     pPositionVAO->unbind();
 }
 

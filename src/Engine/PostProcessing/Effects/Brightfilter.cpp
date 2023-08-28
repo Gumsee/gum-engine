@@ -13,7 +13,7 @@ Brightfilter::~Brightfilter() { }
 void Brightfilter::render(Texture* texture)
 {
 	pFramebuffer->bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	pShader->use();
 	texture->bind(0);
 	pRenderCanvas->renderCustom();

@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-#include <GL/glew.h>
 #include <Graphics/Framebuffer.h>
 
 #include "../3D/Renderer3D.h"

@@ -66,4 +66,5 @@ public:
     void setZoomFactor(const float& factor);
     void setZoomSpeed(const float& speed);
     void setFOV(const float& fov);
+    void overrideViewMatrix(mat4 matrix);
 };

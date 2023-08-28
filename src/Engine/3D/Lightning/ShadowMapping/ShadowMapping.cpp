@@ -1,4 +1,7 @@
 #include "ShadowMapping.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/Graphics.h"
+#include "Graphics/TextureDepth.h"
 #include "ShadowMappingShader.h"
 #include "../../../Shaders/ShaderManager.h"
 #include "../../Camera3D.h"
@@ -70,9 +73,8 @@ void ShadowMapping::prepare(vec3 LightDirection, int index)
 
 		projectionViewMatrix = lightViewMatrix * projectionMatrix;
 		vFramebuffers[index]->bind();
-        glClearColor(1,1,1,1);
-		glClearDepth(1.0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        vFramebuffers[index]->setClearColor(color(255, 255, 255, 255));
+		vFramebuffers[index]->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 		//Gum::Output::debug(Settings::getSetting(Settings::Names::SHADOW_SIZE));
 
 		vec3 lightInvDir = vec3(0.5f,2,2);
@@ -105,12 +107,12 @@ void ShadowMapping::prepare(vec3 LightDirection, int index)
         pShader->loadUniform("viewMatrix", lightViewMatrix);
 		pShader->unuse();
 	}
-	glCullFace(GL_FRONT);
+    Gum::Graphics::cullBackside(false);
 }
 
 void ShadowMapping::finish()
 {
-	glCullFace(GL_BACK);
+    Gum::Graphics::cullBackside(true);
 	vFramebuffers[0]->unbind();
 }
 
@@ -144,26 +146,9 @@ void ShadowMapping::updateOrthoProjectionMatrix(float width, float height, float
 	projectionMatrix[3][3] = 1;
 }
 
-Texture2D* ShadowMapping::createDepthTextureAttachment(Framebuffer* framebuffer)
+TextureDepth* ShadowMapping::createDepthTextureAttachment(Framebuffer* framebuffer)
 {    
-    framebuffer->bind();
-    Texture2D* tex = new Texture2D("ShadowMapDepthTex");
-    tex->bind();
-    if(!gumTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, framebuffer->getSize(), 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0))
-			Gum::Output::error("ShadowMapping::createDepthTextureAttachment: glTexImage Failed.");
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	//Remove to debug
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor); 
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, tex->getID(), 0);
-    tex->unbind();
-    framebuffer->unbind();
-    //framebuffer->setDepthTextureAttachment(tex);
-    return tex;
+    return framebuffer->addDepthTextureAttachment("ShadowMapDepthTex");
 }
 
 

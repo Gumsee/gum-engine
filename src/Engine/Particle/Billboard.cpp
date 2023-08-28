@@ -3,6 +3,8 @@
 #include <Essentials/FPS.h>
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
+#include "Graphics/Graphics.h"
+#include "Graphics/Variables.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"
 #include "System/MemoryManagement.h"
@@ -18,10 +20,10 @@ Billboard::Billboard(vec3 Position)
     this->Scale = vec2(0.1f, 0.1f * Renderer::getActiveRenderer()->getFramebuffer()->getAspectRatio()); //10% of the screen
 	this->tex = nullptr;
 
-    pVAO = new VertexArrayObject();
+    pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::TRIANGLE_STRIP);
     VertexBufferObject<float> vbo;
-    vbo.setData(vertices);
-    pVAO->addAttribute(&vbo, 0, 3, GL_FLOAT, 0);
+    vbo.setData(vertices, Gum::Graphics::DataState::STATIC);
+    pVAO->addAttribute(&vbo, 0, 3, Gum::Graphics::Datatypes::FLOAT, 0);
     pVAO->setVertexCount(vertices.size());
 }
 
@@ -39,22 +41,21 @@ void Billboard::render(ShaderProgram *shader)
         shader->loadUniform("billboardSize", Scale);
         shader->loadUniform("fixedSize", bFixedSize);
 
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
+        Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
         
-        if (Transparency) { glBlendFunc(GL_SRC_ALPHA, GL_ONE); }
-        else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
+        //if (Transparency) { glBlendFunc(GL_SRC_ALPHA, GL_ONE); }
+        //else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
         //glDepthMask(false);
 
 		if(tex != nullptr) tex->bind(0);
         pVAO->bind();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, pVAO->getRenderCount());
+        pVAO->render(1);
         pVAO->unbind();
 		if(tex != nullptr) tex->unbind(0);
 
         //glDepthMask(true);
         //glDisable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
+        Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
 	}
 }
 

@@ -1,5 +1,6 @@
 #include "CurveRenderer.h"
 #include "Camera.h"
+#include "Graphics/Variables.h"
 #include "Maths/MatrixFunctions.h"
 #include "Maths/vec.h"
 #include "Graphics/Framebuffer.h"
@@ -20,22 +21,22 @@ CurveRenderer::CurveRenderer(Curve* curve)
     pIDShader = Gum::ShaderManager::getShaderProgram("ThicklinesShader");
 
     pTransMatricesVBO = new VertexBufferObject<mat4>();
-    pTransMatricesVBO->setData({mTransformation});
+    pTransMatricesVBO->setData({mTransformation}, Gum::Graphics::DataState::STATIC);
 
     pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINE_STRIP);
     pPointsBuffer = new VertexBufferObject<vec3>();
-    pPointsBuffer->setData(pCurve->getData());
-    pVAO->addAttribute(pPointsBuffer, 0, 3, GL_FLOAT, sizeof(vec3), 0);
-    pVAO->addAttributeMat4(pTransMatricesVBO, 3, GL_FLOAT, 1);
+    pPointsBuffer->setData(pCurve->getData(), Gum::Graphics::DataState::STATIC);
+    pVAO->addAttribute(pPointsBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
+    pVAO->addAttributeMat4(pTransMatricesVBO, 3, Gum::Graphics::Datatypes::FLOAT, 1);
     pVAO->setVertexCount(pCurve->getData().size());
 
 
 
     pControlVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINE_STRIP);
     pControlPointsBuffer = new VertexBufferObject<vec3>();
-    pControlPointsBuffer->setData(pCurve->getControlpoints());
-    pControlVAO->addAttribute(pControlPointsBuffer, 0, 3, GL_FLOAT, sizeof(vec3), 0);
-    pControlVAO->addAttributeMat4(pTransMatricesVBO, 3, GL_FLOAT, 1);
+    pControlPointsBuffer->setData(pCurve->getControlpoints(), Gum::Graphics::DataState::STATIC);
+    pControlVAO->addAttribute(pControlPointsBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
+    pControlVAO->addAttributeMat4(pTransMatricesVBO, 3, Gum::Graphics::Datatypes::FLOAT, 1);
     pControlVAO->setVertexCount(pCurve->numPoints());
 }
 
@@ -60,7 +61,7 @@ void CurveRenderer::onProjectionUpdate()
 
 void CurveRenderer::onTransformUpdate()
 {
-    pTransMatricesVBO->setData({mTransformation});
+    pTransMatricesVBO->setData({mTransformation}, Gum::Graphics::DataState::STATIC);
 }
 
 void CurveRenderer::prerender()
@@ -77,7 +78,7 @@ void CurveRenderer::prerender()
 void CurveRenderer::render()
 {
     pVAO->bind();
-    glDrawArrays(GL_LINE_STRIP, 0, pVAO->getRenderCount());
+    pVAO->render(1);
     pVAO->unbind();
 
     /*pShader->loadUniform("color", vec4(0,1,0,1));
@@ -93,7 +94,7 @@ void CurveRenderer::renderID()
     pIDShader->loadUniform("transformationMatrix", mTransformation);
     pIDShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pVAO->bind();
-    glDrawArrays(GL_LINE_STRIP, 0, pVAO->numVertices());
+    pVAO->render(1);
     pVAO->unbind();
     pIDShader->unuse();
 }

@@ -98,6 +98,6 @@ R"(
 
         FragColor = grid(fragPos3D, 1, true);
         FragColor *= float(t > 0);
-        FragColor.a *= fading;
+        FragColor.a *= clamp(0.0f, 1.0f, fading);
     }
 )";

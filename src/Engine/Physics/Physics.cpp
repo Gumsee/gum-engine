@@ -142,7 +142,6 @@ void Physics::drawDebug()
 	{
         btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 		//pDebugDrawer->prepare();
-		glLineWidth(1);
 		world->debugDrawWorld();
         btCollisionObjectArray objs = world->getCollisionWorld()->getCollisionObjectArray();
         for(int i = 0; i < objs.size(); i++)

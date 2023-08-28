@@ -3,12 +3,12 @@
 #include <gum-maths.h>
 
 #include "../Rendering/World.h"
+#include "Graphics/Graphics.h"
+#include "Graphics/Variables.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"
 #include "Particle.h"
 #include "System/Output.h"
-
-#include <GL/glew.h>
 
 ParticleSystem::ParticleSystem(World* world)
 {
@@ -16,22 +16,23 @@ ParticleSystem::ParticleSystem(World* world)
 	properties = new ParticleProperties();
 	ParticleStages = new std::vector<Particle::ParticleStage*>();
 
-    pVAO = new VertexArrayObject();
+    pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::TRIANGLE_STRIP);
 
     VertexBufferObject<float> vertexBuffer;
-    vertexBuffer.setData(vertices);
-    pVAO->addAttribute(&vertexBuffer, 0, 3, GL_FLOAT, 0, 0);
+    vertexBuffer.setData(vertices, Gum::Graphics::DataState::STATIC);
+    pVAO->addAttribute(&vertexBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, 0, 0);
     
     partPositionsVBO = new VertexBufferObject<Particle>();
-    partPositionsVBO->setData(vParticles, GL_STREAM_DRAW);
-    pVAO->addAttribute(partPositionsVBO, 1, 3, GL_FLOAT, sizeof(Particle), offsetof(Particle, v3Position), 1);
-    pVAO->addAttribute(partPositionsVBO, 2, 2, GL_FLOAT, sizeof(Particle), offsetof(Particle, v2Scale), 1);
+    partPositionsVBO->setData(vParticles, Gum::Graphics::DataState::DYNAMIC);
+    pVAO->addAttribute(partPositionsVBO, 1, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(Particle), offsetof(Particle, v3Position), 1);
+    pVAO->addAttribute(partPositionsVBO, 2, 2, Gum::Graphics::Datatypes::FLOAT, sizeof(Particle), offsetof(Particle, v2Scale), 1);
 	
     TexOffsets = new VertexBufferObject<vec4>();
-    pVAO->addAttribute(TexOffsets, 3, 4, GL_FLOAT, sizeof(vec4), 0, 1);
+    pVAO->addAttribute(TexOffsets, 3, 4, Gum::Graphics::Datatypes::FLOAT, sizeof(vec4), 0, 1);
 	
     TexCoordInfo = new VertexBufferObject<vec2>();
-    pVAO->addAttribute(TexCoordInfo, 4, 2, GL_FLOAT, sizeof(vec2), 0, 1);
+    pVAO->addAttribute(TexCoordInfo, 4, 2, Gum::Graphics::Datatypes::FLOAT, sizeof(vec2), 0, 1);
+    pVAO->setVertexCount(6);
 }
 
 
@@ -43,21 +44,18 @@ void ParticleSystem::render()
 {
 	if (vParticles.size() > 0)
 	{
-		glDisable(GL_CULL_FACE);
-		glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE);
-		glDepthMask(GL_FALSE);
-		glEnable(GL_DEPTH_TEST);
+        Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+		//glDepthMask(GL_FALSE);
 
         pVAO->bind();
 		texture->bind();
-		glDrawArraysInstanced(GL_TRIANGLE_STRIP, 0, 6, vParticles.size());
+        pVAO->render(vParticles.size());
 		texture->unbind();
         pVAO->unbind();
 
-		glDepthMask(GL_TRUE);
-		glDisable(GL_BLEND);
-		glEnable(GL_CULL_FACE);
+		//glDepthMask(GL_TRUE);
+        Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
 	}
 }
 
@@ -91,9 +89,9 @@ void ParticleSystem::update()
 			}
 	}
 	
-    partPositionsVBO->setData(vParticles, GL_STREAM_DRAW);
-    TexOffsets->setData(TexOffsetsVector, GL_STREAM_DRAW);
-    TexCoordInfo->setData(TexCoordInfoVector, GL_STREAM_DRAW);
+    partPositionsVBO->setData(vParticles, Gum::Graphics::DataState::DYNAMIC);
+    TexOffsets->setData(TexOffsetsVector, Gum::Graphics::DataState::DYNAMIC);
+    TexCoordInfo->setData(TexCoordInfoVector, Gum::Graphics::DataState::DYNAMIC);
 }
 
 void ParticleSystem::addParticle(vec3 position, float lifetime)

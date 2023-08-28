@@ -28,8 +28,8 @@ void Lightning::render(ShadowMapping *shadowmap, World3D* world)
 {
 	auto start = std::chrono::high_resolution_clock::now();
 
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	//glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     pRenderer->getGBuffer()->getPositionMap()->bind(0);
 	pRenderer->getGBuffer()->getNormalMap()->bind(1);
 	pRenderer->getGBuffer()->getDiffuseMap()->bind(2);

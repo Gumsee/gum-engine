@@ -11,6 +11,7 @@
 #include "Essentials/Unicode.h"
 #include "GUI/Basics/Dropdown.h"
 #include "GUI/Primitives/RenderGUI.h"
+#include "Graphics/Framebuffer.h"
 #include "System/Output.h"
 #include "Worlds/Worlds.h"
 
@@ -60,13 +61,13 @@ int main(int argc, char** argv)
 
     Gum::Display::init();
     pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
-    pMainWindow->setClearColor(color(61, 99, 191, 255));
     pMainWindow->setVerticalSync(true);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
     Gum::Graphics::addFramebufferToWindow(pMainWindow);
 
     pGUI = new Gum::GUI(pMainWindow);
+    Framebuffer::CurrentlyBoundFramebuffer->setClearColor(Gum::GUI::getTheme()->backgroundColor);
 
     ObjectManager::MODEL_ASSETS_PATH = example_path + "objects/";
     Gum::TextureManager::TEXTURE_ASSETS_PATH = example_path + "textures/";
@@ -139,8 +140,7 @@ int main(int argc, char** argv)
     while(pMainWindow->isOpen())
     {
         Gum::Display::pollEvents();
-        pMainWindow->setClearColor(Gum::GUI::getTheme()->backgroundColor);
-        pMainWindow->clear(GL_COLOR_BUFFER_BIT);
+        Framebuffer::CurrentlyBoundFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
         
         //GumEngine::update(GumEngine::ALL);
         pMainCamera->update();

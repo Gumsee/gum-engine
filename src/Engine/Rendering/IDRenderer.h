@@ -18,6 +18,7 @@ public:
     using Framebuffer::bind;
     using Framebuffer::setSize;
     using Framebuffer::getPixel;
+    using Framebuffer::clear;
 
     ShaderProgram* getMeshShader();
     ShaderProgram* getCurveShader();

@@ -31,8 +31,7 @@ void Renderer2D::renderInternal()
         return;
 
     pFramebuffer->bind();
-    glClearColor(0.02, 0.31, 0.53,1);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
     pWorld->renderSky();
 
     for(unsigned int i = 0; i < pWorld->numLayers(); i++)
@@ -92,7 +91,7 @@ World2D* Renderer2D::getWorld()    { return this->pWorld; }
 void Renderer2D::setWorld(World2D* world) 
 { 
     this->pWorld = world; 
-    world->getLightManager()->addCallback([this](Light* light, int index) {
+    world->getLightManager()->addCallback([](Light* light, int index) {
         //pLightning->loadLight(light, index);
     });
 }

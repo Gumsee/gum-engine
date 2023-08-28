@@ -1,4 +1,5 @@
 #include "ReflectiveTexture2D.h"
+#include "Graphics/Framebuffer.h"
 
 ReflectiveTexture2D::ReflectiveTexture2D(Renderer3D* renderer, ivec2 resolution)
 {
@@ -16,10 +17,9 @@ ReflectiveTexture2D::~ReflectiveTexture2D()
 
 void ReflectiveTexture2D::render(Camera* camera)
 {
-	glEnable(GL_CLIP_DISTANCE0);
+	//glEnable(GL_CLIP_DISTANCE0);
 	pFrameBuffer->bind();
-	glClearDepth(1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    pFrameBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 	float distance = 2 * (camera->getPosition().y - this->fHeight);
 	//vec3 oldpos = camera->getPosition();
 	//mat4 oldmat = camera->getViewMatrix();
@@ -43,7 +43,7 @@ void ReflectiveTexture2D::render(Camera* camera)
 	//GumEngine::Shaders->update("ClipPlane");
 	//GumEngine::Shaders->update();
 	pFrameBuffer->unbind();
-	glDisable(GL_CLIP_DISTANCE0);
+	//glDisable(GL_CLIP_DISTANCE0);
 }
 
 Texture2D* ReflectiveTexture2D::getTexture()      { return (Texture2D*)pFrameBuffer->getTextureAttachment(); }

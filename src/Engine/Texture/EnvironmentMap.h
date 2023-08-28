@@ -1,24 +1,25 @@
 #pragma once
+#include "../3D/Camera3D.h"
+
 #include <Graphics/Framebuffer.h>
 #include <Graphics/TextureCube.h>
+#include <functional>
 
-class Renderer3D;
-
-class EnvironmentMap
+class EnvironmentMap : public TextureCube
 {
 private:
-	TextureCube *pResultTexture;
 	Framebuffer *pFramebuffer;
-    Renderer3D* pRenderer;
 
-	mat4 captureProjection;
-    std::vector<mat4> captureViews;
+	Camera3D* pCaptureCamera;
+    std::vector<mat4> vCaptureViews;
 
 public:
-	EnvironmentMap(Renderer3D* renderer);
+	EnvironmentMap(const ivec2& resolution, std::string name = "EnvironmentMap", const unsigned short& datatype = Gum::Graphics::Datatypes::UNSIGNED_CHAR);
 	~EnvironmentMap();
 
-	void render();
+	void render(std::function<void()> renderfunc);
 
-	Texture *getTexture();
+    ivec2 getSize() const;
+    void setSize(const ivec2& size);
+    Framebuffer* getFramebuffer();
 };

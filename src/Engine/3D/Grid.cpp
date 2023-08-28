@@ -2,16 +2,18 @@
 #include "GridShader.h"
 #include "Camera3D.h"
 #include "../Shaders/ShaderManager.h"
-#include "Graphics/VertexArrayObject.h"
-#include "System/MemoryManagement.h"
-#include "System/Output.h"
+#include <Graphics/VertexArrayObject.h>
+#include <Graphics/Graphics.h>
+#include <System/MemoryManagement.h>
+#include <System/Output.h>
 
 Grid::Grid()
 {
-    pVAO = new VertexArrayObject();
+    pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::TRIANGLES);
     VertexBufferObject<float> vbo;
-    vbo.setData({}); //TODO
-    pVAO->addAttribute(&vbo, 0, 2, GL_FLOAT);
+    vbo.setData({}, Gum::Graphics::DataState::STATIC); //TODO
+    pVAO->addAttribute(&vbo, 0, 2, Gum::Graphics::Datatypes::FLOAT);
+    pVAO->setVertexCount(6);
     initShader();
 }
 
@@ -26,12 +28,13 @@ void Grid::render()
     pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
 
-    glEnable(GL_BLEND);
+    Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::BLENDING);
     pVAO->bind();
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    pVAO->render(1);
     pVAO->unbind();
-    glDisable(GL_BLEND);
     pShader->unuse();
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
 }
 
 void Grid::initShader()

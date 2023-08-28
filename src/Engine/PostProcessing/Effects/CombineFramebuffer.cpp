@@ -13,8 +13,7 @@ CombineFramebuffer::~CombineFramebuffer() {}
 void CombineFramebuffer::render(Texture* texture)
 {
 	pFramebuffer->bind();
-    glClearDepth(1.0);
-    glClear(GL_COLOR_BUFFER_BIT);
+	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
 	pShader->use();
 
     framebuffer1->getTextureAttachment(0)->bind(0);

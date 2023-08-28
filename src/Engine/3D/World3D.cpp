@@ -25,7 +25,6 @@ World3D::~World3D()
 
 void World3D::update()
 {
-    pObjectManager->getSkybox()->update();
     pLightManager->update();
     pPhysics->update();
 }
