@@ -7,6 +7,8 @@ set(CMAKE_EXPORT_PACKAGE_REGISTRY TRUE)
 include(CMakePackageConfigHelpers)
 include(GNUInstallDirs)
 
+option(GUMENGINE_BUILD_EXAMPLES "Should the exampleprojects be build" ON)
+
 #Set OS
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DGUM_OS_LINUX)
@@ -131,4 +133,7 @@ set(BUILD_UNIT_TESTS OFF CACHE INTERNAL "")
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/bullet3/ EXCLUDE_FROM_ALL)
 
 add_subdirectory(src)
-add_subdirectory(examples)
+if(GUMENGINE_BUILD_EXAMPLES)
+    add_subdirectory(examples)
+    endif()
+    
