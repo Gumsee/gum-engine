@@ -5,7 +5,7 @@ file(GLOB_RECURSE SRC
 "./*.cpp"
 
 )
-add_library(${CMAKE_PROJECT_NAME}_trgt STATIC ${SRC})
+add_library(${PROJECT_NAME}_trgt STATIC ${SRC})
 
 include_directories(${CMAKE_SOURCE_DIR}/external/)
 
@@ -85,144 +85,144 @@ include_directories(${CMAKE_SOURCE_DIR}/external/)
 
 install(
     FILES gum-engine.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/
 ) 
 
 file(GLOB HEADERS Engine/2D/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/2D/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/2D/
 ) 
 
 file(GLOB HEADERS Engine/2D/Layer/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/2D/Layer/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/2D/Layer/
 ) 
 
 file(GLOB HEADERS Engine/3D/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/3D/
 ) 
 
 file(GLOB HEADERS Engine/3D/Object/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Object/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/3D/Object/
 ) 
 
 file(GLOB HEADERS Engine/3D/Object/Skeletal/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Object/Skeletal/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/3D/Object/Skeletal/
 ) 
 
 file(GLOB HEADERS Engine/3D/Lightning/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/3D/Lightning/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/3D/Lightning/
 ) 
 
 file(GLOB HEADERS Engine/General/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/General/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/General/
 ) 
 
 file(GLOB HEADERS Engine/Rendering/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Rendering/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Rendering/
 ) 
 
 file(GLOB HEADERS Engine/Lightning/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Lightning/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Lightning/
 ) 
 
 file(GLOB HEADERS Engine/Lightning/ShadowMapping/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Lightning/ShadowMapping/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Lightning/ShadowMapping/
 ) 
 
 file(GLOB HEADERS Engine/Loaders/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Loaders/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Loaders/
 ) 
 
 file(GLOB HEADERS Engine/Managers/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Managers/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Managers/
 ) 
 
 file(GLOB HEADERS Engine/Material/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Material/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Material/
 ) 
 
 file(GLOB HEADERS Engine/Particle/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Particle/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Particle/
 ) 
 
 file(GLOB HEADERS Engine/Physics/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Physics/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Physics/
 ) 
 
 file(GLOB HEADERS Engine/PostProcessing/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/
 ) 
 
 file(GLOB HEADERS Engine/PostProcessing/Effects/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/Effects/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/
 ) 
 
 file(GLOB HEADERS Engine/PostProcessing/ImageCorrection/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/ImageCorrection/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/ImageCorrection/
 ) 
 
 file(GLOB HEADERS Engine/PostProcessing/OutlineRenderer/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/PostProcessing/OutlineRenderer/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/OutlineRenderer/
 ) 
 
 file(GLOB HEADERS Engine/Texture/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Texture/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Texture/
 ) 
 
 file(GLOB HEADERS Engine/Shaders/*.h)
 install(
     FILES ${HEADERS}
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}/Engine/Shaders/
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/Shaders/
 )
 
 
 
 
-set(COMBINED_LIB ${CMAKE_BINARY_DIR}/lib${CMAKE_PROJECT_NAME}.a)
+set(COMBINED_LIB ${CMAKE_BINARY_DIR}/lib${PROJECT_NAME}.a)
 
-add_custom_target(createcombineddir
+add_custom_target(${PROJECT_NAME}_createcombineddir
     COMMAND mkdir -p ${CMAKE_BINARY_DIR}/combined/
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/
-    DEPENDS ${CMAKE_PROJECT_NAME}_trgt
+    DEPENDS ${PROJECT_NAME}_trgt
     VERBATIM
 )
 
@@ -233,22 +233,22 @@ add_custom_command( #combinedtarget ALL
     COMMAND ar -x $<TARGET_FILE:BulletDynamics>
     COMMAND ar -x $<TARGET_FILE:BulletCollision>
     COMMAND ar -x $<TARGET_FILE:LinearMath>
-    COMMAND ar -x $<TARGET_FILE:${CMAKE_PROJECT_NAME}_trgt>
+    COMMAND ar -x $<TARGET_FILE:${PROJECT_NAME}_trgt>
     COMMAND sh -c "ar -qcs \"${COMBINED_LIB}\" *.o"
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/combined/
-    DEPENDS  BulletSoftBody BulletDynamics BulletCollision LinearMath createcombineddir ${CMAKE_PROJECT_NAME}_trgt
+    DEPENDS  BulletSoftBody BulletDynamics BulletCollision LinearMath ${PROJECT_NAME}_createcombineddir ${PROJECT_NAME}_trgt
     COMMENT "Combining libs"
     VERBATIM
 )
 
-add_custom_target(combinedlibtarget ALL DEPENDS ${COMBINED_LIB})
+add_custom_target(${PROJECT_NAME}_combinedlibtarget ALL DEPENDS ${COMBINED_LIB})
 
 # Create an library target out of the library compilation result
-add_library(${CMAKE_PROJECT_NAME} STATIC IMPORTED GLOBAL)
-add_dependencies(${CMAKE_PROJECT_NAME} combinedlibtarget)
+add_library(${PROJECT_NAME} STATIC IMPORTED GLOBAL)
+add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_combinedlibtarget)
 
 # Specify where the library is and where to find the headers
-set_target_properties(${CMAKE_PROJECT_NAME}
+set_target_properties(${PROJECT_NAME}
     PROPERTIES
     IMPORTED_LOCATION "${COMBINED_LIB}"
 )
@@ -257,29 +257,29 @@ install(FILES ${COMBINED_LIB}
     DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 #install(
-#    EXPORT ${CMAKE_PROJECT_NAME}Targets
-#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
-#    FILE ${CMAKE_PROJECT_NAME}Targets.cmake
+#    EXPORT ${PROJECT_NAME}Targets
+#    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+#    FILE ${PROJECT_NAME}Targets.cmake
 #)
 
 configure_package_config_file("Config.cmake.in"
-    "${CMAKE_PROJECT_NAME}Config.cmake"
-    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}
+    "${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
     PATH_VARS CMAKE_INSTALL_LIBDIR
 )
 
 #write_basic_package_version_file(
-#	${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake
+#	${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake
 #	VERSION 1.0.0
 #	COMPATIBILITY SameMajorVersion
 #)
 
 ### Install Config and ConfigVersion files
 install(
-    FILES "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}Config.cmake"
-#          "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_PROJECT_NAME}ConfigVersion.cmake"
-    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${CMAKE_PROJECT_NAME}"
+    FILES "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+#          "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
 )
 
-export(PACKAGE ${CMAKE_PROJECT_NAME})
+export(PACKAGE ${PROJECT_NAME})
 
