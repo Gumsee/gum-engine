@@ -30,7 +30,7 @@ void main()
 static void initSimpleShader()
 {
     ShaderProgram* shader;
-    shader = new ShaderProgram();
+    shader = new ShaderProgram(true);
     shader->addShader(new Shader(SimpleVertexShader, Shader::TYPES::VERTEX_SHADER));
     shader->addShader(new Shader(SimpleFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 

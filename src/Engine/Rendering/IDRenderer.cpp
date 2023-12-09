@@ -30,7 +30,7 @@ void IDRenderer::initShaders()
 {
     if(pMeshIDShader == nullptr)
     {
-        pMeshIDShader = new ShaderProgram();
+        pMeshIDShader = new ShaderProgram(true);
         pMeshIDShader->addShader(new Shader(MeshIDVertexShader, Shader::TYPES::VERTEX_SHADER));
         pMeshIDShader->addShader(new Shader(MeshIDFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pMeshIDShader->build("CurveIDShader", { {"vertices", 0}, {"TransMatrix", 3}, {"individualColor", 10} });

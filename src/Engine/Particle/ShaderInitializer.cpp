@@ -13,7 +13,7 @@ namespace Particles
     {
         if(pParticleShader == nullptr)
         {
-            pParticleShader = new ShaderProgram();
+            pParticleShader = new ShaderProgram(true);
             pParticleShader->addShader(new Shader(ParticleVertexShader, Shader::TYPES::VERTEX_SHADER));
             pParticleShader->addShader(new Shader(ParticleFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
             pParticleShader->build("ParticleShader", {
@@ -29,7 +29,7 @@ namespace Particles
 
         if(pBillboardShader == nullptr)
         {            
-            pBillboardShader = new ShaderProgram();
+            pBillboardShader = new ShaderProgram(true);
             pBillboardShader->addShader(new Shader(BillboardVertexShader, Shader::TYPES::VERTEX_SHADER));
             pBillboardShader->addShader(new Shader(BillboardFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
             pBillboardShader->build("BillboardShader", {{"vertexPosition", 0}});

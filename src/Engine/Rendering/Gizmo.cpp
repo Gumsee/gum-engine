@@ -59,7 +59,7 @@ void Gizmo::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("GizmoShader", { {"vertices", 0}, {"colors", 1}, {"TransMatrix", 2} });

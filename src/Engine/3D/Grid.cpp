@@ -45,7 +45,7 @@ void Grid::initShader()
     }
     else
     {
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("GridShader");

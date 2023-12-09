@@ -1,5 +1,6 @@
 #include <Engine.h>
 #include <iostream>
+#include <string>
 #include "../Examples.h"
 
 int currentInstance = 0;
@@ -31,7 +32,7 @@ int makeSphere(vec3 pos, Object* obj, double radius, bool half)
     double radius1Sq = (radius - 1.0) * (radius - 1.0); //Square of the radius of a circle 1 block smaller, for making a hollow sphere
 
     int ceilRadius = ceil(radius); //Round the radius up
-    std::cout << "Radius: " << ceilRadius << std::endl;
+    Gum::Output::print(std::string("Radius: ") + std::to_string(ceilRadius));
     //Loop through x,y,z up to the rounded radius
     for (int x = 0; x <= ceilRadius; x++) 
     {

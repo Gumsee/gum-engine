@@ -19,6 +19,7 @@ public:
 
 private:
     Type iType;
+    std::string sName;
 
 protected:
 	//std::vector<std::function<void()>> vUpdateables;
@@ -45,8 +46,15 @@ public:
     void addBillboard(Billboard* billboard);
     void addParticles(ParticleSystem* particles);
 
+    virtual void saveToFile(const Gum::Filesystem::File& file) {};
+    static World* readFromFile(const Gum::Filesystem::File& file);
+
+    //Setter
+    void setName(std::string name);
+
     //Getter
     Camera* getCamera(const unsigned int& index = 0);
     Physics* getPhysics();
     Type getType() const;
+    std::string getName();
 };

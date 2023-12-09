@@ -167,7 +167,7 @@ void ShadowMapping::initShader()
     }
     else
     {
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("ShadowMapShader");

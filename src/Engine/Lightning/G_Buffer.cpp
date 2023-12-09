@@ -74,7 +74,7 @@ void G_Buffer::initShader()
 {
     if(!Gum::ShaderManager::hasShaderProgram("GBufferShader"))
     {
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
@@ -117,7 +117,7 @@ void G_Buffer::initShader()
         pShader->addTexture("Enviorment", 15);
         pShader->addTexture("ShadowMap", 16);
 
-        Gum::ShaderManager::addShaderProgram(pShader, "GBufferShader");
+        Gum::ShaderManager::addShaderProgram(pShader);
     }
     
     pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");

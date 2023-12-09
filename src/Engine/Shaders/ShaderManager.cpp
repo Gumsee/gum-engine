@@ -8,61 +8,72 @@
 namespace Gum {
 namespace ShaderManager
 {
-	std::map<std::string, ShaderProgram*> mShaderPrograms;
-	std::map<std::string, Shader*> mShaders;
+	std::vector<ShaderProgram*> mShaderPrograms;
+	std::vector<Shader*> mShaders;
 
-	ShaderProgram* addShaderProgram(ShaderProgram* shader, std::string Identifier)
+	unsigned int addShaderProgram(ShaderProgram* shader)
 	{
 		if(shader == nullptr)
-			Gum::Output::error("ShaderManager: Trying to add nullptr shaderprogram! (" + Identifier + ")");
-		if(Identifier == "") { Identifier = shader->getName(); }
-		mShaderPrograms[Identifier] = shader;
-		Gum::Output::debug("ShaderManager: Added Shaderprogram, " + Identifier);
+			Gum::Output::error("ShaderManager: Trying to add nullptr shaderprogram!");
 
-		return shader;
+		mShaderPrograms.push_back(shader);
+		return mShaderPrograms.size() - 1;
 	}
 
-	Shader* addShader(Shader* shader, std::string Identifier)
+	unsigned int addShader(Shader* shader)
 	{
 		if(shader == nullptr)
-			Gum::Output::error("ShaderManager: Trying to add nullptr shader! (" + Identifier + ")");
+			Gum::Output::error("ShaderManager: Trying to add nullptr shader!");
 		
-		mShaders[Identifier] = shader;
-		Gum::Output::debug("ShaderManager: Added Shader, " + Identifier);
-
-		return shader;
+		mShaders.push_back(shader);
+		return mShaders.size() - 1;
 	}
 
 
 	void cleanup()
 	{
-		for(auto program : mShaderPrograms)
-		{
-			std::cout << "cleaning " << program.first << std::endl;
-			Gum::_delete(program.second);
-		}
+		for(ShaderProgram* shader : mShaderPrograms)
+			Gum::_delete(shader);
 		mShaders.clear();
+		mShaderPrograms.clear();
 	}
 
 
 	//
 	// Getter
 	//
-	int numShaderPrograms()                 { return mShaderPrograms.size(); }
-	bool hasShaderProgram(std::string name) { return Tools::mapHasKeyNotNull(mShaderPrograms, name); }
+	unsigned int numShaderPrograms()                 { return mShaderPrograms.size(); }
+	bool hasShaderProgram(std::string name) 
+    {
+		for(ShaderProgram* shader : mShaderPrograms)
+			if(shader->getName() == name)
+                return true;
+
+        return false;
+    }
 
 	ShaderProgram* getShaderProgram(std::string name) 
 	{ 
-		if(!Tools::mapHasKeyNotNull(mShaderPrograms, name))
-			Gum::Output::error("Shaderprogram " + name + " does not exist!");
+		for(ShaderProgram* shader : mShaderPrograms)
+			if(shader->getName() == name)
+                return shader;
 
-		return mShaderPrograms[name]; 
+		return nullptr; 
 	}
 
-	Shader* getShader(std::string name)
+	ShaderProgram* getShaderProgram(const unsigned int& index) 
 	{
-		if(!Tools::mapHasKeyNotNull(mShaders, name))
-			Gum::Output::error("Shader " + name + " does not exist!");
-		return mShaders[name];
+        if(index >= mShaderPrograms.size())
+            return nullptr;
+
+		return mShaderPrograms[index]; 
+	}
+
+	Shader* getShader(const unsigned int& index)
+	{
+        if(index >= mShaders.size())
+            return nullptr;
+
+		return mShaders[index];
 	}
 }}

@@ -4,8 +4,8 @@
 namespace Gum {
 namespace ShaderManager
 {
-	extern ShaderProgram* addShaderProgram(ShaderProgram* shader, std::string Identifier = "");
-    extern Shader* addShader(Shader* shader, std::string Identifier);
+	extern unsigned int addShaderProgram(ShaderProgram* shader);
+    extern unsigned int addShader(Shader* shader);
 
 	/*
 	* This function gets called by the Engine never call it yourself
@@ -14,7 +14,8 @@ namespace ShaderManager
 
     //Getter
     extern bool hasShaderProgram(std::string name);
-	extern int numShaderPrograms();
+	extern unsigned int numShaderPrograms();
     extern ShaderProgram* getShaderProgram(std::string name);
-    extern Shader* getShader(std::string name);
+    extern ShaderProgram* getShaderProgram(const unsigned int& index);
+    extern Shader* getShader(const unsigned int& index);
 }}

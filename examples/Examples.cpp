@@ -1,5 +1,5 @@
 #include <gum-engine.h>
-#include <gum-opengl.h>
+#include <gum-graphics.h>
 #include <gum-system.h>
 #include <gum-essentials.h>
 #include <gum-gui.h>

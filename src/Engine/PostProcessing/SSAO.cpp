@@ -8,6 +8,7 @@
 #include "../Shaders/ShaderManager.h"
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
+#include "PostProcessing.h"
 
 #include <random>
 #include <chrono>
@@ -212,8 +213,8 @@ void SSAO::initShader()
 {
     if(pShader == nullptr)
 	{
-		pShader = new ShaderProgram();
-        pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
+		pShader = new ShaderProgram(true);
+        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
         pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("SSAOShader");
         pShader->addTexture("texPosition", 0);
@@ -233,8 +234,8 @@ void SSAO::initShader()
 
     if(pBlurShader == nullptr)
     {
-        pBlurShader = new ShaderProgram();
-        pBlurShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
+        pBlurShader = new ShaderProgram(true);
+        pBlurShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
         pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pBlurShader->build("SSAOBlurShader");
         pBlurShader->addTexture("ssaoInput", 0);

@@ -78,7 +78,7 @@ World3D* createGBufferExample()
     pFragShaderBuilder->set(fragColorAttr, pFragShaderBuilder->texture2D(textureSampler, texCoordVary));
 
 
-    ShaderProgram* pPostProcessingShader = new ShaderProgram();
+    ShaderProgram* pPostProcessingShader = new ShaderProgram(true);
     pPostProcessingShader->addShader(pShaderBuilder->build());
     pPostProcessingShader->addShader(pFragShaderBuilder->build());
     pPostProcessingShader->build("PostProcessingShader");*/

@@ -92,7 +92,7 @@ void DebugDrawer::initShader()
 {
     if(pShaderProgram == nullptr)
 	{
-		pShaderProgram = new ShaderProgram();
+		pShaderProgram = new ShaderProgram(true);
         pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShaderProgram->build("PhysicsDebuggingpShaderProgram");

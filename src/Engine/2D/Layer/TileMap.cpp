@@ -5,7 +5,8 @@
 #include "../../Shaders/SpriteShader.h"
 #include "../../Rendering/Camera.h"
 
-TileMap::TileMap() 	
+TileMap::TileMap(std::string name)
+    : Layer(name, "tilemap")
 {
     initShader();
 }
@@ -20,9 +21,9 @@ TileMap::~TileMap()
 
 void TileMap::render()
 {
-    pSpriteShader->use();
-    pSpriteShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pSpriteShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    pShader->use();
+    pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     for(Sprite2D* spr : vSprites)
         spr->render();
 }
@@ -89,16 +90,16 @@ void TileMap::initShader()
 {
     if(!Gum::ShaderManager::hasShaderProgram("SpriteShader"))
     {
-        pSpriteShader = new ShaderProgram();
-        pSpriteShader->addShader(new Shader(SpriteVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pSpriteShader->addShader(new Shader(SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+        pShader = new ShaderProgram(true);
+        pShader->addShader(new Shader(SpriteVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        pSpriteShader->build("SpriteShader", {{"vertices", 0}, {"TransMatrix", 1}});
-        pSpriteShader->addUniform("color");
-        pSpriteShader->addTexture("textureSampler", 0);
+        pShader->build("SpriteShader", {{"vertices", 0}, {"TransMatrix", 1}});
+        pShader->addUniform("color");
+        pShader->addTexture("textureSampler", 0);
 
-        Gum::ShaderManager::addShaderProgram(pSpriteShader, "SpriteShader");
+        Gum::ShaderManager::addShaderProgram(pShader);
     }
 
-    pSpriteShader = Gum::ShaderManager::getShaderProgram("SpriteShader");
+    pShader = Gum::ShaderManager::getShaderProgram("SpriteShader");
 }

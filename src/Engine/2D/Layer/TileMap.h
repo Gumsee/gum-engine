@@ -9,14 +9,13 @@ typedef std::function<void(Sprite2D*)> AddSpriteCallback;
 class TileMap : public Layer
 {
 private:
-    ShaderProgram* pSpriteShader;
 	std::vector<Sprite2D*> vSprites;
     AddSpriteCallback pAddSpriteCallback;
 
     void initShader();
 	
 public:
-	TileMap();
+	TileMap(std::string name);
 	~TileMap();
 
 

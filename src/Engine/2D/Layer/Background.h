@@ -4,7 +4,7 @@
 #include <Graphics/ShaderProgram.h>
 #include <Graphics/Renderable.h>
 
-class ScreenPlane : public Layer
+class Background : public Layer
 {
 private:
     inline static const std::vector<float> afSkyVertices {
@@ -20,11 +20,10 @@ private:
 	inline static VertexArrayObject* pVertexArrayObject = nullptr;
 
     unsigned int iNumLayers;
-    ShaderProgram* pParallaxSkyShader;
 
 public:
-    ScreenPlane();
-    ~ScreenPlane();
+    Background(std::string name);
+    ~Background();
 
     void render() override;
 

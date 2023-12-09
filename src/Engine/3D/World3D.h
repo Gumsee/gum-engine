@@ -20,6 +20,8 @@ public:
 
     void update() override;
     void renderSky() override;
+    void saveToFile(const Gum::Filesystem::File& file) override;
+    static World3D* readFromFile(XMLReader& reader);
 
     LightManager* getLightManager();
     ObjectManager* getObjectManager();

@@ -1,8 +1,9 @@
-#include "ScreenPlane.h"
+#include "Background.h"
 #include "../../Shaders/ShaderManager.h"
 #include "Graphics/VertexArrayObject.h"
 
-ScreenPlane::ScreenPlane()
+Background::Background(std::string name)
+    : Layer(name, "background")
 {
     iNumLayers = 1U;
 
@@ -23,20 +24,20 @@ ScreenPlane::ScreenPlane()
     }
 }
 
-ScreenPlane::~ScreenPlane()
+Background::~Background()
 {
 
 }
 
-void ScreenPlane::render()
+void Background::render()
 {
-    pParallaxSkyShader->use();
+    pShader->use();
     pVertexArrayObject->bind();
     pVertexArrayObject->renderIndexed(iNumLayers);
     pVertexArrayObject->unbind();
 }
 
-void ScreenPlane::addLayer()
+void Background::addLayer()
 {
     iNumLayers++;
 }

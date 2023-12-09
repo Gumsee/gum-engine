@@ -4,6 +4,7 @@
 #include <System/MemoryManagement.h>
 #include "LightningShader.h"
 #include "../../Shaders/ShaderManager.h"
+#include "../../PostProcessing/PostProcessing.h"
 #include "../Renderer3D.h"
 #include "../World3D.h"
 #include "ShadowMapping/ShadowMapping.h"
@@ -85,8 +86,8 @@ void Lightning::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram();
-        pShader->addShader(Gum::ShaderManager::getShader("PostProcessingShaderVert"));
+        pShader = new ShaderProgram(true);
+        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
         pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("LightningShader");
 
@@ -110,7 +111,6 @@ void Lightning::initShader()
         pShader->addUniform("numLights");
         pShader->addUniform("pixelSize");
 
-		//std::cout << "activelights: " << Settings::getSetting(Settings::Names::NUM_ACTIVE_LIGHTS) << std::endl;
         for (int i = 0; i < GUM_MAX_LIGHTS; i++)
         {
             pShader->addUniform("lights[" + std::to_string(i) + "].Position");

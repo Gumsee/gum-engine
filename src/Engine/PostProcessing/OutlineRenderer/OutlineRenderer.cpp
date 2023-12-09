@@ -38,7 +38,7 @@ void OutlineRenderer::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(OutlineRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(OutlineRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("OutlineRendererShader");

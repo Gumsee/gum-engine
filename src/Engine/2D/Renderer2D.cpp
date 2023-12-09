@@ -101,14 +101,14 @@ void Renderer2D::initShader()
 {
     if(!Gum::ShaderManager::hasShaderProgram("ParallaxSkyShader"))
     {
-        pParallaxSkyShader = new ShaderProgram();
+        pParallaxSkyShader = new ShaderProgram(true);
         pParallaxSkyShader->addShader(new Shader(ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
         pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        pParallaxSkyShader->build("SpriteShader", {{"vertices", 0}});
+        pParallaxSkyShader->build("ParallaxSkyShader", {{"vertices", 0}});
         pParallaxSkyShader->addUniform("color");
         pParallaxSkyShader->addTexture("textureSampler", 0);
 
-        Gum::ShaderManager::addShaderProgram(pParallaxSkyShader, "ParallaxSkyShader");
+        Gum::ShaderManager::addShaderProgram(pParallaxSkyShader);
     }
 }

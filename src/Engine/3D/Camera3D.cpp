@@ -79,7 +79,7 @@ void Camera3D::update()
             fAngleAroundPos = fMouseAngle;
 
             fRoll = fPitch;
-            Gum::Maths::clamp(fPitch, -89.99f, 89.99f);
+            fPitch = Gum::Maths::clamp((const float)fPitch, -89.99f, 89.99f);
 
             v3ActualPosition.x = vPosition.x - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos);
             v3ActualPosition.y = vPosition.y + pOffsetToPos->get() * Gum::Maths::sindeg(fPitch);

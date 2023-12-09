@@ -38,7 +38,7 @@ void CombineTextures::initShader()
 {
 	if(pShader == nullptr)
 	{
-        pShader = new ShaderProgram();
+        pShader = new ShaderProgram(true);
         pShader->addShader(new Shader(CombineTexturesVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("CombineTexturesShader");
