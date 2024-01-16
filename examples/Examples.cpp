@@ -7,13 +7,16 @@
 #include <GUI/Basics/Basics.h>
 #include <string>
 #include "Desktop/IO/Mouse.h"
+#include "Engine/PostProcessing/Effects/Effects.h"
 #include "Engine/Texture/TextureManager.h"
 #include "Essentials/Unicode.h"
 #include "GUI/Basics/Dropdown.h"
 #include "GUI/Primitives/RenderGUI.h"
 #include "Graphics/Framebuffer.h"
+#include "System/File.h"
 #include "System/Output.h"
 #include "Worlds/Worlds.h"
+#include "Worlds/PostProcessingEffects.h"
 
 /******
 
@@ -47,7 +50,7 @@ World3D* getExampleWorld(std::string name)
         if(name == "Particles")                 { mWorlds[name] = createParticlesExample(); }
         if(name == "PhysicallyBasedRendering")  { mWorlds[name] = createPhysicallyBasedRenderingExample(); }
         if(name == "Physics")                   { mWorlds[name] = createPhysicsExample(); }
-        //if(name == "PostProcessing")            { mWorlds[name] = createPostProcessingExample(); }
+        if(name == "PostProcessing")            { mWorlds[name] = createPostProcessingExample(); }
         //if(name == "ShadowMapping")             { mWorlds[name] = createShadowMappingExample(); }
         //if(name == "SphereGenerator")           { mWorlds[name] = createSphereGeneratorExample(); }
     }
@@ -57,7 +60,7 @@ World3D* getExampleWorld(std::string name)
 
 int main(int argc, char** argv)
 {
-    std::string example_path = std::string(EXAMPLES_PATH) + "/assets/";
+    Gum::Filesystem::File assetPath(std::string(EXAMPLES_PATH) + "/assets/", Gum::Filesystem::DIRECTORY);
 
     Gum::Display::init();
     pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
@@ -69,44 +72,39 @@ int main(int argc, char** argv)
     pGUI = new Gum::GUI(pMainWindow);
     Framebuffer::CurrentlyBoundFramebuffer->setClearColor(Gum::GUI::getTheme()->backgroundColor);
 
-    ObjectManager::MODEL_ASSETS_PATH = example_path + "objects/";
-    Gum::TextureManager::TEXTURE_ASSETS_PATH = example_path + "textures/";
+    ObjectManager::MODEL_ASSETS_PATH = assetPath.toString() + "/objects/";
+    Gum::TextureManager::TEXTURE_ASSETS_PATH = assetPath.toString() + "/textures/";
     Gum::Engine::init();
 
-    XMLLoader pXMLGUILoader(example_path + "/guis/example_interface.xml");
+    XMLLoader pXMLGUILoader(assetPath.toString() + "/guis/example_interface.xml");
     pGUI->addGUI(pXMLGUILoader.getRootGUI());
     pRenderCanvas = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
 
+    //Gum::Output::print(pXMLGUILoader.getRootGUI()->getHierarchy());
+
+    pMainCamera = new Camera3D(pRenderCanvas->getSize(), new World3D());
+    pMainCamera->setPosition(vec3(0,0,0));
+    pMainCamera->setMode(Camera3D::Modes::STATIC);
+    pMainCamera->setOffset(60.0f);
+    pMainCamera->setZoomFactor(3.0f);
+    pMainCamera->makeActive();
+    //pMainCamera->setRotationalSpeed(0.2f);
+
     pMainRenderer = new Renderer3D(pRenderCanvas);
-    pMainRenderer->setWorld(getExampleWorld("BasicCube"));
+    pMainRenderer->setWorld(getExampleWorld("AnimatesModels"));
     pMainRenderer->setExposure(1.0f);
 
     pMainWindow->onResized([](ivec2 size) {
         pGUI->setSize(size);
+        ((Camera3D*)Camera::getActiveCamera())->updateProjection(pRenderCanvas->getSize());
         pMainRenderer->updateFramebufferSize();
     });
 
     Settings::setSetting(Settings::SHOWDEBUGINFO, true);
 
-    pMainCamera = new Camera3D(pMainWindow->getSize(), new World3D());
-    pMainCamera->setPosition(vec3(0,0,0));
-    pMainCamera->setMode(Camera3D::Modes::STATIC);
-    pMainCamera->setOffset(60.0f);
-    pMainCamera->setZoomFactor(3.0f);
-    //pMainCamera->setRotationalSpeed(0.2f);
-
-    /*Box* debugBox = new Box(ivec2(100, 100), ivec2(300, 300));
-    debugBox->setTexture(Gum::TextureManager::getTexture("boii.jpg"));
-    pGUI->addGUI(debugBox);*/
-
-
-    /*FileExplorer* pFileExplorer = new FileExplorer(ivec2(0,0), ivec2(100, 100), "./");
-    pFileExplorer->setSizeInPercent(true, true);
-    pXMLGUILoader->getGUI()->findChildByID("filesmenu")->addGUI(pFileExplorer);*/
-
 
     Tabs* TabsGUI = (Tabs*)pXMLGUILoader.getRootGUI()->findChildByID("sidemenutabs");
-    RenderGUI* GBufferTab = TabsGUI->getTabContent("GBuffer");
+    RenderGUI* GBufferTab = TabsGUI->getTabContent("Renderdata");
     ((Box*)GBufferTab->findChildByID("Positions"))->setTexture(pMainRenderer->getGBuffer()->getPositionMap());
     ((Box*)GBufferTab->findChildByID("Normals"))->setTexture(pMainRenderer->getGBuffer()->getNormalMap());
     ((Box*)GBufferTab->findChildByID("Diffuse"))->setTexture(pMainRenderer->getGBuffer()->getDiffuseMap());
@@ -127,8 +125,19 @@ int main(int argc, char** argv)
     examplesDropdown->onSelection([](Gum::Unicode title) {
         pMainRenderer->setWorld(getExampleWorld(title.toString()));
     });
+
     for(std::string example : { "AnimatesModels", "Billboards", "GBuffer", "BasicCube", "IrradiancePBR", "MazeLearning", "Ocean", "Particles", "PhysicallyBasedRendering", "Physics", "PostProcessing", "ShadowMapping", "SphereGenerator" })
         examplesDropdown->addEntry(example, false);
+
+
+    Dropdown* postprocessingDropdown = ((Dropdown*)examplesTab->findChildByID("postprocessingdropdown"));
+    postprocessingDropdown->onSelection([](Gum::Unicode title) {
+
+    });
+
+    for(std::string effect : { "GaussianBlur" })
+        postprocessingDropdown->addEntry(effect, false);
+
     pMainWindow->getMouse()->onRelease([](int button, int mods) {
         if(button & GUM_MOUSE_BUTTON_RIGHT)
         {
@@ -137,23 +146,32 @@ int main(int argc, char** argv)
         }
     });
 
+    //pMainRenderer->addPostProcessingEffect(new GaussianBlur(pRenderCanvas, 10));
+    //pMainRenderer->addPostProcessingEffect(new Brightfilter(pRenderCanvas));
+    //pMainRenderer->addPostProcessingEffect(new BloomEffect(pRenderCanvas));
+
+    //getExampleWorld("PhysicallyBasedRendering")->saveToFile(assetPath + Gum::Filesystem::File("/worlds/physicallybased.wld"));
+
     while(pMainWindow->isOpen())
     {
         Gum::Display::pollEvents();
         Framebuffer::CurrentlyBoundFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
         
-        //GumEngine::update(GumEngine::ALL);
         pMainCamera->update();
         pMainRenderer->update();
         pMainRenderer->render();
+        pMainRenderer->renderIDs();
 
+        pMainWindow->bind();
         pGUI->render();
         pGUI->update();
+
+        //Gum::Output::print(Framebuffer::CurrentlyBoundFramebuffer->getSize());
 
         if(pRenderCanvas->hasClickedInside(GUM_MOUSE_BUTTON_RIGHT))
         {
             pMainWindow->getMouse()->trap(true);
-            ((Camera3D*)Camera::getActiveCamera())->setMode(Camera3D::THIRDPERSON);
+            ((Camera3D*)Camera::getActiveCamera())->setMode(Camera3D::FREECAM);
         }
 
         pMainWindow->finishRender();

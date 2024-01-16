@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "System/Output.h"
 #include <Essentials/Settings.h>
 #include <Maths/MatrixFunctions.h>
 

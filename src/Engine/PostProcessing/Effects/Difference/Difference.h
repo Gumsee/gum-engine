@@ -1,10 +1,10 @@
 #pragma once
-#include "PostProcessingEffect.h"
+#include "../PostProcessingEffect.h"
 
 class Difference : public PostProcessingEffect
 {
 private:
-	ShaderProgram *pShader;
+	static inline ShaderProgram *pShader = nullptr;
 	
 public:
 	Difference(Box *canvas);

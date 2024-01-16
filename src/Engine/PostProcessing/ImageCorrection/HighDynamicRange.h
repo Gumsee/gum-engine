@@ -11,6 +11,6 @@ public:
 	HighDynamicRange(Box *canvas);
 	~HighDynamicRange();
 
-	void render(Texture* texture, float exposure);
+	Texture* render(Texture* texture, float exposure);
 };
 

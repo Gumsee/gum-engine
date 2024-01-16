@@ -19,7 +19,6 @@ EnvironmentMap::EnvironmentMap(const ivec2& resolution, std::string name, const 
     pFramebuffer->addDepthAttachment();
     pFramebuffer->addCubeTextureAttachment(0, this);
 
-	
     pCaptureCamera = new Camera3D(pFramebuffer->getSize(), nullptr);
     pCaptureCamera->setFOV(90.0f);
 	/*vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3(-1.0f,  0.0f,  0.0f), vec3(0.0f, 1.0f,  0.0f)));

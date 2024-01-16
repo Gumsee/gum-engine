@@ -18,9 +18,7 @@ void PostProcessingEffect::init(Box* canvas)
     this->pFramebuffer->addTextureAttachment(0, "PostProcessingEffect");
 }
 
-void PostProcessingEffect::render(Texture* texture) {}
-
-Texture* PostProcessingEffect::getResultTexture() { return pFramebuffer->getTextureAttachment(0); }
+Texture* PostProcessingEffect::render(Texture* texture) { return texture; }
 
 void PostProcessingEffect::setSize(ivec2 size)
 {

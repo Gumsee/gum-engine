@@ -1,6 +1,7 @@
 #include "Renderer3D.h"
 
 #include "Graphics/Graphics.h"
+#include "System/Output.h"
 #include "World3D.h"
 #include "../Shaders/ShaderManager.h"
 #include "Lightning/Lightning.h"
@@ -27,6 +28,8 @@ Renderer3D::Renderer3D(Box* canvas)
 
     pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
     pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
+
+    updateFramebufferSize();
 }
 
 Renderer3D::~Renderer3D()
@@ -46,32 +49,26 @@ void Renderer3D::renderInternal()
     if(pWorld == nullptr)
         return;
     //GumEngine::DefaultOutlineRenderer->resetFramebuffer();
-    
-    //Render Objects to GBuffer
-    pGBuffer->bind();
-    pGBuffer->getShader()->use();
-    pGBuffer->getShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pGBuffer->getShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    pWorld->getObjectManager()->renderToGBuffer(pGBuffer->getShader());
-    pGBuffer->getShader()->unuse();
-    pGBuffer->unbind();
 
-    //SSAO
-    //pSSAO->render();
     pFramebuffer->bind();
     pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
     pWorld->renderSky();
 
+    //SSAO
+    //pSSAO->render();
+
 	//pShadowMaps->getResultTexture(0)->bind(16);
 	//pEnvironmentMap->getTexture()->bind(15);
-    pLightning->render(pShadowMaps, pWorld);
+    pWorld->getObjectManager()->renderDefered(pGBuffer, pRenderCanvas);
 	//pEnvironmentMap->getTexture()->unbind(15);
 	//pShadowMaps->getResultTexture(0)->unbind(16);
 
-    pGBuffer->getFramebuffer()->blitDepthToOtherFramebuffer(pFramebuffer);
+
+    pLightning->updateShader(pShadowMaps, pWorld);
+
     
     pFramebuffer->bind();
-    pWorld->getObjectManager()->renderExceptGBuffer(pGBuffer->getShader(), Camera::getActiveCamera());
+    pWorld->getObjectManager()->renderForward();
 
     #ifdef DEBUG
         pGrid->render();
@@ -82,12 +79,10 @@ void Renderer3D::renderInternal()
 
     pParticleShader->use();
     pParticleShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pParticleShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pWorld->renderParticles(pParticleShader);
 
 	pBillboardShader->use();
     pBillboardShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pBillboardShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pWorld->renderBillboards(pBillboardShader);
 
 
@@ -101,7 +96,7 @@ void Renderer3D::renderInternal()
     //Render the Shadowmap
     pShadowMaps->prepare(*pWorld->getLightManager()->getSun()->getDirection(), 0);
     Gum::Graphics::renderWireframe(false);
-    pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pShadowMaps->getShader(), true);
+    //pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pShadowMaps->getShader(), true);
 
     //ShadowMaps->prepare(*Lights->getSun()->getDirection(), 1);
     //Objects->render(0, ShadowMaps->getShader());
@@ -121,7 +116,9 @@ void Renderer3D::renderIDsInternal()
     if(pWorld == nullptr)
         return;
 
-    pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pIDRenderer->getMeshShader(), true);
+    pIDRenderer->getMeshShader()->use();
+    pIDRenderer->getMeshShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    pWorld->getObjectManager()->renderIDs();
     pWorld->renderRenderableIDs();
 }
 
@@ -136,11 +133,29 @@ void Renderer3D::update()
 void Renderer3D::updateFramebufferSize()
 {
     Renderer::updateFramebufferSize();
-
     pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
+    
+    if(Camera::getActiveCamera() == nullptr)
+        return;
+
+    pGBuffer->getShader()->use();
+    pGBuffer->getShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    
+    pBillboardShader->use();
+    pBillboardShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    
+    pParticleShader->use();
+    pParticleShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+
+    pIDRenderer->getMeshShader()->use();
+    pIDRenderer->getMeshShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    ShaderProgram::unuse();
 
     if(pWorld != nullptr)
+    {
+        pWorld->getObjectManager()->updateShaderPrograms(Camera::getActiveCamera());
         pWorld->updateProjection();
+    }
 }
 
 

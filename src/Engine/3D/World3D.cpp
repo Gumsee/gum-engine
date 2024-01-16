@@ -2,8 +2,12 @@
 #include "../Shaders/ShaderManager.h"
 #include <System/MemoryManagement.h>
 #include <Desktop/Window.h>
+#include <string>
 #include "Camera3D.h"
+#include "Codecs/XMLNode.h"
 #include "Codecs/XMLWriter.h"
+#include "Graphics/Shader.h"
+#include "Graphics/ShaderProgram.h"
 #include "Object/PhysicsObjectInstance.h"
 
 
@@ -28,14 +32,12 @@ World3D::~World3D()
 void World3D::update()
 {
     pLightManager->update();
-    pPhysics->update();
+    World::update();
 }
 
 void World3D::renderSky()
 {
     pObjectManager->getSkybox()->getShaderProgram()->use();
-    pObjectManager->getSkybox()->getShaderProgram()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pObjectManager->getSkybox()->getShaderProgram()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pObjectManager->getSkybox()->render();
     pObjectManager->getSkybox()->getShaderProgram()->unuse();
 }
@@ -45,13 +47,66 @@ void World3D::saveToFile(const Gum::Filesystem::File& file)
     XMLNode* rootNode = new XMLNode("world");
 
     //
-    // Adding Objects
+    // Adding Meshes
     //
-    XMLNode* objectsNode = new XMLNode("objects");
+    /*std::vector<Mesh*> meshes;
+    XMLNode* meshesNode = new XMLNode("meshes");
     for(unsigned int i = 0; i < getObjectManager()->numObjects(); i++)
     {
         Object3D* obj = getObjectManager()->getObject(i);
-        XMLNode* objNode = new XMLNode(obj->getName());
+        Mesh* mesh = obj->getMesh();
+
+        if(std::find(meshes.begin(), meshes.end(), mesh) == meshes.end())
+        {
+            XMLNode* meshNode = new XMLNode("mesh");
+            meshNode->addAttribute("name", mesh->name);
+            meshNode->addAttribute("id", std::to_string(meshes.size()));
+
+            
+            XMLNode* indicesNode = new XMLNode("indices");
+            indicesNode->type = XMLNode::TEXT;
+            for(unsigned int i = 0; i < mesh->numIndices(); i++)
+                indicesNode->content += std::to_string(mesh->getIndex(i)) + " ";
+            meshNode->addChild(indicesNode);
+            
+            XMLNode* verticesNode = new XMLNode("vertices");
+            for(unsigned int j = 0; j < mesh->numVertices(); j++)
+            {
+                Vertex &vertex = mesh->getVertex(j);
+                XMLNode* vertexNode = new XMLNode("vertex");
+                vertexNode->addAttribute("p", vertex.position.toString("", "", ","));
+                vertexNode->addAttribute("n", vertex.normal.toString("", "", ","));
+                vertexNode->addAttribute("t", vertex.textureCoord.toString("", "", ","));
+                vertexNode->addAttribute("j", vertex.JointIDs.toString("", "", ","));
+                vertexNode->addAttribute("a", vertex.tangent.toString("", "", ","));
+                vertexNode->addAttribute("b", vertex.bitangent.toString("", "", ","));
+                vertexNode->addAttribute("w", vertex.Weights.toString("", "", ","));
+
+                verticesNode->addChild(vertexNode);
+            }
+            meshNode->addChild(verticesNode);
+
+
+        
+            meshes.push_back(mesh);
+
+            meshesNode->addChild(meshNode);
+        }
+    }
+    rootNode->addChild(meshesNode);*/
+
+    //
+    // Adding Objects
+    //
+    XMLNode* objectsNode = new XMLNode("objects");
+    getObjectManager()->iterateThroughObjects([objectsNode](Object3D* obj, ShaderProgram* shader, bool defered) {
+        XMLNode* objNode = new XMLNode("object");
+        objNode->addAttribute("name", obj->getName());
+        objNode->addAttribute("shader", shader->getName());
+        objNode->addAttribute("isdefered", defered ? "true" : "false");
+
+        //int meshid = std::find(meshes.begin(), meshes.end(), obj->getMesh()) - meshes.begin();
+        //objNode->addAttribute("meshid", std::to_string(meshid));
         for(unsigned int j = 0; j < obj->numInstances(); j++)
         {
             Object3DInstance* inst = obj->getInstance(j);
@@ -64,7 +119,7 @@ void World3D::saveToFile(const Gum::Filesystem::File& file)
             objNode->addChild(instanceNode);
         }
         objectsNode->addChild(objNode);
-    }
+    });
     rootNode->addChild(objectsNode);
 
 
@@ -75,7 +130,8 @@ void World3D::saveToFile(const Gum::Filesystem::File& file)
     for(unsigned int i = 0; i < getLightManager()->numPointLights(); i++)
     {
         PointLight* light = getLightManager()->getPointLight(i);
-        XMLNode* lightNode = new XMLNode(light->getName());
+        XMLNode* lightNode = new XMLNode("light");
+        lightNode->addAttribute("name", light->getName());
         lightNode->addAttribute("position", light->getPosition().toString());
         lightNode->addAttribute("color", light->getColor().toString());
         lightNode->addAttribute("strength", std::to_string(light->getStrength()));

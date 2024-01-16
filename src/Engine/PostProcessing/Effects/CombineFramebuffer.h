@@ -11,7 +11,7 @@ private:
 public:
 	CombineFramebuffer(Box *canvas);
 	~CombineFramebuffer();
-	void render(Texture* texture = nullptr);
+	Texture* render(Texture* texture = nullptr);
 
     void addFirstFramebuffer(Framebuffer* framebuffer);
     void addSecondFramebuffer(Framebuffer* framebuffer);

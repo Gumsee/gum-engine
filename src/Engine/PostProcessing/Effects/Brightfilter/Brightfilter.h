@@ -1,14 +1,14 @@
 #pragma once
-#include "PostProcessingEffect.h"
+#include "../PostProcessingEffect.h"
 
 class Brightfilter : public PostProcessingEffect
 {
 private:
-	ShaderProgram *pShader;
+	static inline ShaderProgram *pShader = nullptr;
 
 public:
 	Brightfilter(Box* canvas);
 	~Brightfilter();
 
-	void render(Texture* texture);
+	Texture* render(Texture* texture);
 };

@@ -25,23 +25,9 @@ Lightning::~Lightning()
 }
 
 
-void Lightning::render(ShadowMapping *shadowmap, World3D* world)
+void Lightning::updateShader(ShadowMapping *shadowmap, World3D* world)
 {
-	auto start = std::chrono::high_resolution_clock::now();
-
-	//glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    pRenderer->getGBuffer()->getPositionMap()->bind(0);
-	pRenderer->getGBuffer()->getNormalMap()->bind(1);
-	pRenderer->getGBuffer()->getDiffuseMap()->bind(2);
-	pRenderer->getSSAO()->getResultTexture()->bind(3);
-	pRenderer->getGBuffer()->getObjectDataMap()->bind(4);
-	//pRenderer->getEnvironmentMap()->getTexture()->bind(5);
-    world->getObjectManager()->getSkybox()->getTexture()->bind(5);
-	world->getObjectManager()->getSkybox()->getIrradianceMap()->bind(6);
-	world->getObjectManager()->getSkybox()->getPreFilterMap()->bind(7);
-	world->getObjectManager()->getSkybox()->getBRDFConvMap()->bind(8);
-	//shadowmap->getResultTexture(0)->bind(9);
+	//auto start = std::chrono::high_resolution_clock::now();
 
 	pShader->use();
 	// for (int i = 0; i < lights->getNearestPointLights().size(); i++)
@@ -54,7 +40,6 @@ void Lightning::render(ShadowMapping *shadowmap, World3D* world)
 	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
 
 	pShader->loadUniform("numLights", (int)world->getLightManager()->numPointLights());
-
 	pShader->loadUniform("SunColor", world->getLightManager()->getSun()->getColor());
 	pShader->loadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
 	pShader->loadUniform("viewmat", Camera::getActiveCamera()->getViewMatrix());
@@ -63,18 +48,10 @@ void Lightning::render(ShadowMapping *shadowmap, World3D* world)
 	pShader->loadUniform("ToShadowMap", *shadowmap->getMatrix());
 	pShader->loadUniform("ShadowMapSize", *shadowmap->getShadowMapSize());
 	pShader->loadUniform("pixelSize", pixelSize);
-	pRenderCanvas->renderCustom();
-
 	pShader->unuse();
-
-    for(int i = 0; i < 9; i++)
-    {
-        //glActiveTexture(GL_TEXTURE0 + i);
-        //glBindTexture(GL_TEXTURE_2D, 0);
-    }
     
-	auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+	//auto elapsed = std::chrono::high_resolution_clock::now() - start;
+	//microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 }
 
 //
@@ -145,4 +122,10 @@ void Lightning::loadLight(Light* light, int index)
 
 	pShader->loadUniform("lights[" + std::to_string(index) + "].Radius", radius);*/
 	pShader->unuse();
+}
+
+
+ShaderProgram* Lightning::getDefaultShaderProgram()
+{
+    return pShader;
 }

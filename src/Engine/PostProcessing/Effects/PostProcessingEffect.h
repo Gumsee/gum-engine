@@ -14,9 +14,7 @@ public:
     PostProcessingEffect();
     virtual ~PostProcessingEffect();
 
-	virtual void render(Texture* texture);
-
-	Texture* getResultTexture();
+	virtual Texture* render(Texture* texture);
 
 	virtual void setSize(ivec2 size);
 };

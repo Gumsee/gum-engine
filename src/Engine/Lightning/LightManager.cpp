@@ -60,6 +60,7 @@ void LightManager::addPointLight(PointLight* light)
     light->setCallback([billboard, this, index](Light* clight) {
         billboard->setTexture(pLightbulb);
         billboard->setPosition(clight->getPosition());
+        billboard->setPixelSize(pLightbulb->getSize() * 0.2f);
 
         for(size_t i = 0; i < vCallbackFunctions.size(); i++)
         {

@@ -148,12 +148,10 @@ R"(
 	void main()
 	{
 	    // retrieve data from gbuffer
-	       vec4 additionalData = texture(gObjectData, Texcoord);
-	       vec4 PositionViewSpace = texture(gPosition, Texcoord);
-	       vec3 Position = (inverse(viewmat) * PositionViewSpace).xyz; //WorldSpace
-	       vec3 NormalViewSpace =   texture(gNormal, Texcoord).xyz;
-	       vec3 Normal =   (inverse(viewmat) * vec4(NormalViewSpace, 0.0f)).xyz; //WorldSpace
-	       vec4 Albedo =   texture(gAlbedo, Texcoord);
+        vec3 Position =       texture(gPosition, Texcoord).xyz; //WorldSpace
+        vec3 Normal =         texture(gNormal, Texcoord).xyz; //WorldSpace
+        vec4 additionalData = texture(gObjectData, Texcoord);
+        vec4 Albedo =         texture(gAlbedo, Texcoord);
 
 	    //AO
 	    float AmbientOcclusion = texture(ssao, Texcoord).r;
@@ -271,6 +269,6 @@ R"(
 	    //FragColor = mix(FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
 	    //FragColor = texture(ShadowMap, shadowmapcoords.xy);
     	//FragColor = vec4(color, 1.0f);
-    	//FragColor = vec4(light, alpha);
+    	FragColor = Albedo * vec4(vec3(dot(Normal, normalize(lights[0].Position - Position))), alpha);
 	}
 )";

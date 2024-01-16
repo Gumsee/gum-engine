@@ -10,7 +10,7 @@ CombineFramebuffer::CombineFramebuffer(Box *canvas)
 
 CombineFramebuffer::~CombineFramebuffer() {}
 
-void CombineFramebuffer::render(Texture* texture)
+Texture* CombineFramebuffer::render(Texture* texture)
 {
 	pFramebuffer->bind();
 	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
@@ -28,6 +28,8 @@ void CombineFramebuffer::render(Texture* texture)
 
 	pShader->unuse();
 	pFramebuffer->unbind();
+    
+    return pFramebuffer->getTextureAttachment(0);
 }
 
 void CombineFramebuffer::addFirstFramebuffer(Framebuffer* framebuffer)

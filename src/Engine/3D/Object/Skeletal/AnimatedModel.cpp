@@ -12,21 +12,33 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
 	this->pShader = nullptr;
 	//Combine all meshes into one
 	sName = name;
-	pMesh = new Mesh();
     pMaterial = new Material();
-	/*Scene3DLoader* loader;(ObjectManager::MODEL_ASSETS_PATH + file, [this](Mesh* mesh) {
-		pProperties->pMesh->addMesh(mesh);
-    }, [this](std::vector<Bone*> bones, Bone* rootbone, std::vector<SkeletalAnimation*> animations, mat4 globalInverseTransform) {
-        for(size_t i = 0; i < bones.size(); i++)
-        {
-            if(bones[i]->getParent() != nullptr)
-                std::cout << bones[i]->getName() << " " << bones[i]->getParent()->getName() << std::endl;
-        }
-        
-        pSkeleton = new Skeleton(rootbone, globalInverseTransform);
-    });*/
 
+    if(Tools::mapHasKey(Mesh::mLoadedMeshes, file))
+    {
+        pMesh = Mesh::mLoadedMeshes[file];
+    }
+    else
+    {
+        pMesh = new Mesh();
+        pMesh->name = file;
+        Scene3DLoader loader;
+        loader.iterateMeshes([this](unsigned int currentMesh, unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
+            pMesh->addMesh(mesh);
+            Gum::_delete(mesh);
 
+            for(size_t i = 0; i < bones.size(); i++)
+            {
+                if(bones[i]->getParent() != nullptr)
+                    std::cout << bones[i]->getName() << " " << bones[i]->getParent()->getName() << std::endl;
+            }
+            
+            mat4 globalInverseTransform; //TODO
+            pSkeleton = new Skeleton(rootbone, globalInverseTransform);
+        });
+        loader.load(file);
+        Mesh::mLoadedMeshes[file] = pMesh;
+    }
 
 	load();
 
@@ -63,11 +75,9 @@ void AnimatedModel::render()
 
 
     //Load TextureObject related uniforms
-	currentShader->loadUniform("transformationMatrix", getInstance()->getMatrix());
-    currentShader->loadUniform("isInstanced", (int)false);
     if(pSkeleton->getBoneMatrices().size() > 0)
     {
-        currentShader->loadUniform("isSkeletal", (int)true);
+        //currentShader->loadUniform("isSkeletal", (int)true);
     }
 
     renderMesh();

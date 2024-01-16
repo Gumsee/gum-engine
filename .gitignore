@@ -13,6 +13,9 @@
 *.tga
 *.jpg
 *.exr
+*.wld
+*.obj
+*.dae
 libGumEngine.a
 libEngineAll.a
 Makefile

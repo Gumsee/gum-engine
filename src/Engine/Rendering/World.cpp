@@ -26,7 +26,7 @@ World::~World()
 void World::update()
 {
     pPhysics->update();
-    //for (size_t i = 0; i < vUpdateables.size(); i++) { vUpdateables[i](); }
+    for (size_t i = 0; i < vUpdateables.size(); i++) { vUpdateables[i](); }
 }
 
 void World::renderRenderable()
@@ -77,7 +77,7 @@ World* World::readFromFile(const Gum::Filesystem::File& file)
 }
 
 
-//void World::addUpdateable(std::function<void()> updateable) { this->vUpdateables.push_back(updateable); }
+void World::addUpdateable(std::function<void()> updateable) { this->vUpdateables.push_back(updateable); }
 void World::addRenderable(Renderable* renderable)           { this->vRenderables.push_back(renderable); }
 void World::addBillboard(Billboard* billboard)              { this->vBillboards.push_back(billboard); }
 void World::addParticles(ParticleSystem* particles)         { this->vParticles.push_back(particles); }

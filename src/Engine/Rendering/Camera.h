@@ -23,7 +23,7 @@ protected:
 	vec3 v3ActualPosition, v3ViewDirection, v3Up, v3StrafeDirection;
 	mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
 	mat3 mRotator;
-	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f;
+	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 0.5f;
     float& fPitch = qRotation.x;
     float& fYaw = qRotation.y;
     float& fRoll = qRotation.z;

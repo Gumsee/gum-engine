@@ -71,8 +71,8 @@ void SkyBox::render()
     getShaderProgram()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
     getShaderProgram()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getPerspective());
 	getShaderProgram()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-	getShaderProgram()->loadUniform("gradiant", (int)gradiant);
-	getShaderProgram()->loadUniform("SunDirection", *this->sunDir);
+	//getShaderProgram()->loadUniform("gradiant", (int)gradiant);
+	//getShaderProgram()->loadUniform("SunDirection", *this->sunDir);
 	renderMesh();
 	pTexture->unbind(0);
 

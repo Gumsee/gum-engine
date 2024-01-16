@@ -1,7 +1,10 @@
 #include "GaussianBlur.h"
-#include "../../Shaders/ShaderManager.h"
+#include "../../../Shaders/ShaderManager.h"
 #include "Graphics/Framebuffer.h"
 #include <System/MemoryManagement.h>
+#include "GaussianBlurShader.h"
+#include "../../PostProcessing.h"
+#include "Graphics/Shader.h"
 
 
 GaussianBlur::GaussianBlur(Box *canvas, int stage)
@@ -20,31 +23,44 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
     pBlurFramebufferV = new Framebuffer(canvas->getSize() / BlurryDivider1);
     pBlurFramebufferV2 = new Framebuffer(canvas->getSize() / BlurryDivider2);
 
-    pBlurFramebufferH->addTextureAttachment(0);
-    pFramebuffer->addTextureAttachment(0);
-    pBlurFramebufferV->addTextureAttachment(0);
-    pBlurFramebufferV2->addTextureAttachment(0);
-
-    
-    /*pBlurFramebufferH->addDepthAttachment();
-    pBlurFramebufferH2->addDepthAttachment();
-    pBlurFramebufferV->addDepthAttachment();
-    pBlurFramebufferV2->addDepthAttachment();*/
+    pBlurFramebufferH->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
+    pFramebuffer->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
+    pBlurFramebufferV->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
+    pBlurFramebufferV2->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
 
 
-	VblurShader = Gum::ShaderManager::getShaderProgram("GaussianBlurVShader");
-	HblurShader = Gum::ShaderManager::getShaderProgram("GaussianBlurHShader");
+    if(VblurShader == nullptr)
+    {
+        VblurShader = new ShaderProgram(true);
+        VblurShader->addShader(new Shader(GussianBlurVShaderVert, Shader::TYPES::VERTEX_SHADER));
+        VblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
+        VblurShader->build("GaussianBlurVShader");
+
+        VblurShader->addTexture("textureSampler", 0);
+        VblurShader->addUniform("specialVar");
+    }
+
+    if(HblurShader == nullptr)
+    {
+        HblurShader = new ShaderProgram(true);
+        HblurShader->addShader(new Shader(GussianBlurHShaderVert, Shader::TYPES::VERTEX_SHADER));
+        HblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
+        HblurShader->build("GaussianBlurHShader");
+
+        HblurShader->addTexture("textureSampler", 0);
+        HblurShader->addUniform("specialVar");
+    }
 }
 
 
 GaussianBlur::~GaussianBlur() 
 {
-	Gum::_delete(HblurShader);
-	Gum::_delete(VblurShader);
+	//Gum::_delete(HblurShader);
+	//Gum::_delete(VblurShader);
 }
 
 
-void GaussianBlur::render(Texture* RenderResult)
+Texture* GaussianBlur::render(Texture* RenderResult)
 {
 	pBlurFramebufferV->bind();
 	pBlurFramebufferV->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
@@ -82,4 +98,6 @@ void GaussianBlur::render(Texture* RenderResult)
 	pBlurFramebufferV2->getTextureAttachment(0)->unbind();
 	HblurShader->unuse();
 	pFramebuffer->unbind();
+
+    return pFramebuffer->getTextureAttachment(0);
 }

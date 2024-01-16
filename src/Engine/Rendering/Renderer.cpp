@@ -47,16 +47,12 @@ void Renderer::render()
     
     //Apply postprocessing effects here
     Texture* lastTex = pFramebuffer->getTextureAttachment();
-    //Texture* lastTex = pLightning->getFramebuffer()->getTextureAttachment();
-    /*for(int i = 0; i < vPostProcessingEffects.size(); i++)
+    for(size_t i = 0; i < vPostProcessingEffects.size(); i++)
     {
-        vPostProcessingEffects[i]->render(lastTex);
-        lastTex = vPostProcessingEffects[i]->getResultTexture();
-    }*/
+        lastTex = vPostProcessingEffects[i]->render(lastTex);
+    }
 
-
-    pHighDynamicRange->render(lastTex, this->fExposure);
-    lastTex = pHighDynamicRange->getResultTexture();
+    lastTex = pHighDynamicRange->render(lastTex, this->fExposure);
 
     pRenderCanvas->setTexture(lastTex);
 

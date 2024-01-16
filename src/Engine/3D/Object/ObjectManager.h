@@ -1,9 +1,14 @@
 #pragma once
 #include <Essentials/Settings.h>
 #include <functional>
+#include <unordered_map>
 
 #include "../Object/Skeletal/AnimatedModel.h"
 #include "../Object/Skybox.h"
+#include "../../Lightning/G_Buffer.h"
+#include "../Lightning/Lightning.h"
+#include "Graphics/Framebuffer.h"
+#include "Graphics/ShaderProgram.h"
 
 
 #define OBJ_INSTANCED 	0
@@ -20,7 +25,8 @@ class ObjectManager
 {
 private:
 	SkyBox *pSkyBox;
-	std::vector<Object3D*> vObjects;
+	std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsForward;
+	std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsDefered;
     AddObjectCallback pAddObjectCallback;
 	
 public:
@@ -38,9 +44,11 @@ public:
 	};
 
 
-	void render(int exception = 0, ShaderProgram *shader = nullptr, bool noPrepare = false);
-	void renderToGBuffer(ShaderProgram* gbufferShader);
-    void renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* camera);
+	void renderSky();
+	void renderDefered(G_Buffer* gbuffer, Box* rendercanvas);
+	void renderForward();
+	void renderEverything();
+    void renderIDs();
 
 	/**
      * Adds a Object to the Object map
@@ -50,9 +58,11 @@ public:
 	 *	Kind:		What kind of object should be created
 	 *	Identifier:	The Identifier thats used in the program
 	 */
-	Object3D* addObject(Object3D* obj, std::string Identifier = "");
+	Object3D* addObject(Object3D* obj, ShaderProgram* shader = Lightning::getDefaultShaderProgram());
+	Object3D* addObjectForwardRendered(Object3D* obj, ShaderProgram* shader);
 
 	void removeObject(Object3D *objToDelete);
+    void updateShaderPrograms(Camera* camera);
 
     //Setter
 	void setSkybox(SkyBox *skybox);
@@ -60,7 +70,7 @@ public:
 
     //Getter
 	Object3D* getObject(const std::string& name);
-	Object3D* getObject(const unsigned int& vaoID);
+    void iterateThroughObjects(std::function<void(Object3D* obj, ShaderProgram* shader, bool defered)> callback);
 	Object3DInstance* getInstanceByID(const unsigned int& id);
 	bool hasObject(std::string name);
 	SkyBox *getSkybox();

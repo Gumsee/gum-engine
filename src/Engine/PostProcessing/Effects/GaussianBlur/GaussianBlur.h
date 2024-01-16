@@ -1,5 +1,5 @@
 #pragma once
-#include "PostProcessingEffect.h"
+#include "../PostProcessingEffect.h"
 
 class GaussianBlur : public PostProcessingEffect
 {
@@ -11,13 +11,13 @@ private:
     Framebuffer *pBlurFramebufferV;
     Framebuffer *pBlurFramebufferV2;
 
-	ShaderProgram *HblurShader;
-	ShaderProgram *VblurShader;
+	static inline ShaderProgram *HblurShader = nullptr;
+	static inline ShaderProgram *VblurShader = nullptr;
 
 public:
 	GaussianBlur(Box *canvas, int stage);
 	~GaussianBlur();
 
-	void render(Texture* RenderResult);
+	Texture* render(Texture* RenderResult);
 };
 

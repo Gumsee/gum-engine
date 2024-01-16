@@ -4,6 +4,7 @@
 #include "Graphics/Framebuffer.h"
 #include "Graphics/Graphics.h"
 #include <System/MemoryManagement.h>
+#include <Graphics/Material.h>
 
 /*
     0 PositionMap;
@@ -96,24 +97,24 @@ void G_Buffer::initShader()
         pShader->addUniform("hasTexture");
 
         pShader->addUniform("inverseCulling");
-        pShader->addUniform("ReflectionFactor");
-        pShader->addUniform("RefractionFactor");
-        pShader->addUniform("specularFactor");
-        pShader->addUniform("roughnessFactor");
+        pShader->addUniform("reflectivity");
+        pShader->addUniform("refractivity");
+        pShader->addUniform("specularity");
+        pShader->addUniform("roughness");
         pShader->addUniform("ClipPlane");
         pShader->addUniform("flipNormal");
         pShader->addUniform("isInstanced");
         pShader->addUniform("isSkeletal");
 
 
-        pShader->addTexture("texture0", 0);
-        pShader->addTexture("ambientOcclusionmap", 7);
-        pShader->addTexture("roughnessmap", 8);
-        pShader->addTexture("specularmap", 9);
-        pShader->addTexture("refractionmap", 10);
-        pShader->addTexture("reflectionmap", 11);
-        pShader->addTexture("Displacement", 13);
-        pShader->addTexture("normalmap", 14);
+        pShader->addTexture("texture0", GUM_MATERIAL_TEXTURE0);
+        pShader->addTexture("ambientOcclusionmap", GUM_MATERIAL_AMBIENT_OCCLUSION_MAP);
+        pShader->addTexture("roughnessmap", GUM_MATERIAL_ROUGHNESS_MAP);
+        pShader->addTexture("specularmap", GUM_MATERIAL_SPECULAR_MAP);
+        pShader->addTexture("refractionmap", GUM_MATERIAL_REFRACTION_MAP);
+        pShader->addTexture("reflectionmap", GUM_MATERIAL_REFLECTION_MAP);
+        pShader->addTexture("Displacement", GUM_MATERIAL_DISPLACEMENT_MAP);
+        pShader->addTexture("normalmap", GUM_MATERIAL_NORMAL_MAP);
         pShader->addTexture("Enviorment", 15);
         pShader->addTexture("ShadowMap", 16);
 

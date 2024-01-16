@@ -27,18 +27,11 @@ R"(
 	in vec3 Texcoord;
     out vec4 FragColor;
 	uniform samplerCube dayTexture;
-	uniform samplerCube nightTexture;
-	uniform vec3 SkyColor;
-	uniform int gradiant;
-	uniform vec3 SunDirection;
 	
 	void main() 
 	{
         vec3 envColor = texture(dayTexture, Texcoord).rgb;
         FragColor = vec4(envColor, 1.0f);
-        //FragColor = vec4(Texcoord, 1.0f);
-        //FragColor = vec4(1,0,0, 1.0f);
-        //FragColor = textureLod(dayTexture, Texcoord, 1.2);
 	}
 )";
 

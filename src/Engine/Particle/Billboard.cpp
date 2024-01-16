@@ -36,7 +36,6 @@ void Billboard::render(ShaderProgram *shader)
 {
 	if(vec3::distance(Camera::getActiveCamera()->getPosition(), getPosition()) < 4000)
 	{
-        shader->loadUniform("transformationMatrix", mat4());
         shader->loadUniform("billboardCenter", Position);
         shader->loadUniform("billboardSize", Scale);
         shader->loadUniform("fixedSize", bFixedSize);

@@ -28,7 +28,7 @@ HighDynamicRange::~HighDynamicRange()
   Gum::_delete(pShader);
 }
 
-void HighDynamicRange::render(Texture* texture, float exposure)
+Texture* HighDynamicRange::render(Texture* texture, float exposure)
 {
   pFramebuffer->bind();
   pShader->use();
@@ -40,4 +40,6 @@ void HighDynamicRange::render(Texture* texture, float exposure)
 
   pShader->unuse();
   pFramebuffer->unbind();
+
+  return pFramebuffer->getTextureAttachment(0);
 }

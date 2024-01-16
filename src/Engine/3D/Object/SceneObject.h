@@ -12,6 +12,7 @@ private:
 public:
     SceneObject(std::string name);
     SceneObject(Mesh *mesh, std::string name);
+    SceneObject(std::string file, std::string name);
     ~SceneObject();
 
     void render();

@@ -16,7 +16,7 @@ class Lightning
 {
 private:
     Box* pRenderCanvas;
-	ShaderProgram *pShader;
+	static inline ShaderProgram *pShader = nullptr;
     void initShader();
 	Renderer3D *pRenderer;
 
@@ -27,10 +27,11 @@ public:
 	Lightning(Box* canvas, Renderer3D *renderer);
 	~Lightning();
 
-	void render(ShadowMapping *shadowmap, World3D* world);
+	void updateShader(ShadowMapping *shadowmap, World3D* world);
 
 
 	long long getExecutionTime();
 	
 	void loadLight(Light* light, int index);
+    static ShaderProgram* getDefaultShaderProgram();
 };

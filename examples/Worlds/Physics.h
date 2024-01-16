@@ -28,7 +28,7 @@ World3D* createPhysicsExample()
 	//SceneObject* Cubes = new SceneObject(Mesh::generateCube(vec3(1, 1, 1)), "Cubes");
 	SceneObject* Cubes = new SceneObject(Mesh::generateUVSphere(15, 15), "Cubes");
 
-    Cubes->getMaterial()->setColor(vec4(1,0,1,1));
+    Cubes->getMaterial()->setColor(rgba(255,0,100,255));
 	for(int i = 0; i < dim; i++)
      for(int j = 0; j < dim; j++)
       for(int k = 0; k < dim; k++)

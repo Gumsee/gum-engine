@@ -9,7 +9,6 @@ R"(
     out vec2 Texcoord;
     uniform mat4 projectionMatrix;
     uniform mat4 viewMatrix;
-    uniform mat4 transformationMatrix;
     uniform vec3 billboardCenter;
     uniform vec2 billboardSize;
     uniform int fixedSize;

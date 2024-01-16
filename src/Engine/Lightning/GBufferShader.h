@@ -10,21 +10,19 @@ R"(
     layout (location = 7) in vec3 tangentNormals;
     layout (location = 8) in ivec3 jointIndices;
     layout (location = 9) in vec3 weights;
+
     out VS_OUT
     {
-            vec2 Texcoord;
-            vec3 worldNormal;
-            vec4 FragPos;
-            mat3 TBN;
-            mat4 viewmat;
-            vec3 viewPos;
-            float distance;
-            vec3 weights;
-            flat ivec3 jointIndices;
-            flat int isSkel;
+        vec2 Texcoord;
+        vec3 worldNormal;
+        vec4 FragPos;
+        mat3 TBN;
+        vec3 viewPos;
+        vec3 weights;
+        flat ivec3 jointIndices;
+        flat int isSkel;
     } vs_out;
 
-    flat out int frag_hasNormalMap;
     //Skeletal Stuff
     const int MAX_JOINTS = 50;//max joints allowed in a skeleton
     const int MAX_WEIGHTS = 3;//max number of joints that can affect a vertex
@@ -35,7 +33,6 @@ R"(
     uniform mat4 projectionMatrix;
     uniform mat4 viewMatrix;
     uniform int TextureMultiplier;
-    uniform int hasNormalMap;
     uniform vec4 ClipPlane;
     uniform vec3 viewPos;
     uniform int flipNormal;
@@ -43,19 +40,17 @@ R"(
 
     void main()
     {
-        mat4 FinalTrans = TransMatrix;
-        
         vs_out.Texcoord = TextureCoords * TextureMultiplier;
-        vs_out.viewmat = viewMatrix;
         vec3 FinalVertexPosition = vertexPosition;
         vec4 totalLocalPos = vec4(0.0);
+
         //Is Skeletal Check
         vs_out.isSkel = isSkeletal;
         if(isSkeletal == 1)
         {
             vs_out.weights = weights;
             vs_out.jointIndices = jointIndices;
-            for(int i=0;i<MAX_WEIGHTS;i++)
+            for(int i = 0; i < MAX_WEIGHTS; i++)
             {
                 mat4 jointTransform = gBones[jointIndices[i]];
                 vec4 posePosition = jointTransform * vec4(vertexPosition, 1.0);
@@ -63,27 +58,19 @@ R"(
             }
             FinalVertexPosition = totalLocalPos.xyz;
         }
-        vec4 worldPosition = FinalTrans * vec4(FinalVertexPosition, 1.0f);
+        vec4 worldPosition = TransMatrix * vec4(FinalVertexPosition, 1.0f);
         vec4 positionRelativeToCam = projectionMatrix * viewMatrix * worldPosition;
         gl_ClipDistance[0] = dot(worldPosition, ClipPlane);
-        //if(flipNormal > 0) { FinalNormal *= -1; }
-        /*mat4 normalMatrix = transpose(inverse(FinalTrans));
-        vec3 norm = normalize(vs_out.worldNormal.xyz);
-        vec3 tang = normalize((normalMatrix * vec4(tangentNormals, 0.0)).xyz);
-        vec3 bitang = normalize(cross(norm, tang));
-        vs_out.TBN = transpose(mat3(
-                tang.x, bitang.x, norm.x,
-                tang.y, bitang.y, norm.y,
-                tang.z, bitang.z, norm.z
-        ));*/
 
-        frag_hasNormalMap = hasNormalMap;
+        vec3 T = normalize(vec3(TransMatrix * vec4(tangentNormals, 0.0)));
+        vec3 N = normalize(vec3(TransMatrix * vec4(Normals,        0.0)));
+        T = normalize(T - dot(T, N) * N);
+        vec3 B = cross(N, T);
+        vs_out.TBN = mat3(T, B, N);
 
-        //vs_out.worldNormal = (normalMatrix * vec4(FinalNormal, 0.0)).xyz;// + vec4(0.000001);
-        vs_out.worldNormal = (viewMatrix * FinalTrans * vec4(Normals, 0.0f)).xyz;
-        vs_out.FragPos = viewMatrix * worldPosition;
+        vs_out.worldNormal = (TransMatrix * vec4(Normals, 0.0f)).xyz;
+        vs_out.FragPos = worldPosition;
         vs_out.viewPos = viewPos;
-        vs_out.distance = positionRelativeToCam.z;
         gl_Position = positionRelativeToCam;
     }
 )";
@@ -108,15 +95,11 @@ R"(
         vec3 worldNormal;
         vec4 FragPos;
         mat3 TBN;
-        mat4 viewmat;
         vec3 viewPos;
-        float distance;
         vec3 weights;
         flat ivec3 jointIndices;
         flat int isSkel;
     } fs_in;
-
-    flat in int frag_hasNormalMap;
 
     uniform sampler2D texture0;
     uniform samplerCube Enviorment;
@@ -128,12 +111,10 @@ R"(
     uniform sampler2D ambientOcclusionmap;
     uniform sampler2D Displacement;
 
-    uniform vec3 SunColor;
-    uniform vec3 lightColor[4];
-    uniform vec3 lightAttenuation[4];
     uniform vec4 color;
 
     uniform int hasTexture;
+    uniform int hasNormalMap;
     uniform int hasSpecularMap;
     uniform int hasReflectionMap;
     uniform int hasRefractionMap;
@@ -141,18 +122,14 @@ R"(
     uniform int hasAmbientOcclusionMap;
     uniform int hasDisplacementMap;
 
-    uniform float specularFactor;
-    uniform float ReflectionFactor;
-    uniform float RefractionFactor;
-    uniform float roughnessFactor;
+    uniform float specularity;
+    uniform float reflectivity;
+    uniform float refractivity;
+    uniform float roughness;
 
-    vec3 unitNormal;
-    vec3 unitToCameraVector; 
-
-    float near = 0.1;
-    float far = 5000.0; 
-
-    float heightScale = 0.1;
+    const float near = 0.1;
+    const float far = 5000.0; 
+    const float heightScale = 0.1;
 
     vec2 ParallaxMapping(vec2 texCoords, vec3 viewdir)
     {
@@ -190,33 +167,27 @@ R"(
         return finalTexCoords;
     }
 
-
     void main(void)
     {
         vec2 Texcoords = fs_in.Texcoord;
-        if(hasDisplacementMap == 1)
+        if(hasDisplacementMap > 0)
         {
-            vec3 viewDir = normalize(fs_in.viewPos - fs_in.FragPos.xyz);
+            vec3 viewDir = transpose(fs_in.TBN) * normalize(fs_in.viewPos - fs_in.FragPos.xyz);
             Texcoords = ParallaxMapping(fs_in.Texcoord, viewDir);
-            //if(Texcoords.x > 1.0 || Texcoords.y > 1.0 || Texcoords.x < 0.0 || Texcoords.y < 0.0)
-    //      discard;
+            if(Texcoords.x > 1.0 || Texcoords.y > 1.0 || Texcoords.x < 0.0 || Texcoords.y < 0.0)
+                discard;
         }
-        if(frag_hasNormalMap == 1)
-        {
-            //Only apply if existing
-            vec3 normalMapValue = texture(normalmap, Texcoords).rgb;
-            normalMapValue = normalize(normalMapValue * 2.0 - vec3(1.0));
-            unitNormal = normalMapValue; //JUST FOR 
-            //unitNormal = fs_in.TBN * normalize(normalMapValue);
-        }
-        else
-        {
-            unitNormal = normalize(fs_in.worldNormal);
-            //unitNormal = fs_in.worldNormal;
-        }
-        vec4 FinishedColor = color;
-        if(hasTexture > 0)
-            FinishedColor = texture(texture0, Texcoords) * color;
+        
+        vec3 unitNormal = hasNormalMap > 0
+            ? normalize(fs_in.TBN * (texture(normalmap, Texcoords).rgb * 2.0 - vec3(1.0)))
+            : normalize(fs_in.worldNormal);
+
+        vec4 FinishedColor      = hasTexture             > 0 ? texture(texture0, Texcoords) * color      : color;
+        float reflFactor        = hasReflectionMap       > 0 ? texture(reflectionmap, Texcoords).r       : reflectivity;
+        float refrFactor        = hasRefractionMap       > 0 ? texture(refractionmap, Texcoords).r       : refractivity;
+        float specularStrength  = hasSpecularMap         > 0 ? texture(specularmap, Texcoords).r         : specularity;
+        float roughnessStrength = hasRoughnessMap        > 0 ? texture(roughnessmap, Texcoords).r        : roughness;
+        float AOStrength        = hasAmbientOcclusionMap > 0 ? texture(ambientOcclusionmap, Texcoords).r : 1.0;
 
         int BONE_TO_CHECK = 1;
         for(int i = 0; i < 3; i++)
@@ -235,23 +206,11 @@ R"(
             }
         }
 
-        float reflFactor = ReflectionFactor;
-        if(hasReflectionMap > 0) { reflFactor = texture(reflectionmap, Texcoords).r; }
-        float refrFactor = RefractionFactor;
-        if(hasRefractionMap > 0) { refrFactor = texture(refractionmap, Texcoords).r; }
-        float specularStrength = specularFactor;
-        if(hasSpecularMap > 0) { specularStrength = texture(specularmap, Texcoords).r; }
-        float roughnessStrength = roughnessFactor;
-        if(hasRoughnessMap > 0) { roughnessStrength = texture(roughnessmap, Texcoords).r; }
-        float AOStrength = 1.0;
-        if(hasAmbientOcclusionMap > 0) { AOStrength = texture(ambientOcclusionmap, Texcoords).r; }
-        //float linearizedDepth = (2.0 * near) / (far + near - gl_FragCoord.z * (far - near));  
-        //gl_FragDepth = fs_in.FragPos.z;
+        //float linearizedDepth = (2.0 * near) / (far + near - gl_FragCoord.z * (far - near));
         //gl_FragDepth = linearizedDepth;
-        gPosition =             fs_in.FragPos;
-        gNormal =               vec4(unitNormal, 1.0f); //vec4(fs_in.worldNormal, 1.0f);
-        gAlbedoSpec =           vec4(FinishedColor.rgb, 1);
-        //gAlbedoSpec = vec4(vec3(linearizedDepth), 1.0);
-        gObjectData =           vec4(roughnessStrength,specularStrength,reflFactor,AOStrength);
+        gPosition   = fs_in.FragPos;
+        gNormal     = vec4(unitNormal, 1.0);
+        gAlbedoSpec = vec4(FinishedColor.rgb, 1);
+        gObjectData = vec4(roughnessStrength, specularStrength, reflFactor, AOStrength);
     }
 )";

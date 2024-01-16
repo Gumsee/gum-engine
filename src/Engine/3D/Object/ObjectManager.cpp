@@ -3,6 +3,7 @@
 #include "../../Shaders/ShaderManager.h"
 #include "../Camera3D.h"
 #include "../Renderer3D.h"
+#include "Graphics/Framebuffer.h"
 #include "Graphics/ShaderProgram.h"
 #include "System/Output.h"
 #include <System/MemoryManagement.h>
@@ -21,81 +22,138 @@ ObjectManager::~ObjectManager()
 {
 	Gum::_delete(pSkyBox);
 
-	for(Object3D* obj : vObjects)
-		Gum::_delete(obj);
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+		    Gum::_delete(obj);
 
-	vObjects.clear();
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+		    Gum::_delete(obj);
+
+	mObjectsForward.clear();
+	mObjectsDefered.clear();
 }
 
-void ObjectManager::render(int exception, ShaderProgram *shader, bool noPrepare)
+
+void ObjectManager::renderSky()
 {
-    if(shader != nullptr)
-        shader->use();
-    if(pSkyBox != nullptr && !(exception & ExceptionTypes::WITHOUTSKYBOX))
+    pSkyBox->getShaderProgram()->use();
+    pSkyBox->getShaderProgram()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    /*if(noPrepare) { pSkyBox->renderMesh(); }
+    else*/ { pSkyBox->render(); }
+    pSkyBox->getShaderProgram()->unuse();
+}
+
+void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
+{
+    Framebuffer* currentFramebuffer = Framebuffer::CurrentlyBoundFramebuffer;
+
+	for(auto objs : mObjectsDefered)
     {
-        if(shader == nullptr)
-            pSkyBox->getShaderProgram()->use();
-        if(noPrepare)
-        {
-            pSkyBox->renderMesh();
-        }
-        else
-            pSkyBox->render();
+        //Render Objects to GBuffer
+        gbuffer->bind();
+        gbuffer->getShader()->use();
+        gbuffer->getShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+        for(Object3D* obj : objs.second)
+            obj->render();
+        
+
+        //Render given shader using gbuffer
+        currentFramebuffer->bind();
+        ShaderProgram* shader = objs.first;
+
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        gbuffer->getPositionMap()->bind(0);
+        gbuffer->getNormalMap()->bind(1);
+        gbuffer->getDiffuseMap()->bind(2);
+        //pRenderer->getSSAO()->getResultTexture()->bind(3);
+        gbuffer->getObjectDataMap()->bind(4);
+        //pRenderer->getEnvironmentMap()->getTexture()->bind(5);
+        pSkyBox->getTexture()->bind(5);
+        pSkyBox->getIrradianceMap()->bind(6);
+        pSkyBox->getPreFilterMap()->bind(7);
+        pSkyBox->getBRDFConvMap()->bind(8);
+        //shadowmap->getResultTexture(0)->bind(9);
+
+        shader->use();
+        shader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+        rendercanvas->renderCustom();
+
+        gbuffer->getFramebuffer()->blitDepthToOtherFramebuffer(currentFramebuffer);
     }
 
-	for (Object3D* obj : vObjects)
+    ShaderProgram::unuse();
+}
+
+
+void ObjectManager::renderForward()
+{
+	for (auto objs : mObjectsForward)
 	{
-        if(shader == nullptr)
-		    obj->getShaderProgram()->use();
-        if(noPrepare)
-        {
-            obj->renderMesh();
-        }
-        else
-		    obj->render();
-		/*if (obj.second->getPosition().y < Settings::getSetting(Settings::MAXIMUMFALLDISTANCE))
-		{
-			obj.second->clean();
-		}*/
+        objs.first->use();
+        objs.first->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+        for(Object3D* obj : objs.second)
+            obj->render();
 	}
     ShaderProgram::unuse();
 }
 
 
-void ObjectManager::renderToGBuffer(ShaderProgram* gbufferShader)
+void ObjectManager::renderEverything()
 {
-	for (Object3D* obj : vObjects)
-	{
-        if(obj->getShaderProgram() == gbufferShader)
-		    obj->render();
-	}
-}
-
-void ObjectManager::renderExceptGBuffer(ShaderProgram* gbufferShader, Camera* camera)
-{
-	for (Object3D* obj : vObjects)
-	{
-        if(obj->getShaderProgram() != gbufferShader)
-        {
-            obj->getShaderProgram()->use();
-			obj->getShaderProgram()->loadUniform("viewMatrix", camera->getViewMatrix());
-			obj->getShaderProgram()->loadUniform("projectionMatrix", camera->getProjectionMatrix());
-		    obj->render();
-        }
-	}
-    ShaderProgram::unuse();
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+            return obj->render();
+        
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+            return obj->render();
 }
 
 
-Object3D* ObjectManager::addObject(Object3D *obj, std::string Identifier)
+void ObjectManager::renderIDs()
 {
-    if(Identifier == "")
-        Identifier = obj->getName();
-		
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+            return obj->renderID();
+        
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+            return obj->renderID();
+}
+
+
+void ObjectManager::updateShaderPrograms(Camera* camera)
+{
+    pSkyBox->getShaderProgram()->use();
+    pSkyBox->getShaderProgram()->loadUniform("projectionMatrix", camera->getProjectionMatrix());
+    pSkyBox->getShaderProgram()->unuse();
+	for(auto objs : mObjectsForward)
+    {
+        ShaderProgram* shader = objs.first;
+        shader->use();
+        shader->loadUniform("projectionMatrix", camera->getProjectionMatrix());
+        shader->unuse();
+    }
+
+	for(auto objs : mObjectsDefered)
+    {
+        ShaderProgram* shader = objs.first;
+        shader->use();
+        shader->loadUniform("projectionMatrix", camera->getProjectionMatrix());
+        shader->unuse();
+    }
+}
+
+
+Object3D* ObjectManager::addObject(Object3D* obj, ShaderProgram* shader)
+{		
     if(obj->getShaderProgram() == nullptr)
-         obj->setShaderProgram(Gum::ShaderManager::getShaderProgram("GBufferShader"));
+        obj->setShaderProgram(shader);
 	
-	vObjects.push_back(obj);
+    mObjectsDefered[shader].push_back(obj);
+
     if(pAddObjectCallback != nullptr)
         pAddObjectCallback(obj);
 
@@ -105,18 +163,25 @@ Object3D* ObjectManager::addObject(Object3D *obj, std::string Identifier)
 
 Object3D* ObjectManager::getObject(const std::string& name)
 {
-	for(Object3D* obj : vObjects)
+	for(auto objs : mObjectsDefered)
 	{
-		if (obj->getName() == name)
-			return obj;
+        for(Object3D* obj : objs.second)
+            if (obj->getName() == name)
+                return obj;
 	}
     Gum::Output::error("ObjectManager: Texture Object3D " + name + " doesn't exist!");
     return nullptr;
 }
 
-Object3D* ObjectManager::getObject(const unsigned int& index)
+void ObjectManager::iterateThroughObjects(std::function<void(Object3D* obj, ShaderProgram* shader, bool defered)> callback)
 {
-	return vObjects[index];
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+            callback(obj, objs.first, true);
+        
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+            callback(obj, objs.first, false);
 }
 
 bool ObjectManager::hasObject(std::string name)
@@ -131,15 +196,31 @@ void ObjectManager::removeObject(Object3D *objToDelete)
 
 Object3DInstance* ObjectManager::getInstanceByID(const unsigned int& id)
 {
-	for(Object3D* obj : vObjects)
+	for(auto objs : mObjectsDefered)
 	{
-		for(unsigned int i = 0; i < obj->numInstances(); i++)
-		{
-			if (obj->getInstance(i)->getID() == id)
-			{
-				return obj->getInstance(i);
-			}
-		}
+        for(Object3D* obj : objs.second)
+        {
+            for(unsigned int i = 0; i < obj->numInstances(); i++)
+            {
+                if (obj->getInstance(i)->getID() == id)
+                {
+                    return obj->getInstance(i);
+                }
+            }
+        }
+	}
+	for(auto objs : mObjectsForward)
+	{
+        for(Object3D* obj : objs.second)
+        {
+            for(unsigned int i = 0; i < obj->numInstances(); i++)
+            {
+                if (obj->getInstance(i)->getID() == id)
+                {
+                    return obj->getInstance(i);
+                }
+            }
+        }
 	}
     Gum::Output::warn("ObjectManager: Object3D with ID " + std::to_string(id) + " doesn't exist!");
     return nullptr;
@@ -170,4 +251,4 @@ void ObjectManager::onAddObject(AddObjectCallback callback)   { this->pAddObject
 //Getter
 //
 SkyBox* ObjectManager::getSkybox() 			                  { return this->pSkyBox; }
-unsigned int ObjectManager::numObjects() 					  { return this->vObjects.size(); }
+unsigned int ObjectManager::numObjects() 					  { return this->mObjectsDefered.size() + this->mObjectsForward.size(); }

@@ -26,14 +26,9 @@ R"(
 static const std::string PostProcessingFragmentShader = Shader::SHADER_VERSION_STR + 
 R"(
     in vec2 Texcoord;
-    in vec3 surfaceNormal;
-    in vec3 toLightVector;
     out vec4 FragColor;
 
     uniform sampler2D textureSampler;
-    uniform vec3 Color;
-
-    const float contrast = 0.3;
 
     void main(void)
     {

@@ -7,7 +7,6 @@ class IDRenderer : private Framebuffer
 {
 private:
     inline static ShaderProgram* pMeshIDShader = nullptr;
-    static void initShaders();
 
     Box* pCanvas;
 
