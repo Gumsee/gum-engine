@@ -3,7 +3,7 @@
 #include <Essentials/FPS.h>
 #include <System/Output.h>
 
-Skeleton::Skeleton(Bone *rootBone, mat4 in_globalInverseTransform)
+Skeleton::Skeleton(Bone *rootBone)
 {
     time = start_time = end_time = 0;
     active_SkeletalAnimation = nullptr;
@@ -15,7 +15,6 @@ Skeleton::Skeleton(Bone *rootBone, mat4 in_globalInverseTransform)
         Gum::Output::error("Skeleton: Rootbone is nullptr");
 
     this->rootBone = rootBone;
-    globalInverseTransform = in_globalInverseTransform;
     time = start_time = end_time = 0;
     active_SkeletalAnimation = nullptr;
     idle_SkeletalAnimation = nullptr;
@@ -30,24 +29,20 @@ void Skeleton::recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTrans
         return;
     
     currentBone->UpdateKeyframeTransform(time);
-    mat4 globalTransform = currentBone->getTransform() * parentTransform;
-    mat4 finalMatrix =  currentBone->getOffsetMatrix() * globalTransform * globalInverseTransform; //Mat4 multiplication is broken (probably)
-    boneMats[currentBone->getID()] = finalMatrix;
 
+    mat4 globalTransform = parentTransform * currentBone->getTransform();
+    if(currentBone->getID() >= 0)
+        boneMats[currentBone->getID()] = globalTransform * currentBone->getOffsetMatrix();
+
+    //Recursive
     for(unsigned int i = 0; i < currentBone->numChildren(); i++)
-    {
-        Bone *childBone = currentBone->getChild(i);
-        recursiveUpdateBoneMatsVector(childBone, globalTransform);
-    }
+        recursiveUpdateBoneMatsVector(currentBone->getChild(i), globalTransform);
 }
 
 void Skeleton::Update()
 {
-
     if(!anim_play)
-    {
         return;
-    }
 
     //If we're not playing an SkeletalAnimation, then just give up, do nothing.
     //Update the time variable by adding the delta time of the last frame
@@ -76,9 +71,8 @@ void Skeleton::Update()
 
     //Make sure there's nothning left in the vector.
     for(int i = 0; i < 100; i++)
-    {
         boneMats[i] = mat4();
-    }
+    
     recursiveUpdateBoneMatsVector(rootBone, mat4());
 }
 

@@ -8,8 +8,8 @@ R"(
     layout (location = 2) in vec3 Normals;
     layout (location = 3) in mat4 TransMatrix;
     layout (location = 7) in vec3 tangentNormals;
-    layout (location = 8) in ivec3 jointIndices;
-    layout (location = 9) in vec3 weights;
+    layout (location = 8) in ivec4 jointIndices;
+    layout (location = 9) in vec4 weights;
 
     out VS_OUT
     {
@@ -18,18 +18,14 @@ R"(
         vec4 FragPos;
         mat3 TBN;
         vec3 viewPos;
-        vec3 weights;
-        flat ivec3 jointIndices;
-        flat int isSkel;
     } vs_out;
 
     //Skeletal Stuff
-    const int MAX_JOINTS = 50;//max joints allowed in a skeleton
-    const int MAX_WEIGHTS = 3;//max number of joints that can affect a vertex
+    const int MAX_WEIGHTS = 4;//max number of joints that can affect a vertex
     const int MAX_BONES = 100;
     uniform mat4 gBones[MAX_BONES];
     uniform int isSkeletal;
-    uniform mat4 transformationMatrix;
+    
     uniform mat4 projectionMatrix;
     uniform mat4 viewMatrix;
     uniform int TextureMultiplier;
@@ -45,13 +41,12 @@ R"(
         vec4 totalLocalPos = vec4(0.0);
 
         //Is Skeletal Check
-        vs_out.isSkel = isSkeletal;
         if(isSkeletal == 1)
         {
-            vs_out.weights = weights;
-            vs_out.jointIndices = jointIndices;
             for(int i = 0; i < MAX_WEIGHTS; i++)
             {
+                if(jointIndices[i] < 0)
+                    continue;
                 mat4 jointTransform = gBones[jointIndices[i]];
                 vec4 posePosition = jointTransform * vec4(vertexPosition, 1.0);
                 totalLocalPos += posePosition * weights[i];
@@ -96,9 +91,6 @@ R"(
         vec4 FragPos;
         mat3 TBN;
         vec3 viewPos;
-        vec3 weights;
-        flat ivec3 jointIndices;
-        flat int isSkel;
     } fs_in;
 
     uniform sampler2D texture0;
@@ -188,23 +180,6 @@ R"(
         float specularStrength  = hasSpecularMap         > 0 ? texture(specularmap, Texcoords).r         : specularity;
         float roughnessStrength = hasRoughnessMap        > 0 ? texture(roughnessmap, Texcoords).r        : roughness;
         float AOStrength        = hasAmbientOcclusionMap > 0 ? texture(ambientOcclusionmap, Texcoords).r : 1.0;
-
-        int BONE_TO_CHECK = 1;
-        for(int i = 0; i < 3; i++)
-        {
-            if(fs_in.jointIndices[i] == BONE_TO_CHECK)
-            {
-                float weight = fs_in.weights[i];
-                if(weight >= 0.7)
-                    FinishedColor = vec4(1.0, 0.0, 0.0, 0.0) * weight;
-                else if(weight >= 0.4 && weight <= 0.6)
-                    FinishedColor = vec4(0.0, 1.0, 0.0, 0.0) * weight;
-                else if(weight >= 0.1)
-                    FinishedColor = vec4(1.0, 1.0, 0.0, 0.0) * weight;
-
-                break;
-            }
-        }
 
         //float linearizedDepth = (2.0 * near) / (far + near - gl_FragCoord.z * (far - near));
         //gl_FragDepth = linearizedDepth;

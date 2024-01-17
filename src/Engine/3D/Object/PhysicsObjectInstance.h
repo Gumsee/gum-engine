@@ -1,9 +1,10 @@
 #pragma once
 #include <Graphics/Object3DInstance.h>
 #include "CollisionObject.h"
-#include "../World3D.h"
 
 #define OBJECT3D_INSTANCE_TYPE_PHYSICS 1
+
+class World3D;
 
 class PhysicsObjectInstance : public Object3DInstance
 {

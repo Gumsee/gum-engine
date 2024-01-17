@@ -1,6 +1,6 @@
 #pragma once
-#include <Engine/3D/Object/NormalRenderer/NormalRenderer.h>
 #include "Engine/3D/Object/SceneObject.h"
+#include "Engine/3D/Object/Skeletal/BoneRenderer/BoneRenderer.h"
 #include <Engine/3D/Object/Skeletal/AnimatedModel.h>
 #include <gum-engine.h>
 
@@ -9,20 +9,24 @@ World3D* createAnimatedModelExample()
     World3D* pWorld3D = new World3D();
 	pWorld3D->getObjectManager()->getSkybox()->useGradiant(true);
 
+	pWorld3D->getLightManager()->addPointLight(new PointLight(vec3(-10, 10, -5),  vec3(600), "light1"));
+
     //Default
-    /*AnimatedModel* pAnimatedModel = new AnimatedModel(ObjectManager::MODEL_ASSETS_PATH + "/animTest.dae", "AnimTest");
+    AnimatedModel* pAnimatedModel = new AnimatedModel("/home/gumse/Downloads/dancing_vampire.dae", "AnimTest");
     pAnimatedModel->addInstance();
 
-	SkeletalAnimation* pWalkCycle = new SkeletalAnimation("WalkCycle", vec2(1, 10), 2, 0.1, 0);
+	SkeletalAnimation* pWalkCycle = new SkeletalAnimation("WalkCycle", vec2(1, 140), 2, 25, 0);
     pAnimatedModel->PlaySkeletalAnimation(pWalkCycle, true);
 
-    pWorld3D->getObjectManager()->addObject(pAnimatedModel);*/
+    pWorld3D->getObjectManager()->addObject(pAnimatedModel);
 
-	SceneObject* pTestOBJ = new SceneObject(Mesh::generateCube(vec3(1,1,1)), "TestOBJ");
-    pTestOBJ->addInstance();
-    pWorld3D->getObjectManager()->addObject(pTestOBJ);
+    SceneObject* floor = new SceneObject(Mesh::generatePlane(vec2(1,1)), "Floor");
+    floor->addInstance();
+	floor->getInstance()->setPosition(vec3(0, 0, 0));
+    floor->getInstance()->setScale(vec3(10, 1, 10));
+    pWorld3D->getObjectManager()->addObject(floor);
 
-    pWorld3D->addRenderable(new NormalRenderer(pWorld3D));
+    //pWorld3D->addRenderable(new BoneRenderer(pAnimatedModel));
 
 	return pWorld3D;
 }

@@ -6,7 +6,7 @@
 
 class SceneObject : public Object3D
 {
-private:
+protected:
     Material* pMaterial;
 
 public:
@@ -15,7 +15,7 @@ public:
     SceneObject(std::string file, std::string name);
     ~SceneObject();
 
-    void render();
+    void render() override;
 
     void setMaterial(Material* material);
     PhysicsObjectInstance* addPhysicsInstance(PhysicsObjectInstance::Shape shape, float mass, World3D* world, vec3 special = vec3(0));

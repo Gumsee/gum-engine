@@ -6,7 +6,6 @@ class Skeleton
 {
 private:   
     Bone* rootBone;
-    mat4 globalInverseTransform;
     std::vector<mat4> boneMats;
     
     float time;
@@ -21,7 +20,7 @@ private:
     bool anim_loop;
 
 public:
-    Skeleton(Bone *rootBone, mat4 in_globalInverseTransform);
+    Skeleton(Bone *rootBone);
 
     void recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform);
     void Update(); 

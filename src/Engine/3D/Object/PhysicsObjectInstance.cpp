@@ -7,6 +7,7 @@
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <LinearMath/btVector3.h>
+#include "../World3D.h"
 
 /**
  * type: Type of Collision Shape
