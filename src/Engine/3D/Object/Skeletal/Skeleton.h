@@ -6,7 +6,7 @@ class Skeleton
 {
 private:   
     Bone* pRootBone;
-    SkeletalAnimation* pCurrentSkeletalAnimation;
+    std::vector<SkeletalAnimation*> vAppliedAnimation;
     std::vector<mat4> vBoneMats;
     
     float fTime;
@@ -19,11 +19,11 @@ private:
     void recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform);
 
 public:
-    Skeleton(Bone *rootbone);
+    Skeleton(Bone *rootbone, unsigned int numbones);
 
     void update(); 
-    void playAnimation(SkeletalAnimation* anim, bool loop);
-    void stopAnimation();
+    void addAnimation(SkeletalAnimation* anim);
 
     std::vector<mat4> getBoneMatrices();
+    SkeletalAnimation* getAnimation(const unsigned int& index);
 };

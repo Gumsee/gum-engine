@@ -71,12 +71,11 @@ void BoneRenderer::render()
     
     for(size_t i = 0; i < pModel->getSkeleton()->getBoneMatrices().size(); i++)
     {
-        pBoneObject->getInstance(i)->setMatrix(pModel->getSkeleton()->getBoneMatrices()[i]);
+        pBoneObject->getInstance(i)->setMatrix(pModel->getSkeleton()->getBoneMatrices()[i] * pModel->getInstance()->getMatrix());
         pBoneObject->getInstance(i)->updateMatrix();
     }
     
     pBoneObject->render();
-	//pModel->getSkeleton()->Update(); //has to go later
     
     pShader->unuse();
 }

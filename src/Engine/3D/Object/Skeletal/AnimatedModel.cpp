@@ -1,4 +1,5 @@
 #include "AnimatedModel.h"
+#include "Primitives/SkeletalAnimation.h"
 #include <Essentials/Tools.h>
 #include <Graphics/Variables.h>
 #include <System/MemoryManagement.h>
@@ -25,7 +26,10 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
         loader.iterateMeshes([this](unsigned int currentMesh, unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
             pMesh->addMesh(mesh);
             Gum::_delete(mesh);            
-            pSkeleton = new Skeleton(rootbone);
+            pSkeleton = new Skeleton(rootbone, bones.size());
+        });
+        loader.iterateAnimations([this](SkeletalAnimation* anim) {
+            pSkeleton->addAnimation(anim);
         });
         loader.load(file);
         Mesh::mLoadedMeshes[file] = pMesh;
