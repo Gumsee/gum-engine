@@ -5,28 +5,25 @@
 class Skeleton
 {
 private:   
-    Bone* rootBone;
-    std::vector<mat4> boneMats;
+    Bone* pRootBone;
+    SkeletalAnimation* pCurrentSkeletalAnimation;
+    std::vector<mat4> vBoneMats;
     
-    float time;
+    float fTime;
+    float fStartTime;
+    float fEndTime;
 
-    float start_time;
-    float end_time;
-
-    SkeletalAnimation* active_SkeletalAnimation;
-    SkeletalAnimation* idle_SkeletalAnimation;
-
-    bool anim_play;
-    bool anim_loop;
-
-public:
-    Skeleton(Bone *rootBone);
+    bool bIsAnimationPlaying;
+    bool bShouldAnimationLoop;
 
     void recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform);
-    void Update(); 
-    void PlaySkeletalAnimation(SkeletalAnimation* anim, bool loop, bool reset_to_start);
-    void StopAnimating();    
-    void SetIdleSkeletalAnimation(SkeletalAnimation* in_anim);
+
+public:
+    Skeleton(Bone *rootbone);
+
+    void update(); 
+    void playAnimation(SkeletalAnimation* anim, bool loop);
+    void stopAnimation();
 
     std::vector<mat4> getBoneMatrices();
 };

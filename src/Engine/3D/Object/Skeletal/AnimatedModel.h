@@ -15,10 +15,6 @@ public:
 
 	void render();
 
-    void PlaySkeletalAnimation(SkeletalAnimation *anim, bool loop = false, bool reset_to_start = false);
-    void AddSkeletalAnimation(SkeletalAnimation& in_anim);
-    void StopAnimating();
-
     // Getter
     Skeleton* getSkeleton();
 };

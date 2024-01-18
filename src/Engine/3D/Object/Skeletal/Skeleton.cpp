@@ -3,130 +3,96 @@
 #include <Essentials/FPS.h>
 #include <System/Output.h>
 
-Skeleton::Skeleton(Bone *rootBone)
+Skeleton::Skeleton(Bone *rootbone)
+    : pRootBone(rootbone),
+      fTime(0), fStartTime(0), fEndTime(0),
+      pCurrentSkeletalAnimation(nullptr),
+      bIsAnimationPlaying(false),
+      bShouldAnimationLoop(false)
 {
-    time = start_time = end_time = 0;
-    active_SkeletalAnimation = nullptr;
-    anim_play = false;
-    anim_loop = false;
-    boneMats.resize(100);
+    vBoneMats.resize(100);
 
-    if(rootBone == nullptr)
+    if(pRootBone == nullptr)
         Gum::Output::error("Skeleton: Rootbone is nullptr");
-
-    this->rootBone = rootBone;
-    time = start_time = end_time = 0;
-    active_SkeletalAnimation = nullptr;
-    idle_SkeletalAnimation = nullptr;
-
-    anim_loop = false;
-    anim_play = false;
 }
 
 void Skeleton::recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform)
-{
-    if(active_SkeletalAnimation == nullptr)
-        return;
-    
-    currentBone->UpdateKeyframeTransform(time);
+{    
+    currentBone->updateKeyframeTransform(fTime);
 
     mat4 globalTransform = parentTransform * currentBone->getTransform();
     if(currentBone->getID() >= 0)
-        boneMats[currentBone->getID()] = globalTransform * currentBone->getOffsetMatrix();
+        vBoneMats[currentBone->getID()] = globalTransform * currentBone->getOffsetMatrix();
 
     //Recursive
     for(unsigned int i = 0; i < currentBone->numChildren(); i++)
         recursiveUpdateBoneMatsVector(currentBone->getChild(i), globalTransform);
 }
 
-void Skeleton::Update()
+void Skeleton::update()
 {
-    if(!anim_play)
+    if(pCurrentSkeletalAnimation == nullptr)
+        return;
+
+    if(!bIsAnimationPlaying)
         return;
 
     //If we're not playing an SkeletalAnimation, then just give up, do nothing.
     //Update the time variable by adding the delta time of the last frame
     //It's * 0.001f because the delta time is in milliseconds, and we 
     //need it in seconds.
-    time += FPS::get() * active_SkeletalAnimation->speed;
+    fTime += FPS::get() * pCurrentSkeletalAnimation->fSpeed;
 
     //Make sure the time can't be less than our SkeletalAnimation's start time.
-    if(time < start_time)
-    {
-        time = start_time;
-    }
+    if(fTime < fStartTime)
+        fTime = fStartTime;
 
     //Make sure the time can't be greater than our SkeletalAnimation's end time.
-    if(time > end_time)
+    if(fTime > fEndTime)
     {
-        if(anim_loop) //If looping is set, then loop!
-        {
-            time = start_time;
-        }
-        else //Else, give up.
-        {
-            StopAnimating();
-        }
+        if(bShouldAnimationLoop)
+            fTime = fStartTime;
+        else
+            stopAnimation();
     }
 
     //Make sure there's nothning left in the vector.
-    for(int i = 0; i < 100; i++)
-        boneMats[i] = mat4();
+    //for(int i = 0; i < 100; i++)
+    //    vBoneMats[i] = mat4();
     
-    recursiveUpdateBoneMatsVector(rootBone, mat4());
+    recursiveUpdateBoneMatsVector(pRootBone, mat4());
 }
 
-void Skeleton::PlaySkeletalAnimation(SkeletalAnimation* anim, bool loop, bool reset_to_start)
+void Skeleton::playAnimation(SkeletalAnimation* anim, bool loop)
 {
-    //If there's an SkeletalAnimation currently playing
-    if(active_SkeletalAnimation != nullptr)
-    {
-        //And this SkeletalAnimation is more important than the current one
-        if(anim->priority < active_SkeletalAnimation->priority) //Set the current SkeletalAnimation to the one passed in.
-        {
-            active_SkeletalAnimation = anim;
-        }
-        else //Do nothing.
-        {
-            return;
-        }
-    }
-    else
-        //Set the current SkeletalAnimation to the one passed in.
-        active_SkeletalAnimation = anim;
-
-    start_time = active_SkeletalAnimation->start_time;
-    end_time = active_SkeletalAnimation->end_time;
-
-    anim_play = true;
-    anim_loop = loop;
+    if(anim == nullptr)
+        return;
     
-    //The reset_to_start variable determines whether or not the SkeletalAnimation
-    //should restart upon playing.
-    if(reset_to_start)
-    {
-        time = active_SkeletalAnimation->start_time;
-    }
-    recursiveUpdateBoneMatsVector(rootBone, rootBone->getTransform());
+
+    //And this SkeletalAnimation is more important than the current one
+    if(pCurrentSkeletalAnimation != nullptr && pCurrentSkeletalAnimation->iPriority > anim->iPriority)
+        return;
+
+
+    pCurrentSkeletalAnimation = anim;
+    fStartTime = pCurrentSkeletalAnimation->fStartTime;
+    fEndTime = pCurrentSkeletalAnimation->fEndTime;
+
+    bIsAnimationPlaying = true;
+    bShouldAnimationLoop = loop;
+
+    recursiveUpdateBoneMatsVector(pRootBone, mat4());
 }
 
-//This function stops animating
-void Skeleton::StopAnimating()
+void Skeleton::stopAnimation()
 {
-    time = end_time;
-    active_SkeletalAnimation = nullptr;
-    anim_play = false;
-}
-         
-//This function sets the idle SkeletalAnimation
-//(An idle SkeletalAnimation, for those who don't know, is an SkeletalAnimation
-//that plays when no other SkeletalAnimations are playing)
-void Skeleton::SetIdleSkeletalAnimation(SkeletalAnimation* in_anim)
-{
-    idle_SkeletalAnimation = in_anim;
+    fTime = fEndTime;
+    pCurrentSkeletalAnimation = nullptr;
+    bIsAnimationPlaying = false;
 }
 
-std::vector<mat4> Skeleton::getBoneMatrices()
-{
-    return boneMats;
-}
+
+//
+// Getter
+//
+std::vector<mat4> Skeleton::getBoneMatrices() { return vBoneMats; }

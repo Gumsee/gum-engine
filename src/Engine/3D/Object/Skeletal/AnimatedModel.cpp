@@ -37,13 +37,6 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
     pVertexArrayObject->addAttribute(pVertexVBO, 8, 4, Gum::Graphics::Datatypes::INTEGER, sizeof(Vertex), offsetof(Vertex, JointIDs));
     pVertexArrayObject->addAttribute(pVertexVBO, 9, 4, Gum::Graphics::Datatypes::FLOAT, sizeof(Vertex), offsetof(Vertex, Weights));
     pVertexArrayObject->unbind();
-    
-
-
-
-    SkeletalAnimation* PlaceHolder = new SkeletalAnimation("Null", vec2(1, 1), 0, 0, 0);
-	PlaySkeletalAnimation(PlaceHolder,false,true);
-    StopAnimating();
 }
 
 AnimatedModel::~AnimatedModel() {}
@@ -62,18 +55,7 @@ void AnimatedModel::render()
     currentShader->loadUniform("isSkeletal", (int)false);
 
 
-	pSkeleton->Update();
-}
-
-
-void AnimatedModel::PlaySkeletalAnimation(SkeletalAnimation* anim, bool loop, bool reset_to_start)
-{
-    pSkeleton->PlaySkeletalAnimation(anim,loop,reset_to_start);
-}
-
-void AnimatedModel::StopAnimating()
-{
-    pSkeleton->StopAnimating();
+	pSkeleton->update();
 }
 
 //

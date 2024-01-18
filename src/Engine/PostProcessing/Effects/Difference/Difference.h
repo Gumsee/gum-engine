@@ -6,10 +6,14 @@ class Difference : public PostProcessingEffect
 private:
 	static inline ShaderProgram *pShader = nullptr;
 	
+    Texture* pSecondTexture;
+
 public:
 	Difference(Box *canvas);
 	~Difference();
 
-	void render(Texture* texture1, Texture* texture2);
+	Texture* render(Texture* texture) override;
+
+    void setSecondTexture(Texture* texture) { pSecondTexture = texture; }
 };
 

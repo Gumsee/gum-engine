@@ -1,9 +1,9 @@
 #pragma once
-#include "Engine/3D/Object/SceneObject.h"
-#include "Engine/3D/Object/Skeletal/BoneRenderer/BoneRenderer.h"
-#include <Engine/3D/Object/Skeletal/AnimatedModel.h>
 #include <gum-engine.h>
+#include <Engine/3D/Object/Skeletal/BoneRenderer/BoneRenderer.h>
+#include <Engine/3D/Object/Skeletal/AnimatedModel.h>
 
+//WORKING
 World3D* createAnimatedModelExample()
 {
     World3D* pWorld3D = new World3D();
@@ -15,8 +15,8 @@ World3D* createAnimatedModelExample()
     AnimatedModel* pAnimatedModel = new AnimatedModel("/home/gumse/Downloads/dancing_vampire.dae", "AnimTest");
     pAnimatedModel->addInstance();
 
-	SkeletalAnimation* pWalkCycle = new SkeletalAnimation("WalkCycle", vec2(1, 140), 2, 25, 0);
-    pAnimatedModel->PlaySkeletalAnimation(pWalkCycle, true);
+	SkeletalAnimation* pWalkCycle = new SkeletalAnimation("WalkCycle", ivec2(1, 140), 25);
+    pAnimatedModel->getSkeleton()->playAnimation(pWalkCycle, true);
 
     pWorld3D->getObjectManager()->addObject(pAnimatedModel);
 

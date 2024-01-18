@@ -10,19 +10,21 @@ Difference::Difference(Box *canvas)
 
 Difference::~Difference(){ }
 
-void Difference::render(Texture* texture1, Texture* texture2)
+Texture* Difference::render(Texture* texture)
 {
 	pFramebuffer->bind();
 	pShader->use();
 	pShader->loadUniform("Texture1", 0);
 	pShader->loadUniform("Texture2", 1);
 
-    texture1->bind(0);
-    texture2->bind(1);
+    texture->bind(0);
+    pSecondTexture->bind(1);
 	pRenderCanvas->renderCustom();
-    texture2->unbind(1);
-    texture1->unbind(0);
+    pSecondTexture->unbind(1);
+    texture->unbind(0);
 
 	pShader->unuse();
 	pFramebuffer->unbind();
+
+    return pFramebuffer->getTextureAttachment(0);
 }
