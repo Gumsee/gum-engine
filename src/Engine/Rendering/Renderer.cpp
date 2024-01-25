@@ -48,9 +48,7 @@ void Renderer::render()
     //Apply postprocessing effects here
     Texture* lastTex = pFramebuffer->getTextureAttachment();
     for(size_t i = 0; i < vPostProcessingEffects.size(); i++)
-    {
         lastTex = vPostProcessingEffects[i]->render(lastTex);
-    }
 
     lastTex = pHighDynamicRange->render(lastTex, this->fExposure);
 

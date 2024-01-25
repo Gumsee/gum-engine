@@ -63,7 +63,8 @@ PhysicsObjectInstance* SceneObject::addPhysicsInstance(PhysicsObjectInstance::Sh
 //
 void SceneObject::setMaterial(Material* material) 
 { 
-    Gum::_delete(pMaterial);
+    if(pMaterial->getName() == Gum::MaterialManager::getDefaultMaterial()->getName())
+        Gum::_delete(pMaterial);
     this->pMaterial = new Material(*material);
 }
 

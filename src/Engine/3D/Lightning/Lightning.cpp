@@ -2,6 +2,7 @@
 #include <random>
 #include <chrono>
 #include <System/MemoryManagement.h>
+#include "Essentials/Settings.h"
 #include "LightningShader.h"
 #include "../../Shaders/ShaderManager.h"
 #include "../../PostProcessing/PostProcessing.h"
@@ -41,12 +42,14 @@ void Lightning::updateShader(ShadowMapping *shadowmap, World3D* world)
 
 	pShader->loadUniform("numLights", (int)world->getLightManager()->numPointLights());
 	pShader->loadUniform("SunColor", world->getLightManager()->getSun()->getColor());
-	pShader->loadUniform("SunDirection", world->getLightManager()->getSun()->getDirection());
+	pShader->loadUniform("SunDirection", *world->getLightManager()->getSun()->getDirection());
 	pShader->loadUniform("viewmat", Camera::getActiveCamera()->getViewMatrix());
 	pShader->loadUniform("viewPos", Camera::getActiveCamera()->getPosition());
 	pShader->loadUniform("viewDir", Camera::getActiveCamera()->getViewDirection());
-	pShader->loadUniform("ToShadowMap", *shadowmap->getMatrix());
-	pShader->loadUniform("ShadowMapSize", *shadowmap->getShadowMapSize());
+	pShader->loadUniform("shadowMapMatrices", shadowmap->getMatrices());
+    pShader->loadUniform("cascadeCount", (int)shadowmap->getCascadeLevels().size());
+    pShader->loadUniform("cascadePlaneDistances", shadowmap->getCascadeLevels());
+    pShader->loadUniform("farPlane", (int)Settings::getSetting(Settings::RENDERDISTANCE));
 	pShader->loadUniform("pixelSize", pixelSize);
 	pShader->unuse();
     
@@ -83,9 +86,12 @@ void Lightning::initShader()
         pShader->addUniform("viewmat");
         pShader->addUniform("viewPos");
         pShader->addUniform("viewDir");
-        pShader->addUniform("ToShadowMap");
+        pShader->addUniform("cascadeCount");
+        pShader->addUniform("cascadePlaneDistances", 5);
+        pShader->addUniform("shadowMapMatrices", 5);
         pShader->addUniform("ShadowMapSize");
         pShader->addUniform("numLights");
+        pShader->addUniform("farPlane");
         pShader->addUniform("pixelSize");
 
         for (int i = 0; i < GUM_MAX_LIGHTS; i++)
@@ -109,6 +115,7 @@ void Lightning::loadLight(Light* light, int index)
 	pShader->use();
 	pShader->loadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
 	pShader->loadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
+
 	/*
 	const float linear = 0.7;
 	const float quadratic = 1.8;

@@ -1,7 +1,6 @@
 #pragma once
 #include <map>
 #include <string>
-#include <Engine/General/World.h>
 #include <gum-engine.h>
 #include <gum-desktop.h>
 #include <gum-gui.h>
@@ -21,4 +20,6 @@ private:
 public:
     Examples();
     ~Examples();
+
+    static Gum::Filesystem::File assetPath;
 };

@@ -3,43 +3,35 @@
 #include <Graphics/Framebuffer.h>
 #include <Graphics/Texture.h>
 #include <Desktop/Window.h>
-
-#include "ShadowBox.h"
+#include <functional>
 
 class Renderer3D;
 
 class ShadowMapping
 {
 private:
-	std::vector<mat4> GetMatrixProduct;
-	std::vector<Framebuffer*> vFramebuffers;
-	std::vector<Texture2D*> texture;
-	std::vector<float> textureOffsets;
-	mat4 projectionViewMatrix, lightViewMatrix, projectionMatrix, m4BiasMatrix;
-	ShadowBox *box;
-
-	int ShadowSize;
-	int ShadowMapAmount;
-	ShaderProgram *pShader;
+	static inline ShaderProgram* pShader = nullptr;
     void initShader();
-    
+
+    Framebuffer* pFramebuffer;
+    std::vector<float> vShadowCascadeLevels;
+    std::vector<mat4> vLightMatrices;
+
+    std::vector<vec4> getFrustumCornersWorldSpace(mat4& proj, const mat4& view);
+    mat4 getLightSpaceMatrix(const vec3& lightdir, const float nearPlane, const float farPlane);
+    void getLightSpaceMatrices(const vec3& lightdir);
+
 public:
-	ShadowMapping(Renderer3D* renderer);
+	ShadowMapping();
 	~ShadowMapping();
 
-	void prepare(vec3 LightDirection, int index);
-	void finish();
-	void addShadowMap(std::string name, float offset);
-	void updateLightViewMatrix(vec3 direction, vec3 center);
-	void updateOrthoProjectionMatrix(float width, float height, float length);
+	void render(const vec3& lightdir, const std::function<void()>& renderfunc);
 
-    TextureDepth* createDepthTextureAttachment(Framebuffer* framebuffer);
-	
 
 	//Getter
-	TextureDepth* getResultTexture(int Index);
-	ShaderProgram* getShader();
-	mat4* getMatrix();
-	int* getShadowMapSize();
+	Texture* getResultTexture();
+	static ShaderProgram* getShader();
+	std::vector<mat4>& getMatrices();
+	std::vector<float>& getCascadeLevels();
 };
 

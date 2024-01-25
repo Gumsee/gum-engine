@@ -88,7 +88,6 @@ Physics::~Physics()
 
 void Physics::update()
 {
-	Gum::Output::debug("Updating Physics");
     btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 	world->stepSimulation(FPS::get(), 100, 1.0f/240);
 

@@ -24,22 +24,22 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
 
 HighDynamicRange::~HighDynamicRange()
 {
-  pShader->removeShader(0);
-  Gum::_delete(pShader);
+    pShader->removeShader(0);
+    Gum::_delete(pShader);
 }
 
 Texture* HighDynamicRange::render(Texture* texture, float exposure)
 {
-  pFramebuffer->bind();
-  pShader->use();
-  pShader->loadUniform("exposure", exposure);
+    pFramebuffer->bind();
+    pShader->use();
+    pShader->loadUniform("exposure", exposure);
 
-  texture->bind();
-  pRenderCanvas->renderCustom();
-  texture->unbind();
+    texture->bind();
+    pRenderCanvas->renderCustom();
+    texture->unbind();
 
-  pShader->unuse();
-  pFramebuffer->unbind();
+    pShader->unuse();
+    pFramebuffer->unbind();
 
-  return pFramebuffer->getTextureAttachment(0);
+    return pFramebuffer->getTextureAttachment(0);
 }

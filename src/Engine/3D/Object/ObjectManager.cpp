@@ -1,6 +1,6 @@
 #include "ObjectManager.h"
 #include "Desktop/Window.h"
-#include "../../Shaders/ShaderManager.h"
+#include "../Lightning/ShadowMapping/ShadowMapping.h"
 #include "../Camera3D.h"
 #include "../Renderer3D.h"
 #include "Graphics/Framebuffer.h"
@@ -74,7 +74,7 @@ void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
         pSkyBox->getIrradianceMap()->bind(6);
         pSkyBox->getPreFilterMap()->bind(7);
         pSkyBox->getBRDFConvMap()->bind(8);
-        //shadowmap->getResultTexture(0)->bind(9);
+        ((Renderer3D*)Renderer3D::getActiveRenderer())->getShadowMapping()->getResultTexture()->bind(9);
 
         shader->use();
         shader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
@@ -104,11 +104,11 @@ void ObjectManager::renderEverything()
 {
 	for(auto objs : mObjectsDefered)
         for(Object3D* obj : objs.second)
-            return obj->render();
+            obj->render();
         
 	for(auto objs : mObjectsForward)
         for(Object3D* obj : objs.second)
-            return obj->render();
+            obj->render();
 }
 
 
@@ -116,11 +116,11 @@ void ObjectManager::renderIDs()
 {
 	for(auto objs : mObjectsDefered)
         for(Object3D* obj : objs.second)
-            return obj->renderID();
+            obj->renderID();
         
 	for(auto objs : mObjectsForward)
         for(Object3D* obj : objs.second)
-            return obj->renderID();
+            obj->renderID();
 }
 
 

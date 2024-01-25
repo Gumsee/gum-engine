@@ -10,6 +10,8 @@ private:
 
     AnimatedModel* pModel;
 
+    void recursiveUpdateBoneMats(Bone *currentBone, mat4 parentTransform);
+
 public:
     BoneRenderer(AnimatedModel* model);
     ~BoneRenderer();

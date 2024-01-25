@@ -63,17 +63,27 @@ BoneRenderer::~BoneRenderer()
 }
 
 
+void BoneRenderer::recursiveUpdateBoneMats(Bone *currentBone, mat4 parentTransform)
+{
+    mat4 globalTransform = parentTransform * currentBone->getTransform();
+    if(currentBone->getID() >= 0)
+    {
+        pBoneObject->getInstance(currentBone->getID())->setMatrix(globalTransform);
+        pBoneObject->getInstance(currentBone->getID())->updateMatrix();
+    }
+
+    //Recursive
+    for(unsigned int i = 0; i < currentBone->numChildren(); i++)
+        recursiveUpdateBoneMats(currentBone->getChild(i), globalTransform);
+}
+
 void BoneRenderer::render()
 {
     pShader->use();
     pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     
-    for(size_t i = 0; i < pModel->getSkeleton()->getBoneMatrices().size(); i++)
-    {
-        pBoneObject->getInstance(i)->setMatrix(pModel->getSkeleton()->getBoneMatrices()[i] * pModel->getInstance()->getMatrix());
-        pBoneObject->getInstance(i)->updateMatrix();
-    }
+    recursiveUpdateBoneMats(pModel->getSkeleton()->getRootBone(), mat4());
     
     pBoneObject->render();
     

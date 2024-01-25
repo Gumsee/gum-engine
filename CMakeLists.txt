@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required (VERSION 3.0...3.9)
 project(GumEngine)
 cmake_policy(SET CMP0072 NEW)
 cmake_policy(SET CMP0090 NEW)
@@ -84,16 +84,16 @@ message(STATUS "${PROJECT_NAME}: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
             find_package(GumGUI REQUIRED)
         endif() 
     
-        if(NOT GUMESSENTIALS_FOUND) 
-            find_package(GumEssentials REQUIRED)
-        endif() 
-    
         if(NOT GUMOPENGL_FOUND) 
             find_package(GumOpenGL REQUIRED)
         endif() 
     
         if(NOT GUMGRAPHICS_FOUND) 
             find_package(GumGraphics REQUIRED)
+        endif() 
+    
+        if(NOT GUMESSENTIALS_FOUND) 
+            find_package(GumEssentials REQUIRED)
         endif() 
     
         if(NOT GUMCODECS_FOUND) 

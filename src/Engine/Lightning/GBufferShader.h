@@ -38,11 +38,11 @@ R"(
     {
         vs_out.Texcoord = TextureCoords * TextureMultiplier;
         vec3 FinalVertexPosition = vertexPosition;
-        vec4 totalLocalPos = vec4(0.0);
 
         //Is Skeletal Check
         if(isSkeletal == 1)
         {
+            vec4 totalLocalPos = vec4(0.0);
             for(int i = 0; i < MAX_WEIGHTS; i++)
             {
                 if(jointIndices[i] < 0)
@@ -63,7 +63,8 @@ R"(
         vec3 B = cross(N, T);
         vs_out.TBN = mat3(T, B, N);
 
-        vs_out.worldNormal = (TransMatrix * vec4(Normals, 0.0f)).xyz;
+        mat3 normalMatrix = transpose(inverse(mat3(TransMatrix)));
+        vs_out.worldNormal = normalMatrix * Normals;
         vs_out.FragPos = worldPosition;
         vs_out.viewPos = viewPos;
         gl_Position = positionRelativeToCam;
@@ -162,13 +163,13 @@ R"(
     void main(void)
     {
         vec2 Texcoords = fs_in.Texcoord;
-        if(hasDisplacementMap > 0)
+        /*if(hasDisplacementMap > 0)
         {
             vec3 viewDir = transpose(fs_in.TBN) * normalize(fs_in.viewPos - fs_in.FragPos.xyz);
             Texcoords = ParallaxMapping(fs_in.Texcoord, viewDir);
             if(Texcoords.x > 1.0 || Texcoords.y > 1.0 || Texcoords.x < 0.0 || Texcoords.y < 0.0)
                 discard;
-        }
+        }*/
         
         vec3 unitNormal = hasNormalMap > 0
             ? normalize(fs_in.TBN * (texture(normalmap, Texcoords).rgb * 2.0 - vec3(1.0)))

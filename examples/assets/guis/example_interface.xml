@@ -9,15 +9,15 @@
                     <box id="Positions"  size="100%, 500" pos="50%, 10"   margin="-20, 0" origin="50%, 0" invert="true" />
                     <box id="Normals"    size="100%, 500" pos="50%, 520"  margin="-20, 0" origin="50%, 0" invert="true" />
                     <box id="Diffuse"    size="100%, 500" pos="50%, 1030" margin="-20, 0" origin="50%, 0" invert="true" />
-                    <box id="IndividualColor"    size="100%, 500" pos="50%, 1540" margin="-20, 0" origin="50%, 0" invert="true" />
-                    <box id="SSAO"       size="100%, 500" pos="50%, 2050" margin="-20, 0" origin="50%, 0" invert="true" />
-                    <box id="Objectdata" size="100%, 500" pos="50%, 2560" margin="-20, 0" origin="50%, 0" invert="true" />
-                    <box id="ShadowMaps" size="100%, 500" pos="50%, 3070" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="Objectdata" size="100%, 500" pos="50%, 1540" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="ShadowMaps" size="100%, 500" pos="50%, 2050" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="SSAO"       size="100%, 500" pos="50%, 2560" margin="-20, 0" origin="50%, 0" invert="true" />
+                    <box id="IndividualColor"    size="100%, 500" pos="50%, 3070" margin="-20, 0" origin="50%, 0" invert="true" />
                     <box id="Skybox"     size="100%, 500" pos="50%, 3580" margin="-20, 0" origin="50%, 0" invert="true" />
                     <box id="Depth"      size="100%, 500" pos="50%, 4090" margin="-20, 0" origin="50%, 0" invert="true" />
                 </scroller>
             </tab>
-            <tab name="Object" active="true">
+            <tab name="Object">
                 <scroller pos="0, 0" size="100%, 50%">
                     <group pos="20, 200" size="150, 90" color="#FFFFFF" title="Translation">
                         <slider pos="0, 0"  length="100%" title="X" infinite="true" round-corner="1, 1, 0, 0" border-radius="10" />
@@ -36,7 +36,7 @@
                     </group>
                 </scroller>
             </tab>
-            <tab name="Examples">
+            <tab name="Examples" active="true">
                 <dropdown id="examplesdropdown" pos="20, 20" size="200, 50" title="Examples" fontsize="20">
                     <!--<item>Test1</item>-->
                 </dropdown>
@@ -46,6 +46,15 @@
                 </dropdown>
             </tab>
             <tab name="World">
+            </tab>
+            <tab name="2D Noisepatterns">
+                <button id="generatebutton" pos="10, 10" size="100, 30" fontsize="20">Generate</button>
+                <scroller pos="0, 50" size="100%, 100%" margin="0, -50">
+                    <box id="perlinnoise"  size="100%, 500" pos="50%, 40"   margin="-20, 0" origin="50%, 0" invert="true" />
+                    <text pos="10, 10">Perlin Noise</text>
+                    <box id="simplexnoise" size="100%, 500" pos="50%, 580"  margin="-20, 0" origin="50%, 0" invert="true" />
+                    <text pos="10, 560">Simplex Noise</text>
+                </scroller>
             </tab>
         </tabs>
     </box>

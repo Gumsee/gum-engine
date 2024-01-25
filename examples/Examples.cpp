@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <gum-engine.h>
 #include <gum-graphics.h>
 #include <gum-system.h>
@@ -7,16 +8,25 @@
 #include <GUI/Basics/Basics.h>
 #include <string>
 #include "Desktop/IO/Mouse.h"
+#include <Codecs/Zip.h>
+#include "Engine/3D/Lightning/ShadowMapping/ShadowMapping.h"
 #include "Engine/PostProcessing/Effects/Effects.h"
 #include "Engine/Texture/TextureManager.h"
+#include "Essentials/Tools.h"
 #include "Essentials/Unicode.h"
+#include "Essentials/Noise.h"
 #include "GUI/Basics/Dropdown.h"
 #include "GUI/Primitives/RenderGUI.h"
 #include "Graphics/Framebuffer.h"
+#include "Graphics/Texture2D.h"
 #include "System/File.h"
 #include "System/Output.h"
+#include "Worlds/Vehicle.h"
 #include "Worlds/Worlds.h"
+#include "Worlds/ShadowMapping.h"
 #include "Worlds/PostProcessingEffects.h"
+#include <Essentials/Serialization.h>
+#include "Examples.h"
 
 /******
 
@@ -51,20 +61,20 @@ World3D* getExampleWorld(std::string name)
         if(name == "PhysicallyBasedRendering")  { mWorlds[name] = createPhysicallyBasedRenderingExample(); }
         if(name == "Physics")                   { mWorlds[name] = createPhysicsExample(); }
         if(name == "PostProcessing")            { mWorlds[name] = createPostProcessingExample(); }
-        //if(name == "ShadowMapping")             { mWorlds[name] = createShadowMappingExample(); }
+        if(name == "Vehicle")                   { mWorlds[name] = createVehicleExample(); }
+        if(name == "ShadowMapping")             { mWorlds[name] = createShadowMappingExample(); }
         //if(name == "SphereGenerator")           { mWorlds[name] = createSphereGeneratorExample(); }
     }
     return mWorlds[name];
 }
 
+Gum::Filesystem::File Examples::assetPath = Gum::Filesystem::File(std::string(EXAMPLES_PATH) + "/assets/", Gum::Filesystem::DIRECTORY);
 
 int main(int argc, char** argv)
 {
-    Gum::Filesystem::File assetPath(std::string(EXAMPLES_PATH) + "/assets/", Gum::Filesystem::DIRECTORY);
-
     Gum::Display::init();
     pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
-    pMainWindow->setVerticalSync(true);
+    pMainWindow->setVerticalSync(false);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
     Gum::Graphics::addFramebufferToWindow(pMainWindow);
@@ -72,11 +82,11 @@ int main(int argc, char** argv)
     pGUI = new Gum::GUI(pMainWindow);
     Framebuffer::CurrentlyBoundFramebuffer->setClearColor(Gum::GUI::getTheme()->backgroundColor);
 
-    ObjectManager::MODEL_ASSETS_PATH = assetPath.toString() + "/objects/";
-    Gum::TextureManager::TEXTURE_ASSETS_PATH = assetPath.toString() + "/textures/";
+    ObjectManager::MODEL_ASSETS_PATH = Examples::assetPath.toString() + "/objects/";
+    Gum::TextureManager::TEXTURE_ASSETS_PATH = Examples::assetPath.toString() + "/textures/";
     Gum::Engine::init();
 
-    XMLLoader pXMLGUILoader(assetPath.toString() + "/guis/example_interface.xml");
+    XMLLoader pXMLGUILoader(Examples::assetPath.toString() + "/guis/example_interface.xml");
     pGUI->addGUI(pXMLGUILoader.getRootGUI());
     pRenderCanvas = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
 
@@ -91,7 +101,7 @@ int main(int argc, char** argv)
     //pMainCamera->setRotationalSpeed(0.2f);
 
     pMainRenderer = new Renderer3D(pRenderCanvas);
-    pMainRenderer->setWorld(getExampleWorld("AnimatesModels"));
+    pMainRenderer->setWorld(getExampleWorld("ShadowMapping"));
     pMainRenderer->setExposure(1.0f);
 
     pMainWindow->onResized([](ivec2 size) {
@@ -112,7 +122,7 @@ int main(int argc, char** argv)
     ((Box*)GBufferTab->findChildByID("SSAO"))->setTexture(pMainRenderer->getSSAO()->getResultTexture());
     ((Box*)GBufferTab->findChildByID("Objectdata"))->setTexture(pMainRenderer->getGBuffer()->getObjectDataMap());
     ((Box*)GBufferTab->findChildByID("Depth"))->setTexture(pMainRenderer->getGBuffer()->getDepthMap());
-    //((Box*)GBufferTab->findChildByID("ShadowMaps"))->setTexture(pMainRenderer->getShadowMapping()->getResultTexture(0));
+    //((Box*)GBufferTab->findChildByID("ShadowMaps"))->setTexture(pMainRenderer->getShadowMapping()->getResultTexture());
 
     /*float* fpsValue = new float(0);
     Graph* pFPSGraph = new Graph("FPS Graph", ivec2(0, 0), ivec2(600, 200), fpsValue);
@@ -126,7 +136,7 @@ int main(int argc, char** argv)
         pMainRenderer->setWorld(getExampleWorld(title.toString()));
     });
 
-    for(std::string example : { "AnimatesModels", "Billboards", "GBuffer", "BasicCube", "IrradiancePBR", "MazeLearning", "Ocean", "Particles", "PhysicallyBasedRendering", "Physics", "PostProcessing", "ShadowMapping", "SphereGenerator" })
+    for(std::string example : { "AnimatesModels", "Billboards", "GBuffer", "BasicCube", "IrradiancePBR", "MazeLearning", "Ocean", "Particles", "PhysicallyBasedRendering", "Physics", "PostProcessing", "ShadowMapping", "SphereGenerator", "Vehicle" })
         examplesDropdown->addEntry(example, false);
 
 
@@ -145,6 +155,22 @@ int main(int argc, char** argv)
             ((Camera3D*)Camera::getActiveCamera())->setMode(Camera3D::STATIC);
         }
     });
+
+    RenderGUI* noisepatternsTab = TabsGUI->getTabContent("2D Noisepatterns");
+    Texture2D* perlinNoiseTex = new Texture2D("perlinnoise", ivec2(100, 100), [](ivec2 pixelcoord) { return rgba(255,0,0,255); });
+    Texture2D* simplexNoiseTex = new Texture2D("perlinnoise", ivec2(100, 100), [](ivec2 pixelcoord) { return rgba(255,0,0,255); });
+    ((Box*)noisepatternsTab->findChildByID("perlinnoise"))->setTexture(perlinNoiseTex);
+    ((Box*)noisepatternsTab->findChildByID("simplexnoise"))->setTexture(simplexNoiseTex);
+
+    Button* generateTexturesButton = (Button*)noisepatternsTab->findChildByID("generatebutton");
+    generateTexturesButton->onClick([perlinNoiseTex, simplexNoiseTex](RenderGUI* gui, uint16_t btn) {
+        Gum::Noise::setSeed(time(0));
+
+        perlinNoiseTex->generate([](ivec2 pixelcoord) {
+            return rgba(rgb(Gum::Noise::noise2D(pixelcoord.x, pixelcoord.y) * 255),255);
+        });
+
+    }, GUM_MOUSE_BUTTON_LEFT);
 
     //pMainRenderer->addPostProcessingEffect(new GaussianBlur(pRenderCanvas, 10));
     //pMainRenderer->addPostProcessingEffect(new Brightfilter(pRenderCanvas));

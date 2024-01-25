@@ -1,8 +1,10 @@
 #pragma once
+#include "Desktop/Window.h"
 #include "System/Output.h"
-#include <gum-engine.h>
 #include <Engine/3D/Object/Skeletal/BoneRenderer/BoneRenderer.h>
 #include <Engine/3D/Object/Skeletal/AnimatedModel.h>
+#include <Engine/3D/Object/Skeletal/RagdollObjectInstance.h>
+#include <gum-engine.h>
 
 //WORKING
 World3D* createAnimatedModelExample()
@@ -15,7 +17,7 @@ World3D* createAnimatedModelExample()
     //Default
     //AnimatedModel* pAnimatedModel = new AnimatedModel("/home/gumse/Downloads/dancing_vampire.dae", "AnimTest");
     AnimatedModel* pAnimatedModel = new AnimatedModel(ObjectManager::MODEL_ASSETS_PATH + "/testAnim.fbx", "AnimTest");
-    pAnimatedModel->addInstance();
+    RagdollObjectInstance* ragdollInstance = pAnimatedModel->addRagdollInstance(pWorld3D);
 
 	SkeletalAnimation* pWalkCycle = pAnimatedModel->getSkeleton()->getAnimation(0);
     pWalkCycle->activate(true);
@@ -30,13 +32,16 @@ World3D* createAnimatedModelExample()
 
     pWorld3D->getObjectManager()->addObject(pAnimatedModel);
 
-    SceneObject* floor = new SceneObject(Mesh::generatePlane(vec2(1,1)), "Floor");
-    floor->addInstance();
-	floor->getInstance()->setPosition(vec3(0, 0, 0));
-    floor->getInstance()->setScale(vec3(10, 1, 10));
+	SceneObject* floor = new SceneObject(Mesh::generateCube(vec3(90, 2, 90)), "Floor");
+    floor->addPhysicsInstance(PhysicsObjectInstance::BOX, 0.0f, pWorld3D)->setPosition(vec3(0, -2, 0));
     pWorld3D->getObjectManager()->addObject(floor);
 
     //pWorld3D->addRenderable(new BoneRenderer(pAnimatedModel));
+
+    pWorld3D->addUpdatable([ragdollInstance]() {
+        if(Gum::Window::CurrentlyBoundWindow->getKeyboard()->checkKeyPressed(GUM_KEY_R))
+            ragdollInstance->triggerRagdoll();
+    });
 
 	return pWorld3D;
 }

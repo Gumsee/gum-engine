@@ -26,11 +26,19 @@ static const std::string SkyboxFragmentShader = Shader::SHADER_VERSION_STR +
 R"(
 	in vec3 Texcoord;
     out vec4 FragColor;
-	uniform samplerCube dayTexture;
+	uniform samplerCube environmentMap;
 	
 	void main() 
 	{
-        vec3 envColor = texture(dayTexture, Texcoord).rgb;
+        /*vec3 envColor = texture(environmentMap, Texcoord).rgb;
+        
+        envColor = envColor / (envColor + vec3(1.0));
+        envColor = pow(envColor, vec3(1.0/2.2)); 
+    
+        FragColor = vec4(envColor, 1.0);*/
+
+
+        vec3 envColor = texture(environmentMap, Texcoord).rgb;
         FragColor = vec4(envColor, 1.0f);
 	}
 )";
@@ -56,7 +64,7 @@ R"(
 	{
 		if(gradiant > 0) 
 		{ 
-			float sun = clamp(dot(normalize(-SunDirection), normalize(Texcoord)), 0.0, 1.0);
+			float sun = clamp(dot(normalize(SunDirection * vec3(1,-1,1)), normalize(Texcoord)), 0.0, 1.0);
 			vec3 col = mix(vec3(0.68,0.68,0.7), vec3(0.52941, 0.80784, 0.98039), Texcoord.y * 0.5 + 0.5);
 			col += 0.5*vec3(1.0,0.5,0.1)*pow(sun, 20.0);
 			FragColor = vec4(col - 0.3, 1.0);

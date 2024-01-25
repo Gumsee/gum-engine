@@ -21,12 +21,15 @@ R"(
 	uniform sampler2D gAlbedo;
 	uniform sampler2D ssao;
 	uniform sampler2D gObjectData;
-	uniform sampler2D ShadowMap;
+	uniform sampler2DArray ShadowMap;
 
 	uniform vec3 SunColor;
 	uniform vec3 SunDirection;
-	uniform mat4 ToShadowMap;
+    uniform int cascadeCount;
+    uniform float cascadePlaneDistances[5];
+	uniform mat4 shadowMapMatrices[5];
 	uniform int ShadowMapSize;
+	uniform int farPlane;
 	uniform mat4 viewmat;
 	uniform vec3 viewPos;
 	uniform vec2 pixelSize;
@@ -88,62 +91,77 @@ R"(
 	//
 	//ShadowMapping
 	//
-	float sampleShadowMap(sampler2D shadowmap, vec2 shadowcoords, float compare)
-	{
-	    return step(compare, texture(shadowmap, shadowcoords.xy).r);
-	}
+    float ShadowCalculation(vec3 fragPosWorldSpace, vec3 normal)
+    {
+        // select cascade layer
+        vec4 fragPosViewSpace = viewmat * vec4(fragPosWorldSpace, 1.0);
+        float depthValue = abs(fragPosViewSpace.z);
 
-	float SampleShadowMapLinear(sampler2D shadowMap, vec2 coords, float compare, vec2 texelSize)
-	{
-	       vec2 pixelPos = coords/texelSize + vec2(0.5);
-	       vec2 fracPart = fract(pixelPos);
-	       vec2 startTexel = (pixelPos - fracPart) * texelSize;
+        int layer = -1;
+        for (int i = 0; i < cascadeCount; ++i)
+        {
+            if (depthValue < cascadePlaneDistances[i])
+            {
+                layer = i;
+                break;
+            }
+        }
+        if (layer == -1)
+        {
+            layer = cascadeCount;
+        }
 
-	       float blTexel = sampleShadowMap(shadowMap, startTexel, compare);
-	       float brTexel = sampleShadowMap(shadowMap, startTexel + vec2(texelSize.x, 0.0), compare);
-	       float tlTexel = sampleShadowMap(shadowMap, startTexel + vec2(0.0, texelSize.y), compare);
-	       float trTexel = sampleShadowMap(shadowMap, startTexel + texelSize, compare);
+        vec4 fragPosLightSpace = shadowMapMatrices[layer] * vec4(fragPosWorldSpace, 1.0);
+        // perform perspective divide
+        vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+        // transform to [0,1] range
+        projCoords = projCoords * 0.5 + 0.5;
 
-	       float mixA = mix(blTexel, tlTexel, fracPart.y);
-	       float mixB = mix(brTexel, trTexel, fracPart.y);
+        // get depth of current fragment from light's perspective
+        float currentDepth = projCoords.z;
 
-	       return mix(mixA, mixB, fracPart.x);
-	}
+        // keep the shadow at 0.0 when outside the far_plane region of the light's frustum.
+        if (currentDepth > 1.0)
+        {
+            return 0.0;
+        }
+        // calculate bias (based on depth map resolution and slope)
+        float bias = max(0.05 * (1.0 - dot(normal, -SunDirection)), 0.005);
+        const float biasModifier = 0.5f;
+        if (layer == cascadeCount)
+        {
+            bias *= 1 / (farPlane * biasModifier);
+        }
+        else
+        {
+            bias *= 1 / (cascadePlaneDistances[layer] * biasModifier);
+        }
 
-	float SampleShadowMapPCF(sampler2D shadowMap, vec2 coords, float compare, vec2 texelSize)
-	{
-	       const float NUM_SAMPLES = 3.0f;
-	       const float SAMPLES_START = (NUM_SAMPLES-1.0f)/2.0f;
-	       const float NUM_SAMPLES_SQUARED = NUM_SAMPLES*NUM_SAMPLES;
-
-	       float result = 0.0f;
-	       for(float y = -SAMPLES_START; y <= SAMPLES_START; y += 1.0f)
-	       {
-				for(float x = -SAMPLES_START; x <= SAMPLES_START; x += 1.0f)
-				{
-					vec2 coordsOffset = vec2(x,y) * texelSize;
-					result += SampleShadowMapLinear(shadowMap, coords + coordsOffset, compare, texelSize);
-				}
-	       }
-	       return result/NUM_SAMPLES_SQUARED;
-	}
-
-	float calcShadowAmount(sampler2D shadowmap, vec4 startShadowMapCoords)
-	{
-	    vec3 shadowmapcoords = startShadowMapCoords.xyz / startShadowMapCoords.w;
-	    shadowmapcoords = shadowmapcoords * 0.5 + 0.5;
-
-	    if(shadowmapcoords.z > 1.0)
-	    {
-	        return 1.0;
-	    }
-	    else
-	    {
-	        return SampleShadowMapPCF(shadowmap, shadowmapcoords.xy, shadowmapcoords.z - 5.0/ShadowMapSize, vec2(1.0/ShadowMapSize)) / 2;
-	    }
-	}
+        // PCF
+        float shadow = 0.0;
+        vec2 texelSize = 1.0 / vec2(textureSize(ShadowMap, 0));
+        for(int x = -1; x <= 1; ++x)
+        {
+            for(int y = -1; y <= 1; ++y)
+            {
+                float pcfDepth = texture(ShadowMap, vec3(projCoords.xy + vec2(x, y) * texelSize, layer)).r;
+                shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;        
+            }    
+        }
+        shadow /= 9.0;
+            
+        return shadow;
+    }
 
 	const float MAX_REFLECTION_LOD = 4.0;
+
+    float linearize_depth(float depth)
+    {
+        float near_plane = 0.1;
+        float far_plane = 5000;
+        float z = depth * 2.0 - 1.0; // Back to NDC 
+        return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));
+    }
 
 	void main()
 	{
@@ -168,9 +186,9 @@ R"(
         //
 	    //ShadowMapping
         //
-	    vec4 shadowspace = ToShadowMap * vec4(Position, 1.0f);
+	    vec4 shadowspace = shadowMapMatrices[0] * vec4(Position, 1.0f);
 	    vec3 shadowmapcoords = shadowspace.xyz / shadowspace.w;
-	    float shadow = calcShadowAmount(ShadowMap, shadowspace);
+	    float shadow = 1.0 - ShadowCalculation(Position, Normal);
 
 	    vec3 F0 = vec3(0.04); 
 	    F0 = mix(F0, Albedo.rgb, metallic);
@@ -206,6 +224,7 @@ R"(
 
 	        // add to outgoing radiance Lo
 	        light += (kD * Albedo.rgb / PI + specular) * radiance * NdotL;
+            //light += radiance;
 	    }
 
         //
@@ -249,8 +268,8 @@ R"(
 	    vec3 ambient = (AmbientkD * diffuse + AmbientSpecular) * AmbientOcclusionFactor;
 
 
-
-	    vec3 color = (ambient + sunlight/* * shadow*/ + light);
+        //ambient = vec3(0); // needs fix
+	    vec3 color = (ambient + sunlight * shadow + light);
         //color = light + ambient * shadow;
         //color = irradiance;
         
@@ -263,12 +282,18 @@ R"(
 	
 
 	    float alpha = 1.0f;
-	    if(Normal == vec3(0.0f)) { alpha = 0.0f; }
+	    if(Normal == vec3(0.0f)) { alpha = 0.0; }
 
 	    FragColor = vec4(color, alpha);
 	    //FragColor = mix(FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
 	    //FragColor = texture(ShadowMap, shadowmapcoords.xy);
     	//FragColor = vec4(color, 1.0f);
-    	FragColor = Albedo * vec4(vec3(dot(Normal, normalize(lights[0].Position - Position))), alpha);
+    	//FragColor = Albedo * vec4(vec3(dot(Normal, normalize(lights[0].Position - Position))), alpha);
+
+        //float shaderval = texture(ShadowMap, vec3(Texcoord, 0)).r;
+        //float linearDepth = linearize_depth(shaderval);
+        //FragColor = vec4(vec3(linearDepth), 1.0);
+
+        //FragColor = vec4(texture(ShadowMap, Texcoord).xyz, 1);
 	}
 )";

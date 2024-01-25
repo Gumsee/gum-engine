@@ -23,7 +23,7 @@ public:
     
     //Getter
 	Texture2D *getTexture();
-	TextureDepth *getDepthTexture();
+	Texture *getDepthTexture();
 	float getHeight();
 	vec4 *getClippingPlane();
 

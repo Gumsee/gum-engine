@@ -21,7 +21,7 @@ Renderer3D::Renderer3D(Box* canvas)
 	pGBuffer      = new G_Buffer(pRenderCanvas);
 	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
 	pLightning    = new Lightning(pRenderCanvas, this);
-    pShadowMaps   = new ShadowMapping(this);
+    pShadowMaps   = new ShadowMapping();
     #ifdef DEBUG
     pGrid         = new Grid();
     #endif
@@ -50,22 +50,19 @@ void Renderer3D::renderInternal()
         return;
     //GumEngine::DefaultOutlineRenderer->resetFramebuffer();
 
-    pFramebuffer->bind();
-    pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
-    pWorld->renderSky();
+    //Render the Shadowmap
+    pShadowMaps->render(*pWorld->getLightManager()->getSun()->getDirection(), [this](){
+        pWorld->getObjectManager()->renderEverything();
+    });
 
     //SSAO
     //pSSAO->render();
 
-	//pShadowMaps->getResultTexture(0)->bind(16);
-	//pEnvironmentMap->getTexture()->bind(15);
-    pWorld->getObjectManager()->renderDefered(pGBuffer, pRenderCanvas);
-	//pEnvironmentMap->getTexture()->unbind(15);
-	//pShadowMaps->getResultTexture(0)->unbind(16);
-
-
+    pFramebuffer->bind();
+    pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
+    pWorld->renderSky();
     pLightning->updateShader(pShadowMaps, pWorld);
-
+    pWorld->getObjectManager()->renderDefered(pGBuffer, pRenderCanvas);
     
     pFramebuffer->bind();
     pWorld->getObjectManager()->renderForward();
@@ -93,17 +90,7 @@ void Renderer3D::renderInternal()
     pWorld->getPhysics()->drawDebug();
     pFramebuffer->unbind();
 
-    //Render the Shadowmap
-    pShadowMaps->prepare(*pWorld->getLightManager()->getSun()->getDirection(), 0);
     Gum::Graphics::renderWireframe(false);
-    //pWorld->getObjectManager()->render(ObjectManager::WITHOUTSKYBOX, pShadowMaps->getShader(), true);
-
-    //ShadowMaps->prepare(*Lights->getSun()->getDirection(), 1);
-    //Objects->render(0, ShadowMaps->getShader());
-    
-    //ShadowMaps->prepare(*Lights->getSun()->getDirection(), 2);
-    //Objects->render(0, ShadowMaps->getShader());
-    pShadowMaps->finish();
 
 
     //Renders scene with all objects inside

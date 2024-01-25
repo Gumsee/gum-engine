@@ -7,20 +7,25 @@
 Skeleton::Skeleton(Bone *rootbone, unsigned int numbones)
     : pRootBone(rootbone),
       fTime(0), fStartTime(0), fEndTime(0),
-      bIsAnimationPlaying(false),
+      bIsStopUpdating(false),
       bShouldAnimationLoop(false)
 {
     vBoneMats.resize(numbones);
 
     if(pRootBone == nullptr)
         Gum::Output::error("Skeleton: Rootbone is nullptr");
+
+    recursiveUpdateBoneMatsVector(pRootBone, mat4());
 }
 
 void Skeleton::recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform)
 {
     mat4 globalTransform = parentTransform * currentBone->getTransform();
     if(currentBone->getID() >= 0)
+    {
+        mBoneMatsWithoutOffset[currentBone] = globalTransform;
         vBoneMats[currentBone->getID()] = globalTransform * currentBone->getOffsetMatrix();
+    }
 
     //Recursive
     for(unsigned int i = 0; i < currentBone->numChildren(); i++)
@@ -29,7 +34,7 @@ void Skeleton::recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTrans
 
 void Skeleton::update()
 {
-    if(vAppliedAnimation.empty())
+    if(bIsStopUpdating || vAppliedAnimation.empty())
         return;
 
     //Make sure there's nothning left in the vector.
@@ -57,5 +62,10 @@ void Skeleton::addAnimation(SkeletalAnimation* anim)
 //
 // Getter
 //
-std::vector<mat4> Skeleton::getBoneMatrices()                          { return vBoneMats; }
-SkeletalAnimation* Skeleton::getAnimation(const unsigned int& index)   { return vAppliedAnimation[index]; }
+std::vector<mat4>& Skeleton::getBoneMatrices()                            { return vBoneMats; }
+std::unordered_map<Bone*, mat4>& Skeleton::getBoneMatricesWithoutOffset() { return mBoneMatsWithoutOffset; }
+SkeletalAnimation* Skeleton::getAnimation(const unsigned int& index)      { return vAppliedAnimation[index]; }
+Bone* Skeleton::getRootBone()                                             { return pRootBone; }
+
+
+void Skeleton::stopUpdating(bool stopupdating) { this->bIsStopUpdating = stopupdating; }

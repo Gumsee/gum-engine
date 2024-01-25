@@ -1,5 +1,7 @@
 #include "AnimatedModel.h"
+#include "Graphics/Object3DInstance.h"
 #include "Primitives/SkeletalAnimation.h"
+#include "RagdollObjectInstance.h"
 #include <Essentials/Tools.h>
 #include <Graphics/Variables.h>
 #include <System/MemoryManagement.h>
@@ -47,6 +49,10 @@ AnimatedModel::~AnimatedModel() {}
 
 void AnimatedModel::render()
 {
+	pSkeleton->update();
+    for(Object3DInstance* instance : vInstances)
+        instance->update();
+
     ShaderProgram* currentShader = ShaderProgram::getCurrentlyBoundShader();
     for(size_t i = 0; i < pSkeleton->getBoneMatrices().size(); i++)
         currentShader->loadUniform("gBones[" + std::to_string(i) + "]", pSkeleton->getBoneMatrices()[i]);
@@ -57,9 +63,14 @@ void AnimatedModel::render()
     SceneObject::render();
 
     currentShader->loadUniform("isSkeletal", (int)false);
+}
 
+RagdollObjectInstance* AnimatedModel::addRagdollInstance(World3D* world)
+{
+    RagdollObjectInstance* instance = new RagdollObjectInstance(this, world);
+    addInstance(instance);
 
-	pSkeleton->update();
+    return instance;
 }
 
 //

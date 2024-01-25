@@ -23,9 +23,11 @@ public:
         PERSPECTIVE,
         ORTHOGRAPHIC
     };
+    
+    inline static const float ROTATIONAL_SPEED = 0.3f;
+    inline static const float NEAR_PLANE = 0.1f;
 
 private:
-    inline static const float ROTATIONAL_SPEED = 0.3f;
 	SmoothFloat* pOffsetToPos;
 	float fMouseAngle;
 	float fAngleAroundPos;

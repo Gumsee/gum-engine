@@ -5,10 +5,11 @@ class CollisionObject
 {
 private:
     void* internalBody;
+    void* userptr;
     std::function<void()> callback;
 
 public:
-    CollisionObject();
+    CollisionObject(void* body = nullptr);
     ~CollisionObject();
 
     void onCollision(std::function<void()> callback);
@@ -16,4 +17,7 @@ public:
 
     void setBody(void* body);
     void* getBody();
+
+    void setUserPtr(void* ptr);
+    void* getUserPtr();
 };

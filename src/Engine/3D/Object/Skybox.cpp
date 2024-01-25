@@ -218,8 +218,8 @@ void SkyBox::initShaders()
         pShader->addShader(skyVertexShader);
         pShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build("SkyShader");
+        pShader->addTexture("environmentMap", 0);
         pShader->addUniform("gradiant");
-        pShader->addTexture("dayTexture", 0);
         pShader->addUniform("SunDirection");
         Gum::ShaderManager::addShaderProgram(pShader); // Make it public
 

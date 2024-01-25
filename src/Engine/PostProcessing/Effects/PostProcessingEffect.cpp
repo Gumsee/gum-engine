@@ -1,4 +1,5 @@
 #include "PostProcessingEffect.h"
+#include "Graphics/Variables.h"
 #include <System/MemoryManagement.h>
 
 PostProcessingEffect::PostProcessingEffect() 
@@ -15,7 +16,7 @@ void PostProcessingEffect::init(Box* canvas)
 {
     this->pRenderCanvas = canvas;
 	this->pFramebuffer = new Framebuffer(pRenderCanvas->getSize());
-    this->pFramebuffer->addTextureAttachment(0, "PostProcessingEffect");
+    this->pFramebuffer->addTextureAttachment(0, "PostProcessingEffect", Gum::Graphics::Datatypes::FLOAT);
 }
 
 Texture* PostProcessingEffect::render(Texture* texture) { return texture; }

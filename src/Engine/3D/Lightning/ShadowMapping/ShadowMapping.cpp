@@ -1,187 +1,178 @@
 #include "ShadowMapping.h"
+#include "Essentials/Settings.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/Graphics.h"
-#include "Graphics/TextureDepth.h"
+#include "Graphics/TextureDepth3D.h"
 #include "ShadowMappingShader.h"
 #include "../../../Shaders/ShaderManager.h"
 #include "../../Camera3D.h"
-
-
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
 #include <Graphics/WrapperFunctions.h>
 
 
-ShadowMapping::ShadowMapping(Renderer3D* renderer)
+ShadowMapping::ShadowMapping()
 {
-	box = new ShadowBox(renderer);
     initShader();
 
+    vShadowCascadeLevels = { 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 100.0f, 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 50.0f, 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 5.0f,
+        (float)Settings::getSetting(Settings::RENDERDISTANCE)
+    };
+    vLightMatrices.resize(vShadowCascadeLevels.size());
 
-    Framebuffer* framebuffer1 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
-    framebuffer1->addTextureAttachment(0, "ShadowMap1");
-    //framebuffer1->addDepthAttachment();
-    framebuffer1->addDepthTextureAttachment();
-    //framebuffer1->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer1));
-	vFramebuffers.push_back(framebuffer1);
-	addShadowMap("ShadowMap", 0);
-
-    Framebuffer* framebuffer2 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
-    framebuffer2->addTextureAttachment(0, "ShadowMap2");
-    framebuffer2->addDepthAttachment();
-    //framebuffer2->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer2));
-	vFramebuffers.push_back(framebuffer2);
-	addShadowMap("ShadowMap2", 10);
-
-    Framebuffer* framebuffer3 = new Framebuffer(ivec2(Settings::getSetting(Settings::Names::SHADOW_SIZE), Settings::getSetting(Settings::Names::SHADOW_SIZE)));
-    framebuffer3->addTextureAttachment(0, "ShadowMap3");
-    framebuffer3->addDepthAttachment();
-    //framebuffer3->setDepthTextureAttachment(createDepthTextureAttachment(framebuffer3));
-	vFramebuffers.push_back(framebuffer3);
-	addShadowMap("ShadowMap3", 100);
-
-	Gum::Output::debug("ShadowMapping: Creating ShadowBox");
-	box->create(&lightViewMatrix);
-
-    
-	this->m4BiasMatrix = mat4(
-		0.5f, 0.0f, 0.0f, 0.0f,
-		0.0f, 0.5f, 0.0f, 0.0f,
-		0.0f, 0.0f, 0.5f, 0.0f,
-		0.5f, 0.5f, 0.5f, 1.0f
-	);
+    pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
+    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment(vShadowCascadeLevels.size());
+    depthtex->setBordercolor(rgba(255,255,255,255));
 }
 
 
 ShadowMapping::~ShadowMapping() 
 {
-	Gum::_delete(box);
-	for(size_t i = 0; i < vFramebuffers.size(); i++)
-		Gum::_delete(vFramebuffers[i]);
+	Gum::_delete(pFramebuffer);
 }
 
 
-void ShadowMapping::prepare(vec3 LightDirection, int index)
+void ShadowMapping::render(const vec3& lightdir, const std::function<void()>& renderfunc)
 {
-	if(index < (int)vFramebuffers.size())
-	{
-		// //Gum::Output::debug("Prepare ShadowMap");
-		box->update();
-		updateLightViewMatrix(LightDirection, box->getCenter());
-		updateOrthoProjectionMatrix(box->getWidth(), box->getHeight(), box->getLength());
-		//updateOrthoProjectionMatrix(1048, 1048, 1048);
-
-		projectionViewMatrix = lightViewMatrix * projectionMatrix;
-		vFramebuffers[index]->bind();
-        vFramebuffers[index]->setClearColor(color(255, 255, 255, 255));
-		vFramebuffers[index]->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
-		//Gum::Output::debug(Settings::getSetting(Settings::Names::SHADOW_SIZE));
-
-		vec3 lightInvDir = vec3(0.5f,2,2);
-		
-		//int size = 10;
-
-		// Compute the MVP matrix from the light's point of view
-		//mat4 depthProjectionMatrix = Math::ortho(-size,size,-size,size,-size,size *2); //TODO FIX ORDER
-		//mat4 depthViewMatrix = Math::view(GumEngine::ActiveCamera->getPosition(), GumEngine::ActiveCamera->getPosition() - lightInvDir, vec3(0,1,0));
-		//mat4 depthMVP = depthProjectionMatrix * depthViewMatrix;
-		
-		// Send our transformation to the currently bound shader,
-		// in the "MVP" uniform
-		// glUniformMatrix4fv(depthMatrixID, 1, GL_FALSE, &depthMVP[0][0])	
-		//GetMatrixProduct[index] = createOffset() * projectionViewMatrix;
-
-		//mat4 lightProjection, lightView;
-		//vec3 lightPos(-2.0f, 4.0f, -1.0f);
-        //float near_plane = 1.0f, far_plane = 7.5f;
-        //lightProjection = perspective(radians(45.0f), (GLfloat)SHADOW_WIDTH / (GLfloat)SHADOW_HEIGHT, near_plane, far_plane); // note that if you use a perspective projection matrix you'll have to change the light position as the current light position isn't enough to reflect the whole scene
-        //lightProjection = ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-        //lightView = lookAt(lightPos, vec3(0.0f), vec3(0.0, 1.0, 0.0));
-        //projectionViewMatrix = lightProjection * lightView;
-		GetMatrixProduct[index] = /*m4BiasMatrix */  projectionViewMatrix;
-
-		ShadowSize = Settings::getSetting(Settings::Names::SHADOW_SIZE);
-
-		pShader->use();
-        pShader->loadUniform("projectionMatrix", projectionMatrix);
-        pShader->loadUniform("viewMatrix", lightViewMatrix);
-		pShader->unuse();
-	}
+    pFramebuffer->bind();
+    pFramebuffer->clear(Framebuffer::ClearFlags::DEPTH);
     Gum::Graphics::cullBackside(false);
-}
+    pShader->use();
+    getLightSpaceMatrices(lightdir);
+    pShader->loadUniform("lightSpaceMatrices", vLightMatrices);
 
-void ShadowMapping::finish()
-{
+    renderfunc();
+    pShader->unuse();
     Gum::Graphics::cullBackside(true);
-	vFramebuffers[0]->unbind();
+    pFramebuffer->unbind();
 }
 
-void ShadowMapping::updateLightViewMatrix(vec3 direction, vec3 center)
+std::vector<vec4> ShadowMapping::getFrustumCornersWorldSpace(mat4& proj, const mat4& view)
 {
-	vec3 invertedDirection = vec3::normalize(direction);
-	lightViewMatrix = Gum::Maths::view(center, center + invertedDirection, vec3(0, 1, 0));
-
-	//vec3 vLightPos = -direction;
-	//lightViewMatrix = lookAt(center + vLightPos, center + vec3(0, 0, 0), vec3(0, 1, 0));
-}
-
-/**
-* Creates the orthographic projection matrix. This projection matrix
-* basically sets the width, length and height of the "view cuboid", based
-* on the values that were calculated in the {@link ShadowBox} class.
-*
-* @param width
-*            - shadow box width.
-* @param height
-*            - shadow box height.
-* @param length
-*            - shadow box length.
-*/
-void ShadowMapping::updateOrthoProjectionMatrix(float width, float height, float length)
-{
-	projectionMatrix = mat4();
-	projectionMatrix[0][0] = 2 / width;
-	projectionMatrix[1][1] = 2 / height;
-	projectionMatrix[2][2] = -2 / length;
-	projectionMatrix[3][3] = 1;
-}
-
-TextureDepth* ShadowMapping::createDepthTextureAttachment(Framebuffer* framebuffer)
-{    
-    return framebuffer->addDepthTextureAttachment("ShadowMapDepthTex");
-}
-
-
-void ShadowMapping::addShadowMap(std::string name, float offset)
-{
-	ShadowMapAmount++;
-	textureOffsets.push_back(offset);
-	GetMatrixProduct.push_back(mat4());
-}
-
-void ShadowMapping::initShader()
-{
-    if(Gum::ShaderManager::hasShaderProgram("ShadowMapShader"))
+    mat4 inv = mat4::inverse(proj * view);
+    
+    std::vector<vec4> frustumCorners;
+    for (unsigned int x = 0; x < 2; ++x)
     {
-	    pShader = Gum::ShaderManager::getShaderProgram("ShadowMapShader");
+        for (unsigned int y = 0; y < 2; ++y)
+        {
+            for (unsigned int z = 0; z < 2; ++z)
+            {
+                const vec4 pt = inv * vec4(
+                    2.0f * x - 1.0f,
+                    2.0f * y - 1.0f,
+                    2.0f * z - 1.0f,
+                    1.0f
+                );
+                frustumCorners.push_back(pt / pt.w);
+            }
+        }
+    }
+    
+    return frustumCorners;
+}
+
+mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPlane, const float farPlane)
+{
+    mat4 proj = Gum::Maths::perspective(Camera::getActiveCamera()->getFOV() + 20, pFramebuffer->getAspectRatioWidthToHeight(), nearPlane, farPlane);
+    std::vector<vec4> corners = getFrustumCornersWorldSpace(proj, Camera::getActiveCamera()->getViewMatrix());
+
+    vec3 center = vec3(0, 0, 0);
+    for (const auto& v : corners)
+        center += vec3(v);
+    center /= (float)corners.size();
+
+    mat4 lightView = Gum::Maths::view(center - lightdir, center, vec3(0.0f, 1.0f, 0.0f));
+
+    float minX = std::numeric_limits<float>::max();
+    float maxX = std::numeric_limits<float>::lowest();
+    float minY = std::numeric_limits<float>::max();
+    float maxY = std::numeric_limits<float>::lowest();
+    float minZ = std::numeric_limits<float>::max();
+    float maxZ = std::numeric_limits<float>::lowest();
+    for (const auto& v : corners)
+    {
+        const auto trf = lightView * v;
+        minX = std::min(minX, trf.x);
+        maxX = std::max(maxX, trf.x);
+        minY = std::min(minY, trf.y);
+        maxY = std::max(maxY, trf.y);
+        minZ = std::min(minZ, trf.z);
+        maxZ = std::max(maxZ, trf.z);
+    }
+
+    // Tune this parameter according to the scene
+    constexpr float zMult = 10.0f;
+    if (minZ < 0)
+    {
+        minZ *= zMult;
     }
     else
     {
-        pShader = new ShaderProgram(true);
-        pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("ShadowMapShader");
-        pShader->addUniform("TextureMultiplier");
-        pShader->addUniform("Displacement");
-        pShader->addUniform("isInstanced");
-        Gum::ShaderManager::addShaderProgram(pShader);
+        minZ /= zMult;
+    }
+    if (maxZ < 0)
+    {
+        maxZ /= zMult;
+    }
+    else
+    {
+        maxZ *= zMult;
+    }
+
+    //minX = left
+    //maxX = right
+    //minY = bottom
+    //maxY = top
+    //minZ = near
+    //maxZ = far
+
+    mat4 lightProjection = Gum::Maths::ortho(maxY, maxX, minY, minY, minZ, maxZ);
+    return lightProjection * lightView;
+}
+
+void ShadowMapping::getLightSpaceMatrices(const vec3& lightdir)
+{
+    for (size_t i = 0; i < vShadowCascadeLevels.size() + 1; ++i)
+    {
+        if (i == 0)
+        {
+            vLightMatrices[i] = getLightSpaceMatrix(lightdir, Camera3D::NEAR_PLANE, vShadowCascadeLevels[i]);
+        }
+        else if (i < vShadowCascadeLevels.size())
+        {
+            vLightMatrices[i] = getLightSpaceMatrix(lightdir, vShadowCascadeLevels[i - 1], vShadowCascadeLevels[i]);
+        }
+        else
+        {
+            vLightMatrices[i] = getLightSpaceMatrix(lightdir, vShadowCascadeLevels[i - 1], Settings::getSetting(Settings::RENDERDISTANCE));
+        }
     }
 }
 
 //
 // Getter
 //
-ShaderProgram* ShadowMapping::getShader() 			    { return pShader; }
-mat4* ShadowMapping::getMatrix()				        { return &GetMatrixProduct[0]; }
-int* ShadowMapping::getShadowMapSize() 				    { return &ShadowSize; }
-TextureDepth* ShadowMapping::getResultTexture(int Index){ return vFramebuffers[Index]->getDepthTextureAttachment(); }
+ShaderProgram* ShadowMapping::getShader() 	          { return pShader; }
+std::vector<mat4>& ShadowMapping::getMatrices()       { return vLightMatrices; }
+Texture* ShadowMapping::getResultTexture()            { return pFramebuffer->getDepthTextureAttachment(); }
+std::vector<float>& ShadowMapping::getCascadeLevels() { return vShadowCascadeLevels; }
+
+
+void ShadowMapping::initShader()
+{
+    if(pShader == nullptr)
+    {
+        pShader = new ShaderProgram(true);
+        pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+        pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+        pShader->build("ShadowMapShader");
+        pShader->addUniform("lightSpaceMatrices", 5);
+        Gum::ShaderManager::addShaderProgram(pShader);
+    }
+}

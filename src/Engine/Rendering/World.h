@@ -22,7 +22,7 @@ private:
     std::string sName;
 
 protected:
-	std::vector<std::function<void()>> vUpdateables;
+	std::vector<std::function<void()>> vUpdatables;
 	std::vector<Renderable*> vRenderables;
     std::vector<ParticleSystem*> vParticles;
     std::vector<Billboard*> vBillboards;
@@ -41,7 +41,7 @@ public:
     void renderBillboards(ShaderProgram* shader);
     void updateProjection();
 
-	void addUpdateable(std::function<void()> updateable);
+	void addUpdatable(std::function<void()> updatable);
 	void addRenderable(Renderable* renderable);
     void addBillboard(Billboard* billboard);
     void addParticles(ParticleSystem* particles);
