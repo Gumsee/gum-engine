@@ -2,8 +2,7 @@
 #include <Graphics/Shader.h>
 
 
-static const std::string GridVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GridVertexShader = GLSL(
 	uniform mat4 viewMatrix;
 	uniform mat4 projectionMatrix;
 
@@ -28,18 +27,17 @@ R"(
 	void main()
 	{
 		vec2 p = gridPlane[gl_VertexID].xy;
+
 		nearPoint = unprojectPoint(p.x, p.y, 0.0, viewMatrix, projectionMatrix).xyz; // unprojecting on the near plane
 		farPoint  = unprojectPoint(p.x, p.y, 1.0, viewMatrix, projectionMatrix).xyz; // unprojecting on the far plane
 		projection = projectionMatrix;
 		view = viewMatrix;
-		gl_Position = vec4(p, 0.0, 1.0); // using directly the clipped coordinates
 
-		//gl_Position = projectionMatrix * viewMatrix * vec4(gridPlane[gl_VertexID].xy, 0, 1.0);
+		gl_Position = vec4(p, 0.0, 1.0);
 	}
-)";
+);
 
-static const std::string GridFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GridFragmentShader = GLSL(
 	in vec3 nearPoint;
 	in vec3 farPoint;
 	in mat4 projection;
@@ -47,12 +45,10 @@ R"(
 
     out vec4 FragColor;
 
-	const float indicatorThickness = 2.0f;
+	const float indicatorThickness = 20.0f;
 
-	float far= 5000; 
-	float near= 0.1;
-
-    vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
+    vec4 grid(vec3 fragPos3D, float scale) 
+    {
         vec2 coord = fragPos3D.xz * scale;
         vec2 derivative = fwidth(coord);
         vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
@@ -62,30 +58,25 @@ R"(
         vec4 color = vec4(0.2, 0.2, 0.2, 1.0 - min(line, 1.0));
         // z axis
         if(fragPos3D.x > -indicatorThickness * minimumx && fragPos3D.x < indicatorThickness * minimumx)
-            color.z = 1.0;
+            color = vec4(0,0,1,1);
         // x axis
         if(fragPos3D.z > -indicatorThickness * minimumz && fragPos3D.z < indicatorThickness * minimumz)
-            color.x = 1.0;
+            color = vec4(1,0,0,1);
         return color;
     }
-    float computeDepth(vec3 pos) {
-        vec4 clip_space_pos = projection * view * vec4(pos.xyz, 1.0);
-        return (clip_space_pos.z / clip_space_pos.w);
-    }
 
-    float linearize_depth(float d,float zNear,float zFar)
+    float computeDepth(vec3 pos) 
     {
-        return zNear * zFar / (zFar + d * (zNear - zFar));
+        vec4 ndc = projection * view * vec4(pos, 1.0);
+        return 0.5 + 0.5 * (ndc.z / ndc.w);
     }
 
     void main() {
         float t = -nearPoint.y / (farPoint.y - nearPoint.y);
+        float fading = 1.0 - t * 0.4;
+
         vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
-
         gl_FragDepth = computeDepth(fragPos3D);
-
-        float linearDepth = linearize_depth(gl_FragDepth, near, far);
-        float fading = 1.0 - t * 200.0;
 
         /*if(linearDepth < 0.2)
             FragColor = grid(fragPos3D, 100, true);
@@ -96,8 +87,8 @@ R"(
         else
             FragColor = grid(fragPos3D, 0.1, true);*/
 
-        FragColor = grid(fragPos3D, 1, true);
+        FragColor = grid(fragPos3D, .02);
         FragColor *= float(t > 0);
-        FragColor.a *= clamp(0.0f, 1.0f, fading);
+        FragColor.a *= 1 - clamp(0, 1, t * 2);
     }
-)";
+);

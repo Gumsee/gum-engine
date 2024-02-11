@@ -12,7 +12,7 @@ World3D* createPostProcessingExample()
 	pWorld3D->getLightManager()->addPointLight(new PointLight(vec3(-10, 10, 0),  vec3(300), "light1"));
 
 
-    std::string shaderballfile = ObjectManager::MODEL_ASSETS_PATH + "shaderball.obj";
+    Gum::File shaderballfile = ObjectManager::MODEL_ASSETS_PATH + "shaderball.obj";
 
 	SceneObject *RoughBronzeObj = new SceneObject(shaderballfile, "RoughBronze");
     RoughBronzeObj->addInstance();

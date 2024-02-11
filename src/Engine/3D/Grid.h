@@ -6,9 +6,8 @@
 class Grid : public Renderable
 {
 private:
-    ShaderProgram* pShader;
+    static inline ShaderProgram* pShader = nullptr;
     VertexArrayObject* pVAO;
-    void initShader();
 
 public:
     Grid();

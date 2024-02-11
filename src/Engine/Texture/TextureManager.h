@@ -8,7 +8,7 @@
 namespace Gum {
 namespace TextureManager
 {
-	extern std::string TEXTURE_ASSETS_PATH;
+	extern Gum::File TEXTURE_ASSETS_PATH;
 
 	/*
 	* Returns a Texture by name

@@ -24,7 +24,6 @@ void ClipPlaneTexture2D::render()
 	v4Pplane = vec4(0, -1, 0, this->fHeight);
 	//GumEngine::Shaders->setClipPlane(v4Pplane);
 	//GumEngine::ActiveCamera->update();
-	//GumEngine::Shaders->update("viewMatrix");
 	//GumEngine::Shaders->update("ClipPlane");
 	//GumEngine::Shaders->update();
 

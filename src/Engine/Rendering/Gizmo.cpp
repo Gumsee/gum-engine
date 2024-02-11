@@ -44,7 +44,6 @@ void Gizmo::onProjectionUpdate()
 void Gizmo::render()
 {
     pShader->use();
-    pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pPositionVAO->bind();
     pPositionVAO->render(1);
     pPositionVAO->unbind();
@@ -59,9 +58,9 @@ void Gizmo::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram(true);
+        pShader = new ShaderProgram("GizmoShader", true);
         pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("GizmoShader", { {"vertices", 0}, {"colors", 1}, {"TransMatrix", 2} });
+        pShader->build({ {"vertices", 0}, {"colors", 1}, {"TransMatrix", 2} });
     }
 }

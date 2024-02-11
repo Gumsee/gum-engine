@@ -4,6 +4,8 @@
 namespace Gum {
 namespace MaterialManager
 {
+	extern Gum::File MATERIAL_ASSETS_PATH;
+
 	extern void init();
 
 	/**

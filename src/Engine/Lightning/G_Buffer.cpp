@@ -1,6 +1,5 @@
 #include "G_Buffer.h"
 #include "GBufferShader.h"
-#include "../Shaders/ShaderManager.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/Graphics.h"
 #include <System/MemoryManagement.h>
@@ -73,13 +72,13 @@ Framebuffer* G_Buffer::getFramebuffer()     { return this->gBuffer; }
 
 void G_Buffer::initShader()
 {
-    if(!Gum::ShaderManager::hasShaderProgram("GBufferShader"))
+    if(ShaderProgram::getShaderProgramByName("GBufferShader") == nullptr)
     {
-        pShader = new ShaderProgram(true);
+        pShader = new ShaderProgram("GBufferShader", true);
         pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        pShader->build("GBufferShader");
+        pShader->build();
         pShader->addUniform("color");
         pShader->addUniform("viewPos");
         pShader->addUniform("TextureMultiplier");
@@ -117,9 +116,7 @@ void G_Buffer::initShader()
         pShader->addTexture("normalmap", GUM_MATERIAL_NORMAL_MAP);
         pShader->addTexture("Enviorment", 15);
         pShader->addTexture("ShadowMap", 16);
-
-        Gum::ShaderManager::addShaderProgram(pShader);
     }
     
-    pShader = Gum::ShaderManager::getShaderProgram("GBufferShader");
+    pShader = ShaderProgram::getShaderProgramByName("GBufferShader");
 }

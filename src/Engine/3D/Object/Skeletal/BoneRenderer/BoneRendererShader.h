@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string BoneRendererVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string BoneRendererVertexShader = GLSL(
     layout (location = 0) in vec3 vertices;
     layout (location = 3) in mat4 transMatrices;
 
@@ -13,10 +12,9 @@ R"(
     {
 	    gl_Position = projectionMatrix * viewMatrix * transMatrices * vec4(vertices, 1.0);
 	}
-)";
+);
 
-static const std::string BoneRendererFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string BoneRendererFragmentShader = GLSL(
 	in vec3 Texcoord;
     out vec4 FragColor;
 	
@@ -24,4 +22,4 @@ R"(
 	{
         FragColor = vec4(1,1,0,1);
 	}
-)";
+);

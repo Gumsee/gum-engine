@@ -1,7 +1,5 @@
-#include "Graphics/Texture2D.h"
-#include "System/File.h"
-#include "System/Output.h"
-#include <Engine/Texture/TextureManager.h>
+#include <Graphics/Texture2D.h>
+#include <System/Output.h>
 #include <Essentials/ArgumentParser.h>
 #include <Essentials/Tools.h>
 #include <Graphics/Material.h>

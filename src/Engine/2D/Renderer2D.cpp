@@ -2,7 +2,6 @@
 #include "System/Output.h"
 #include "World2D.h"
 #include "../Rendering/Camera.h"
-#include "../Shaders/ShaderManager.h"
 #include "../Shaders/ParallaxSkyShader.h"
 
 #include <System/MemoryManagement.h>
@@ -15,8 +14,8 @@ Renderer2D::Renderer2D(Box* canvas)
 
     initShader();
 
-    pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
-    pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
+    pParticleShader = ShaderProgram::getShaderProgramByName("ParticleShader");
+    pBillboardShader = ShaderProgram::getShaderProgramByName("BillboardShader");
 }
 
 Renderer2D::~Renderer2D()
@@ -39,13 +38,9 @@ void Renderer2D::renderInternal()
     pWorld->renderRenderable();
 
     pParticleShader->use();
-    pParticleShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pParticleShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pWorld->renderParticles(pParticleShader);
 
 	pBillboardShader->use();
-    pBillboardShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pBillboardShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pWorld->renderBillboards(pBillboardShader);
 
 
@@ -99,16 +94,14 @@ void Renderer2D::setWorld(World2D* world)
 
 void Renderer2D::initShader()
 {
-    if(!Gum::ShaderManager::hasShaderProgram("ParallaxSkyShader"))
+    if(pParallaxSkyShader == nullptr)
     {
-        pParallaxSkyShader = new ShaderProgram(true);
+        pParallaxSkyShader = new ShaderProgram("ParallaxSkyShader", true);
         pParallaxSkyShader->addShader(new Shader(ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
         pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        pParallaxSkyShader->build("ParallaxSkyShader", {{"vertices", 0}});
+        pParallaxSkyShader->build({{"vertices", 0}});
         pParallaxSkyShader->addUniform("color");
         pParallaxSkyShader->addTexture("textureSampler", 0);
-
-        Gum::ShaderManager::addShaderProgram(pParallaxSkyShader);
     }
 }

@@ -2,8 +2,7 @@
 #include <Graphics/Shader.h>
 
 
-static const std::string OutlineRendererVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string OutlineRendererVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 2) in vec3 Normals;
 
@@ -15,21 +14,19 @@ R"(
 	{
 		gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(vertexPosition, 1.0f);
 	}
-)";
+);
 
-static const std::string OutlineRendererFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string OutlineRendererFragmentShader = GLSL(
     out vec4 FragColor;
 
 	void main()
 	{
 		FragColor = vec4(1,1,1,1);
 	}
-)";
+);
 
 
-static const std::string OutlineRendererProcessingVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string OutlineRendererProcessingVertexShader = GLSL(
     in vec3 vertexPosition;
     out vec2 Texcoord;
 
@@ -38,10 +35,9 @@ R"(
         gl_Position = vec4(vertexPosition, 1.0f);
         Texcoord = (vertexPosition.xy + vec2(1.0)) / 2.0;
     }
-)";
+);
 
-static const std::string OutlineRendererProcessingFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string OutlineRendererProcessingFragmentShader = GLSL(
 	in vec2 Texcoord;
     out vec4 FragColor;
     uniform sampler2D textureSampler;
@@ -73,4 +69,4 @@ R"(
 		else
 			FragColor = vec4(0,0,0, 0.0);
 	}
-)";
+);

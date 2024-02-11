@@ -1,6 +1,5 @@
 #include "Brightfilter.h"
 #include "BrightfilterShader.h"
-#include "../../../Shaders/ShaderManager.h"
 #include "../../PostProcessing.h"
 
 Brightfilter::Brightfilter(Box* canvas)
@@ -9,10 +8,10 @@ Brightfilter::Brightfilter(Box* canvas)
     
     if(this->pShader == nullptr)
     {
-        this->pShader = new ShaderProgram(true);
-        this->pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        this->pShader = new ShaderProgram("BrightnessFilterShader", true);
+        this->pShader->addShader(Gum::PostProcessing::VertexShader);
         this->pShader->addShader(new Shader(BrightfilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        this->pShader->build("BrightnessFilterShader");
+        this->pShader->build();
 
         this->pShader->addTexture("texture0", 0);
     }

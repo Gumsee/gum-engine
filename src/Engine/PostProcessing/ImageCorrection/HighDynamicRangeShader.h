@@ -1,14 +1,13 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string HighDynamicRangeFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string HighDynamicRangeFragmentShader = GLSL(
 	in vec2 Texcoord;
     out vec4 FragColor;
 
     uniform float exposure;
     uniform sampler2D textureSampler;
-
+    
     void main()
     {             
         const float gamma = 2.2;
@@ -21,4 +20,4 @@ R"(
     
         FragColor = vec4(mapped, 1.0);
     } 
-)";
+);

@@ -17,6 +17,7 @@
 *.obj
 *.dae
 *.gummtl
+*.gumobj
 libGumEngine.a
 libEngineAll.a
 Makefile

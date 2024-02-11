@@ -1,5 +1,4 @@
 #include "Background.h"
-#include "../../Shaders/ShaderManager.h"
 #include "Graphics/VertexArrayObject.h"
 
 Background::Background(std::string name)

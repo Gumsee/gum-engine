@@ -1,6 +1,7 @@
 #pragma once
 #include <gum-engine.h>
 #include <Engine/3D/Object/SceneObject.h>
+#include <Engine/3D/World3D.h>
 #include "../Examples.h"
 
 World3D* createPhysicallyBasedRenderingExample()
@@ -15,7 +16,7 @@ World3D* createPhysicallyBasedRenderingExample()
 	//pWorld3D->getLightManager()->addPointLight(new PointLight(vec3(-10, -10, 0), vec3(300), "light3"));
 	//pWorld3D->getLightManager()->addPointLight(new PointLight(vec3(10, -10, 0),  vec3(300), "light4"));
 
-    std::string shaderballfile = ObjectManager::MODEL_ASSETS_PATH + "shaderball.obj";
+    Gum::File shaderballfile = ObjectManager::MODEL_ASSETS_PATH + "shaderball.obj";
 
     float gapSize = 3.0f;
 

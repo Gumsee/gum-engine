@@ -1,6 +1,5 @@
 #include "ContrastChanger.h"
 #include "ContrastChangerShader.h"
-#include "../../../Shaders/ShaderManager.h"
 #include "../../PostProcessing.h"
 
 
@@ -11,10 +10,10 @@ ContrastChanger::ContrastChanger(Box *canvas, const float& contrast)
 
     if(this->pShader == nullptr)
     {
-        this->pShader = new ShaderProgram(true);
-        this->pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        this->pShader = new ShaderProgram("ContrastChangerShader", true);
+        this->pShader->addShader(Gum::PostProcessing::VertexShader);
         this->pShader->addShader(new Shader(ContrastChangerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        this->pShader->build("ContrastChangerShader");
+        this->pShader->build();
 
         this->pShader->addTexture("texture0", 0);
 	    this->pShader->addUniform("contrast");

@@ -3,10 +3,13 @@
 #include <Engine/3D/Object/SceneObject.h>
 #include <Engine/3D/Object/Terrain/Terrain.h>
 #include <Engine/Texture/TextureManager.h>
+#include <Engine/3D/World3D.h>
+#include <Engine/3D/Renderer3D.h>
 #include <Essentials/FPS.h>
 #include <Graphics/Material.h>
 #include <System/Output.h>
 #include "../Examples.h"
+#include "Essentials/SerializationData.h"
 
 World3D* createShadowMappingExample()
 {

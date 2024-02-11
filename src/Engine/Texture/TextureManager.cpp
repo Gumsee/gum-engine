@@ -1,11 +1,12 @@
 #include "TextureManager.h"
+#include "System/File.h"
 #include <Essentials/Tools.h>
 #include <System/MemoryManagement.h>
 
 namespace Gum {
 namespace TextureManager
 {
-	std::string TEXTURE_ASSETS_PATH = "";
+	Gum::File TEXTURE_ASSETS_PATH;
 	std::map<std::string, Texture*> mTextures;
 	std::vector<Texture*> vTexturesToLoad;
 

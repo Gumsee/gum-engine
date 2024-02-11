@@ -2,8 +2,7 @@
 #include <Graphics/Shader.h>
 
 
-static const std::string ParticleVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ParticleVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 1) in vec3 partPositions;
     layout (location = 2) in vec2 partSizes;
@@ -33,10 +32,9 @@ R"(
         Texcoord2 = Texcoord + texOffset.zw;
         blend = TexCoordInfo.y;
     }
-)";
+);
 
-static const std::string ParticleFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ParticleFragmentShader = GLSL(
     in float visibility;
     in vec2 Texcoord1;
     in vec2 Texcoord2;
@@ -54,4 +52,4 @@ R"(
         FragColor = vec4(Texcoord1,1,1);
         FragColor = color1;
     }
-)";
+);

@@ -10,6 +10,7 @@
 #include "Desktop/IO/Mouse.h"
 #include <Codecs/Zip.h>
 #include "Engine/3D/Lightning/ShadowMapping/ShadowMapping.h"
+#include "Engine/Material/MaterialManager.h"
 #include "Engine/PostProcessing/Effects/Effects.h"
 #include "Engine/Texture/TextureManager.h"
 #include "Essentials/Tools.h"
@@ -19,8 +20,11 @@
 #include "GUI/Primitives/RenderGUI.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/Texture2D.h"
+#include "Maths/Maths.h"
+#include "Noises.h"
 #include "System/File.h"
 #include "System/Output.h"
+#include "Worlds/TestScene.h"
 #include "Worlds/Vehicle.h"
 #include "Worlds/Worlds.h"
 #include "Worlds/ShadowMapping.h"
@@ -38,7 +42,7 @@ TODO
 
  ******/
 
-std::map<std::string, World3D*> mWorlds;
+std::map<std::string, World*> mWorlds;
 Gum::Window* pMainWindow;
 Gum::GUI* pGUI;
 Box* pRenderCanvas;
@@ -46,7 +50,7 @@ Camera3D* pMainCamera;
 Renderer3D* pMainRenderer;
 
 
-World3D* getExampleWorld(std::string name)
+World* getExampleWorld(std::string name)
 {
     if(!Tools::mapHasKeyNotNull(mWorlds, name))
     {
@@ -58,11 +62,12 @@ World3D* getExampleWorld(std::string name)
         //if(name == "MazeLearning")              { mWorlds[name] = createMazeLearningExample(); }
         //if(name == "Ocean")                     { mWorlds[name] = createOceanExample(); }
         if(name == "Particles")                 { mWorlds[name] = createParticlesExample(); }
-        if(name == "PhysicallyBasedRendering")  { mWorlds[name] = createPhysicallyBasedRenderingExample(); }
+        if(name == "PhysicallyBasedRendering")  { mWorlds[name] = World::readFromFile(Examples::assetPath + "worlds/physicallybased.wld"); }
         if(name == "Physics")                   { mWorlds[name] = createPhysicsExample(); }
         if(name == "PostProcessing")            { mWorlds[name] = createPostProcessingExample(); }
         if(name == "Vehicle")                   { mWorlds[name] = createVehicleExample(); }
         if(name == "ShadowMapping")             { mWorlds[name] = createShadowMappingExample(); }
+        if(name == "TestScene")                 { mWorlds[name] = createTestSceneExample(); }
         //if(name == "SphereGenerator")           { mWorlds[name] = createSphereGeneratorExample(); }
     }
     return mWorlds[name];
@@ -82,8 +87,9 @@ int main(int argc, char** argv)
     pGUI = new Gum::GUI(pMainWindow);
     Framebuffer::CurrentlyBoundFramebuffer->setClearColor(Gum::GUI::getTheme()->backgroundColor);
 
-    ObjectManager::MODEL_ASSETS_PATH = Examples::assetPath.toString() + "/objects/";
-    Gum::TextureManager::TEXTURE_ASSETS_PATH = Examples::assetPath.toString() + "/textures/";
+    ObjectManager::MODEL_ASSETS_PATH = Examples::assetPath + Gum::File("/objects/", Gum::Filesystem::DIRECTORY);;
+    Gum::TextureManager::TEXTURE_ASSETS_PATH = Examples::assetPath + Gum::File("/textures/", Gum::Filesystem::DIRECTORY);;
+    Gum::MaterialManager::MATERIAL_ASSETS_PATH = Examples::assetPath + Gum::File("/materials/", Gum::Filesystem::DIRECTORY);
     Gum::Engine::init();
 
     XMLLoader pXMLGUILoader(Examples::assetPath.toString() + "/guis/example_interface.xml");
@@ -101,7 +107,7 @@ int main(int argc, char** argv)
     //pMainCamera->setRotationalSpeed(0.2f);
 
     pMainRenderer = new Renderer3D(pRenderCanvas);
-    pMainRenderer->setWorld(getExampleWorld("ShadowMapping"));
+    pMainRenderer->setWorld((World3D*)getExampleWorld("PhysicallyBasedRendering"));
     pMainRenderer->setExposure(1.0f);
 
     pMainWindow->onResized([](ivec2 size) {
@@ -133,10 +139,10 @@ int main(int argc, char** argv)
     RenderGUI* examplesTab = TabsGUI->getTabContent("Examples");
     Dropdown* examplesDropdown = ((Dropdown*)examplesTab->findChildByID("examplesdropdown"));
     examplesDropdown->onSelection([](Gum::Unicode title) {
-        pMainRenderer->setWorld(getExampleWorld(title.toString()));
+        pMainRenderer->setWorld((World3D*)getExampleWorld(title.toString()));
     });
 
-    for(std::string example : { "AnimatesModels", "Billboards", "GBuffer", "BasicCube", "IrradiancePBR", "MazeLearning", "Ocean", "Particles", "PhysicallyBasedRendering", "Physics", "PostProcessing", "ShadowMapping", "SphereGenerator", "Vehicle" })
+    for(std::string example : { "TestScene", "AnimatesModels", "Billboards", "GBuffer", "BasicCube", "IrradiancePBR", "MazeLearning", "Ocean", "Particles", "PhysicallyBasedRendering", "Physics", "PostProcessing", "ShadowMapping", "SphereGenerator", "Vehicle" })
         examplesDropdown->addEntry(example, false);
 
 
@@ -157,20 +163,7 @@ int main(int argc, char** argv)
     });
 
     RenderGUI* noisepatternsTab = TabsGUI->getTabContent("2D Noisepatterns");
-    Texture2D* perlinNoiseTex = new Texture2D("perlinnoise", ivec2(100, 100), [](ivec2 pixelcoord) { return rgba(255,0,0,255); });
-    Texture2D* simplexNoiseTex = new Texture2D("perlinnoise", ivec2(100, 100), [](ivec2 pixelcoord) { return rgba(255,0,0,255); });
-    ((Box*)noisepatternsTab->findChildByID("perlinnoise"))->setTexture(perlinNoiseTex);
-    ((Box*)noisepatternsTab->findChildByID("simplexnoise"))->setTexture(simplexNoiseTex);
-
-    Button* generateTexturesButton = (Button*)noisepatternsTab->findChildByID("generatebutton");
-    generateTexturesButton->onClick([perlinNoiseTex, simplexNoiseTex](RenderGUI* gui, uint16_t btn) {
-        Gum::Noise::setSeed(time(0));
-
-        perlinNoiseTex->generate([](ivec2 pixelcoord) {
-            return rgba(rgb(Gum::Noise::noise2D(pixelcoord.x, pixelcoord.y) * 255),255);
-        });
-
-    }, GUM_MOUSE_BUTTON_LEFT);
+    buildNoiseTextureSection(noisepatternsTab);
 
     //pMainRenderer->addPostProcessingEffect(new GaussianBlur(pRenderCanvas, 10));
     //pMainRenderer->addPostProcessingEffect(new Brightfilter(pRenderCanvas));
@@ -192,7 +185,8 @@ int main(int argc, char** argv)
         pGUI->render();
         pGUI->update();
 
-        //Gum::Output::print(Framebuffer::CurrentlyBoundFramebuffer->getSize());
+        /*vec4 campos = Camera::getActiveCamera()->getViewMatrix() * vec4(0, 0, 0, 1);
+        Gum::Output::print(campos);*/
 
         if(pRenderCanvas->hasClickedInside(GUM_MOUSE_BUTTON_RIGHT))
         {

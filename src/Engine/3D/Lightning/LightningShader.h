@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string LightningFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string LightningFragmentShader = GLSL(
 	in vec2 Texcoord;
 
     out vec4 FragColor;
@@ -296,4 +295,4 @@ R"(
 
         //FragColor = vec4(texture(ShadowMap, Texcoord).xyz, 1);
 	}
-)";
+);

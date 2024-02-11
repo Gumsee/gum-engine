@@ -5,7 +5,6 @@
 
 #include <System/MemoryManagement.h>
 #include <Graphics/WrapperFunctions.h>
-#include "../Shaders/ShaderManager.h"
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
 #include "PostProcessing.h"
@@ -213,10 +212,10 @@ void SSAO::initShader()
 {
     if(pShader == nullptr)
 	{
-		pShader = new ShaderProgram(true);
-        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+		pShader = new ShaderProgram("SSAOShader", true);
+        pShader->addShader(Gum::PostProcessing::VertexShader);
         pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("SSAOShader");
+        pShader->build();
         pShader->addTexture("texPosition", 0);
         pShader->addTexture("texNormal", 1);
         pShader->addTexture("texNoise", 2);
@@ -227,17 +226,15 @@ void SSAO::initShader()
         pShader->addUniform("power");
         pShader->addUniform("noiseScale");
         for (unsigned int i = 0; i < kernelSize; ++i)
-        {
             pShader->addUniform("samples[" + std::to_string(i) + "]");
-        }
     }
 
     if(pBlurShader == nullptr)
     {
-        pBlurShader = new ShaderProgram(true);
-        pBlurShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        pBlurShader = new ShaderProgram("SSAOBlurShader", true);
+        pBlurShader->addShader(Gum::PostProcessing::VertexShader);
         pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pBlurShader->build("SSAOBlurShader");
+        pBlurShader->build();
         pBlurShader->addTexture("ssaoInput", 0);
         pBlurShader->addUniform("NoiseSize");
     }

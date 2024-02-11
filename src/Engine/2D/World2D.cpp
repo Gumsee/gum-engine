@@ -7,7 +7,6 @@
 #include <Codecs/XMLWriter.h>
 #include "Layer/Background.h"
 #include "Layer/TileMap.h"
-#include "../Shaders/ShaderManager.h"
 
 World2D::World2D()
     : World(WORLD2D)
@@ -77,7 +76,7 @@ World2D* World2D::readFromFile(XMLReader& reader)
             if     (type == "background") layer = new Background(name);
             else if(type == "tilemap")    layer = new TileMap(name);
 
-            ShaderProgram* shader = Gum::ShaderManager::getShaderProgram(layernode->getAttribute("shader").toString());
+            ShaderProgram* shader = ShaderProgram::getShaderProgramByName(layernode->getAttribute("shader").toString());
 
             if(layer != nullptr)
             {

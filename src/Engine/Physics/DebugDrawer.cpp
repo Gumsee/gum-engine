@@ -2,7 +2,6 @@
 #include "Graphics/Variables.h"
 #include "Graphics/VertexArrayObject.h"
 #include "PhysicsDebugShader.h"
-#include "../Shaders/ShaderManager.h"
 #include "../Rendering/Camera.h"
 #include "System/MemoryManagement.h"
 #include "System/Output.h"
@@ -51,8 +50,6 @@ void DebugDrawer::drawLine(const btVector3 & from, const btVector3 & to, const b
 	pVAO->bind();
 	pShaderProgram->use();
 	pShaderProgram->loadUniform("color", vec4(color.x(), color.y(), color.z(), 1.0f));
-    pShaderProgram->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pShaderProgram->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pVAO->render(1);
 	pShaderProgram->unuse();
 	pVAO->unbind();
@@ -92,11 +89,10 @@ void DebugDrawer::initShader()
 {
     if(pShaderProgram == nullptr)
 	{
-		pShaderProgram = new ShaderProgram(true);
+		pShaderProgram = new ShaderProgram("PhysicsDebuggingpShaderProgram", true);
         pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShaderProgram->build("PhysicsDebuggingpShaderProgram");
+        pShaderProgram->build();
         pShaderProgram->addUniform("color");
-        Gum::ShaderManager::addShaderProgram(pShaderProgram);
     }
 }

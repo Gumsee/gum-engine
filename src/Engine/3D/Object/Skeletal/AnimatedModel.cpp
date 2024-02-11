@@ -10,20 +10,20 @@
 #include <vector>
 
 
-AnimatedModel::AnimatedModel(std::string file, std::string name)
+AnimatedModel::AnimatedModel(const Gum::File& file, const std::string& name)
     : SceneObject(name)
 {
 	this->pShader = nullptr;
 	//Combine all meshes into one
 
-    if(Tools::mapHasKey(Mesh::mLoadedMeshes, file))
+    if(Tools::mapHasKey(Mesh::mLoadedMeshes, file.toString()))
     {
-        pMesh = Mesh::mLoadedMeshes[file];
+        pMesh = Mesh::mLoadedMeshes[file.toString()];
     }
     else
     {
         pMesh = new Mesh();
-        pMesh->name = file;
+        pMesh->name = file.getName();
         Scene3DLoader loader;
         loader.iterateMeshes([this](unsigned int currentMesh, unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
             pMesh->addMesh(mesh);
@@ -34,7 +34,7 @@ AnimatedModel::AnimatedModel(std::string file, std::string name)
             pSkeleton->addAnimation(anim);
         });
         loader.load(file);
-        Mesh::mLoadedMeshes[file] = pMesh;
+        Mesh::mLoadedMeshes[file.toString()] = pMesh;
     }
 
 	load();

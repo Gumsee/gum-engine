@@ -65,8 +65,6 @@ void Renderer::renderIDs()
     Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
     
     pIDRenderer->getMeshShader()->use();
-    pIDRenderer->getMeshShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pIDRenderer->getMeshShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     renderIDsInternal();
 }
 

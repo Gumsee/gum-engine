@@ -1,7 +1,6 @@
 #include "HighDynamicRange.h"
 #include <System/MemoryManagement.h>
 #include "HighDynamicRangeShader.h"
-#include "../../Shaders/ShaderManager.h"
 #include "../PostProcessing.h"
 
 HighDynamicRange::HighDynamicRange(Box *canvas)
@@ -10,10 +9,10 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
     pShader = nullptr;
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram(true);
-        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        pShader = new ShaderProgram("HighDynamicRangeShader", true);
+        pShader->addShader(Gum::PostProcessing::VertexShader);
         pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("HighDynamicRangeShader");
+        pShader->build();
 
         //Textures
         pShader->addTexture("textureSampler", 0);

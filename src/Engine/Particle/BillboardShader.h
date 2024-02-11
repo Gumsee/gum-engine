@@ -2,8 +2,7 @@
 #include <Graphics/Shader.h>
 
 
-static const std::string BillboardVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string BillboardVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
 
     out vec2 Texcoord;
@@ -31,10 +30,9 @@ R"(
         }
         Texcoord = vec2(vertexPosition.x, vertexPosition.y * -1) + vec2(0.5,0.5);
     }
-)";
+);
 
-static const std::string BillboardFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string BillboardFragmentShader = GLSL(
     in vec2 Texcoord;
     out vec4 FragColor;
 
@@ -45,4 +43,4 @@ R"(
         vec4 color = texture(textureSampler, Texcoord);
         FragColor = color;
     }
-)";
+);

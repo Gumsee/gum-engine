@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static std::string SSAOFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static std::string SSAOFragmentShader = GLSL(
     in vec2 Texcoord;
     //out float FragColor;
     out vec4 FragColor;
@@ -58,11 +57,10 @@ R"(
             FragColor = vec4(occlusion,occlusion,occlusion, alpha);
         }
     }
-)";
+);
 
 
-static std::string SSAOBlurFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static std::string SSAOBlurFragmentShader = GLSL(
     in vec2 Texcoord;
     //out float FragColor;
     out vec4 FragColor;
@@ -87,4 +85,4 @@ R"(
         float color = result / float(NoiseSize * NoiseSize);
         FragColor = vec4(color,color,color,1.0f);
     }
-)";
+);

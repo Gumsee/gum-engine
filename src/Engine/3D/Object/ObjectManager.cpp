@@ -5,12 +5,13 @@
 #include "../Renderer3D.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/ShaderProgram.h"
+#include "System/File.h"
 #include "System/Output.h"
 #include <System/MemoryManagement.h>
 #include <string>
 
 
-std::string ObjectManager::MODEL_ASSETS_PATH = "";
+Gum::File ObjectManager::MODEL_ASSETS_PATH = Gum::File("", Gum::Filesystem::DIRECTORY);
 
 ObjectManager::ObjectManager(vec3 *sunDirection) 	
 {
@@ -38,7 +39,6 @@ ObjectManager::~ObjectManager()
 void ObjectManager::renderSky()
 {
     pSkyBox->getShaderProgram()->use();
-    pSkyBox->getShaderProgram()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     /*if(noPrepare) { pSkyBox->renderMesh(); }
     else*/ { pSkyBox->render(); }
     pSkyBox->getShaderProgram()->unuse();
@@ -53,7 +53,6 @@ void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
         //Render Objects to GBuffer
         gbuffer->bind();
         gbuffer->getShader()->use();
-        gbuffer->getShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
         for(Object3D* obj : objs.second)
             obj->render();
         
@@ -77,7 +76,6 @@ void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
         ((Renderer3D*)Renderer3D::getActiveRenderer())->getShadowMapping()->getResultTexture()->bind(9);
 
         shader->use();
-        shader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
         rendercanvas->renderCustom();
 
         gbuffer->getFramebuffer()->blitDepthToOtherFramebuffer(currentFramebuffer);
@@ -92,7 +90,6 @@ void ObjectManager::renderForward()
 	for (auto objs : mObjectsForward)
 	{
         objs.first->use();
-        objs.first->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
         for(Object3D* obj : objs.second)
             obj->render();
 	}

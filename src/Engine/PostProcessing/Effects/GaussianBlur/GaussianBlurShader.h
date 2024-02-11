@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string GussianBlurHShaderVert = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GussianBlurHShaderVert = GLSL(
     in vec2 vertexPosition;
 
     out vec2 blurTextureCoords[11];
@@ -18,10 +17,9 @@ R"(
         for(int i = -5; i <= 5; i++)
             blurTextureCoords[i + 5] = CenterTexCoords + vec2(0.0f,pixelsize * i);
     }
-)";
+);
 
-static const std::string GussianBlurVShaderVert = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GussianBlurVShaderVert = GLSL(
     in vec2 vertexPosition;
 
     out vec2 blurTextureCoords[11];
@@ -37,13 +35,12 @@ R"(
         for(int i = -5; i <= 5; i++)
             blurTextureCoords[i + 5] = CenterTexCoords + vec2(pixelsize * i, 0.0f);
     }
-)";
+);
 
 
 
 
-static const std::string GussianBlurShaderFrag = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GussianBlurShaderFrag = GLSL(
     in vec2 blurTextureCoords[11];
 
     out vec4 FragColor;
@@ -65,4 +62,4 @@ R"(
         FragColor += texture(textureSampler, blurTextureCoords[9]) * 0.028002;
         FragColor += texture(textureSampler, blurTextureCoords[10]) * 0.0093;
     }
-)";
+);

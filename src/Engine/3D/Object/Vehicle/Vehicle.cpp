@@ -1,7 +1,7 @@
 #include "Vehicle.h"
 
 
-Vehicle::Vehicle(std::string file, std::string name)
+Vehicle::Vehicle(const Gum::File& file, const std::string& name)
     : SceneObject(file, name)
 {
 

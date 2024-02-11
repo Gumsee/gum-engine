@@ -10,9 +10,9 @@ private:
     World2D* pWorld;
 	G_Buffer *pGBuffer;
 
-    ShaderProgram* pParticleShader;
-    ShaderProgram* pBillboardShader;
-    ShaderProgram* pParallaxSkyShader;
+    static inline ShaderProgram* pParticleShader = nullptr;
+    static inline ShaderProgram* pBillboardShader = nullptr;
+    static inline ShaderProgram* pParallaxSkyShader = nullptr;
 
     void renderInternal()  override;
     void renderIDsInternal()  override;

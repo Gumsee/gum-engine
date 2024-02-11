@@ -15,7 +15,7 @@ SceneObject::SceneObject(std::string name)
     pMaterial = new Material(*Gum::MaterialManager::getDefaultMaterial());
 }
 
-SceneObject::SceneObject(std::string file, std::string name) : Object3D(file, name)
+SceneObject::SceneObject(const Gum::File& file, const std::string& name) : Object3D(file, name)
 {
     pMaterial = new Material(*Gum::MaterialManager::getDefaultMaterial());
 }

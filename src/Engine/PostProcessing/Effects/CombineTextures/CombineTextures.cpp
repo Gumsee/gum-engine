@@ -1,6 +1,5 @@
 #include "CombineTextures.h"
 #include "CombineTexturesShader.h"
-#include "../../../Shaders/ShaderManager.h"
 #include "../../PostProcessing.h"
 
 CombineTextures::CombineTextures(Box *canvas, const float& exposure)
@@ -11,10 +10,10 @@ CombineTextures::CombineTextures(Box *canvas, const float& exposure)
 
 	if(pShader == nullptr)
 	{
-        pShader = new ShaderProgram(true);
-        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        pShader = new ShaderProgram("CombineTexturesShader", true);
+        pShader->addShader(Gum::PostProcessing::VertexShader);
         pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("CombineTexturesShader");
+        pShader->build();
         pShader->addUniform("exposure");
         pShader->addTexture("texture0", 0);
         pShader->addTexture("texture1", 1);

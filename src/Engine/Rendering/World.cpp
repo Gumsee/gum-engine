@@ -1,6 +1,5 @@
 #include "World.h"
 #include "Camera.h"
-#include "../Shaders/ShaderManager.h"
 #include "../Particle/ParticleSystem.h"
 #include "Codecs/XMLReader.h"
 #include "Graphics/ShaderProgram.h"
@@ -68,7 +67,7 @@ void World::updateProjection()
 
 World* World::readFromFile(const Gum::Filesystem::File& file)
 {    
-    XMLReader reader(file);
+    XMLReader reader(file, XMLNode::ELEMENT);
     XMLNode* rootNode = reader.getRootNode();
     if(rootNode->getAttribute("type") == "2D")
         return World2D::readFromFile(reader);

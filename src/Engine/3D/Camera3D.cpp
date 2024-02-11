@@ -136,7 +136,8 @@ void Camera3D::mouseUpdate()
 void Camera3D::lookAt(const vec3& lookat)
 { 
     mViewMatrix = Gum::Maths::view(v3ActualPosition, lookat, v3Up); 
-    v3ViewDirection = vec3(-mViewMatrix[0][2], -mViewMatrix[1][2], -mViewMatrix[1][2]); 
+    v3ViewDirection = vec3(-mViewMatrix[0][2], -mViewMatrix[1][2], -mViewMatrix[1][2]);
+    pOnViewUpdate();
 }
 
 

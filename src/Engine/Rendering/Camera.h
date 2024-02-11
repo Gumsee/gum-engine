@@ -3,6 +3,7 @@
 #include <Essentials/SmoothFloat.h>
 #include <Maths/vec.h>
 #include <Maths/mat.h>
+#include <functional>
 
 
 class Camera : public Transformable<3U>
@@ -27,6 +28,7 @@ protected:
     float& fPitch = qRotation.x;
     float& fYaw = qRotation.y;
     float& fRoll = qRotation.z;
+    static std::function<void()> pOnViewUpdate;
 
     void updateView();
 
@@ -67,4 +69,6 @@ public:
     void setZoomSpeed(const float& speed);
     void setFOV(const float& fov);
     void overrideViewMatrix(mat4 matrix);
+
+    static void onViewUpdate(std::function<void()> callback);
 };

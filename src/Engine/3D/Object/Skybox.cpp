@@ -7,14 +7,11 @@
 #include "Graphics/TextureCube.h"
 #include "Graphics/Variables.h"
 #include "SkyboxShaders.h"
-#include "../../Shaders/ShaderManager.h"
-#include "../../Texture/TextureManager.h"
 #include "System/Output.h"
 #include <Graphics/WrapperFunctions.h>
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 {
-    pShader = nullptr;
     initShaders();
 	this->sunDir = SunDirection;
 	this->gradiant = true;
@@ -69,8 +66,6 @@ void SkyBox::render()
 	pTexture->bind(0);
     //pPreFilterMap->bind(); //TODO
     getShaderProgram()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-    getShaderProgram()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getPerspective());
-	getShaderProgram()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
 	//getShaderProgram()->loadUniform("gradiant", (int)gradiant);
 	//getShaderProgram()->loadUniform("SunDirection", *this->sunDir);
 	renderMesh();
@@ -210,49 +205,50 @@ void SkyBox::spin(bool spin)                   { this->isSpinning = spin; }
 
 void SkyBox::initShaders()
 {
-    if(pShader == nullptr)
+    if(SkyShader == nullptr)
     {
         Shader* skyVertexShader = new Shader(SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
 
-        pShader = new ShaderProgram(true);
-        pShader->addShader(skyVertexShader);
-        pShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("SkyShader");
-        pShader->addTexture("environmentMap", 0);
-        pShader->addUniform("gradiant");
-        pShader->addUniform("SunDirection");
-        Gum::ShaderManager::addShaderProgram(pShader); // Make it public
+        SkyShader = new ShaderProgram("SkyShader", true);
+        SkyShader->addShader(skyVertexShader);
+        SkyShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+        SkyShader->build();
+        SkyShader->addTexture("environmentMap", 0);
+        SkyShader->addUniform("gradiant");
+        SkyShader->addUniform("SunDirection");
 
 
-        HDRToCubeMapShader = new ShaderProgram(true);
+        HDRToCubeMapShader = new ShaderProgram("HDRToCubeMapShader", true);
         HDRToCubeMapShader->addShader(skyVertexShader);
         HDRToCubeMapShader->addShader(new Shader(SkyboxHDRToCubeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        HDRToCubeMapShader->build("HDRToCubeMapShader");
+        HDRToCubeMapShader->build();
         HDRToCubeMapShader->addUniform("gradiant");
         HDRToCubeMapShader->addTexture("hdrTexture", 0);
         HDRToCubeMapShader->addUniform("SunDirection");
 
         
-        IrradianceMapShader = new ShaderProgram(true);
+        IrradianceMapShader = new ShaderProgram("IrradianceMapShader", true);
         IrradianceMapShader->addShader(skyVertexShader);
         IrradianceMapShader->addShader(new Shader(SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        IrradianceMapShader->build("IrradianceMapShader");
+        IrradianceMapShader->build();
         IrradianceMapShader->addTexture("cubeMap", 0);
 
         
-        PreFilteredMapShader = new ShaderProgram(true);
+        PreFilteredMapShader = new ShaderProgram("PreFilteredMapShader", true);
         PreFilteredMapShader->addShader(skyVertexShader);
         PreFilteredMapShader->addShader(new Shader(SkyboxPrefilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        PreFilteredMapShader->build("PreFilteredMapShader");
+        PreFilteredMapShader->build();
         PreFilteredMapShader->addUniform("roughness");
         PreFilteredMapShader->addTexture("cubeMap", 0);
 
         
-        BRDFMapShader = new ShaderProgram(true);
+        BRDFMapShader = new ShaderProgram("BRDFMapShader", true);
         BRDFMapShader->addShader(new Shader(SkyboxBRDFVertexShader, Shader::TYPES::VERTEX_SHADER));
         BRDFMapShader->addShader(new Shader(SkyboxBRDFFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        BRDFMapShader->build("BRDFMapShader");
+        BRDFMapShader->build();
         BRDFMapShader->addUniform("roughness");
         BRDFMapShader->addTexture("cubeMap", 0);
     }
+
+    pShader = SkyShader;
 }

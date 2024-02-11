@@ -1,14 +1,10 @@
 #include "Renderer3D.h"
 
 #include "Graphics/Graphics.h"
-#include "System/Output.h"
+#include "Graphics/ShaderProgram.h"
 #include "World3D.h"
-#include "../Shaders/ShaderManager.h"
 #include "Lightning/Lightning.h"
 #include "Lightning/ShadowMapping/ShadowMapping.h"
-#include "../PostProcessing/PostProcessing.h"
-#include "../Particle/ShaderInitializer.h"
-#include "../Texture/TextureManager.h"
 #include "../Rendering/IDRenderer.h"
 
 #include <Desktop/Window.h>
@@ -22,12 +18,12 @@ Renderer3D::Renderer3D(Box* canvas)
 	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
 	pLightning    = new Lightning(pRenderCanvas, this);
     pShadowMaps   = new ShadowMapping();
-    #ifdef DEBUG
+    //#ifdef DEBUG
     pGrid         = new Grid();
-    #endif
+    //#endif
 
-    pParticleShader = Gum::ShaderManager::getShaderProgram("ParticleShader");
-    pBillboardShader = Gum::ShaderManager::getShaderProgram("BillboardShader");
+    pParticleShader = ShaderProgram::getShaderProgramByName("ParticleShader");
+    pBillboardShader = ShaderProgram::getShaderProgramByName("BillboardShader");
 
     updateFramebufferSize();
 }
@@ -67,19 +63,17 @@ void Renderer3D::renderInternal()
     pFramebuffer->bind();
     pWorld->getObjectManager()->renderForward();
 
-    #ifdef DEBUG
-        pGrid->render();
-    #endif
+    //#ifdef DEBUG
+    pGrid->render();
+    //#endif
 
     pWorld->renderRenderable();
 
 
     pParticleShader->use();
-    pParticleShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pWorld->renderParticles(pParticleShader);
 
 	pBillboardShader->use();
-    pBillboardShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pWorld->renderBillboards(pBillboardShader);
 
 
@@ -104,7 +98,6 @@ void Renderer3D::renderIDsInternal()
         return;
 
     pIDRenderer->getMeshShader()->use();
-    pIDRenderer->getMeshShader()->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pWorld->getObjectManager()->renderIDs();
     pWorld->renderRenderableIDs();
 }
@@ -125,18 +118,8 @@ void Renderer3D::updateFramebufferSize()
     if(Camera::getActiveCamera() == nullptr)
         return;
 
-    pGBuffer->getShader()->use();
-    pGBuffer->getShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    
-    pBillboardShader->use();
-    pBillboardShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    
-    pParticleShader->use();
-    pParticleShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-
-    pIDRenderer->getMeshShader()->use();
-    pIDRenderer->getMeshShader()->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    ShaderProgram::unuse();
+    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
 
     if(pWorld != nullptr)
     {

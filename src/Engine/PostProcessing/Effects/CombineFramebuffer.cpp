@@ -1,11 +1,10 @@
 #include "CombineFramebuffer.h"
-#include "../../Shaders/ShaderManager.h"
 
 
 CombineFramebuffer::CombineFramebuffer(Box *canvas)
 {
     init(canvas);
-	pShader = Gum::ShaderManager::getShaderProgram("CombineFramebufferShader");
+	pShader = ShaderProgram::getShaderProgramByName("CombineFramebufferShader");
 }
 
 CombineFramebuffer::~CombineFramebuffer() {}

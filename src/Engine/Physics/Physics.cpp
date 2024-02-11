@@ -17,7 +17,6 @@
 #include <System/MemoryManagement.h>
 
 #include "../Rendering/Camera.h"
-#include "../Shaders/ShaderManager.h"
 #include "../3D/Object/CollisionObject.h"
 #include "DebugDrawer.h"
 

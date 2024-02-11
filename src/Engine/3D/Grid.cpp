@@ -1,7 +1,6 @@
 #include "Grid.h"
 #include "GridShader.h"
 #include "Camera3D.h"
-#include "../Shaders/ShaderManager.h"
 #include <Graphics/VertexArrayObject.h>
 #include <Graphics/Graphics.h>
 #include <System/MemoryManagement.h>
@@ -14,7 +13,14 @@ Grid::Grid()
     vbo.setData({}, Gum::Graphics::DataState::STATIC); //TODO
     pVAO->addAttribute(&vbo, 0, 2, Gum::Graphics::Datatypes::FLOAT);
     pVAO->setVertexCount(6);
-    initShader();
+    
+    if(pShader == nullptr)
+    {
+        pShader = new ShaderProgram("GridShader", true);
+        pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
+        pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+        pShader->build();
+    }
 }
 
 Grid::~Grid()
@@ -25,9 +31,6 @@ Grid::~Grid()
 void Grid::render()
 {
     pShader->use();
-    pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-
     Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
     Gum::Graphics::enableFeature(Gum::Graphics::Features::BLENDING);
     pVAO->bind();
@@ -35,23 +38,4 @@ void Grid::render()
     pVAO->unbind();
     pShader->unuse();
     Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
-}
-
-void Grid::initShader()
-{
-    if(Gum::ShaderManager::hasShaderProgram("GridShader"))
-    {
-		pShader = Gum::ShaderManager::getShaderProgram("GridShader");
-    }
-    else
-    {
-        pShader = new ShaderProgram(true);
-        pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("GridShader");
-
-
-
-        Gum::ShaderManager::addShaderProgram(pShader);
-    }
 }

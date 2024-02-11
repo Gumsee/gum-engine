@@ -1,19 +1,24 @@
 #include "Camera.h"
-#include "System/Output.h"
+#include "Graphics/ShaderProgram.h"
 #include <Essentials/Settings.h>
 #include <Maths/MatrixFunctions.h>
+#include <functional>
+
+std::function<void()> Camera::pOnViewUpdate = [](){
+    ShaderProgram::loadUniformForAll("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+};
 
 Camera::Camera(const ivec2& resolution, const Type& type)
 {
+    if(pActiveCamera == nullptr)
+        pActiveCamera = this;
+
     iType = type;
     v3ViewDirection = vec3(0.0f, 0.0f, 1.0f);
     v3Up = vec3(0.0f, 1.0f, 0.0f);
 
     updateProjection(resolution);
     updateView();
-
-    if(pActiveCamera == nullptr)
-        pActiveCamera = this;
 }
 
 Camera::~Camera()
@@ -23,12 +28,14 @@ Camera::~Camera()
 void Camera::updateView()
 {
     mViewMatrix = Gum::Maths::view(v3ActualPosition, v3ActualPosition + v3ViewDirection, v3Up);
+    pOnViewUpdate();
     //v3ViewDirection = vec3(-viewMat[0][2], -viewMat[1][2], -viewMat[1][2]);
 }
 
 void Camera::makeActive()
 {
     pActiveCamera = this;
+    pOnViewUpdate();
 }
 
 void Camera::moveForward(const float& f)  { v3ActualPosition += v3ViewDirection * f; }
@@ -68,3 +75,9 @@ void Camera::setZoomFactor(const float& factor) { fZoomfactor = factor; updatePr
 void Camera::setZoomSpeed(const float& speed)   { fZoomSpeed = speed; updateProjection(v2CurrentResolution); }
 void Camera::setFOV(const float& fov)           { fFOV = fov; updateProjection(v2CurrentResolution); }
 void Camera::overrideViewMatrix(mat4 matrix)    { this->mViewMatrix = matrix; }
+
+void Camera::onViewUpdate(std::function<void()> callback)
+{
+    if(callback != nullptr)
+        pOnViewUpdate = callback;
+}

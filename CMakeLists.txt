@@ -92,16 +92,16 @@ message(STATUS "${PROJECT_NAME}: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
             find_package(GumGraphics REQUIRED)
         endif() 
     
-        if(NOT GUMESSENTIALS_FOUND) 
-            find_package(GumEssentials REQUIRED)
-        endif() 
-    
         if(NOT GUMCODECS_FOUND) 
             find_package(GumCodecs REQUIRED)
         endif() 
     
         if(NOT GUMPRIMITIVES_FOUND) 
             find_package(GumPrimitives REQUIRED)
+        endif() 
+    
+        if(NOT GUMESSENTIALS_FOUND) 
+            find_package(GumEssentials REQUIRED)
         endif() 
     
         if(NOT GUMGLFW_FOUND) 

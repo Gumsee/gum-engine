@@ -1,7 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string PhysicsDebuggingVertexShader = Shader::SHADER_VERSION_STR + R"(
+static const std::string PhysicsDebuggingVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 1) in vec2 TextureCoords;
     layout (location = 2) in vec3 Normals;
@@ -14,9 +14,9 @@ static const std::string PhysicsDebuggingVertexShader = Shader::SHADER_VERSION_S
     {
         gl_Position = projectionMatrix * viewMatrix * vec4(vertexPosition, 1.0f);
     }
-)";
+);
 
-static const std::string PhysicsDebuggingFragmentShader = Shader::SHADER_VERSION_STR + R"(
+static const std::string PhysicsDebuggingFragmentShader = GLSL(
     out vec4 FragColor;
     uniform vec4 color;
 
@@ -25,4 +25,4 @@ static const std::string PhysicsDebuggingFragmentShader = Shader::SHADER_VERSION
         FragColor = color;
         //FragColor = vec4(1,0,0,1);
     }
-)";
+);

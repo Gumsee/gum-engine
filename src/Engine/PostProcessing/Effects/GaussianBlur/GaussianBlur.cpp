@@ -1,5 +1,4 @@
 #include "GaussianBlur.h"
-#include "../../../Shaders/ShaderManager.h"
 #include "Graphics/Framebuffer.h"
 #include <System/MemoryManagement.h>
 #include "GaussianBlurShader.h"
@@ -31,10 +30,10 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
 
     if(VblurShader == nullptr)
     {
-        VblurShader = new ShaderProgram(true);
+        VblurShader = new ShaderProgram("GaussianBlurVShader", true);
         VblurShader->addShader(new Shader(GussianBlurVShaderVert, Shader::TYPES::VERTEX_SHADER));
         VblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
-        VblurShader->build("GaussianBlurVShader");
+        VblurShader->build();
 
         VblurShader->addTexture("textureSampler", 0);
         VblurShader->addUniform("specialVar");
@@ -42,10 +41,10 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
 
     if(HblurShader == nullptr)
     {
-        HblurShader = new ShaderProgram(true);
+        HblurShader = new ShaderProgram("GaussianBlurHShader", true);
         HblurShader->addShader(new Shader(GussianBlurHShaderVert, Shader::TYPES::VERTEX_SHADER));
         HblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
-        HblurShader->build("GaussianBlurHShader");
+        HblurShader->build();
 
         HblurShader->addTexture("textureSampler", 0);
         HblurShader->addUniform("specialVar");

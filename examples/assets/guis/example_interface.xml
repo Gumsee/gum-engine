@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gui-root pos="0, 0" size="100%, 100%">
-    <box id="renderview" pos="0, 0" size="70%, 80%" max-size="-800, -400" margin="0, 0" color="#FFFFFF"></box>
-    <box id="filesmenu" pos="0, 80%" size="70%, 20%" max-size="-800, 0" min-size="0, 400" margin="0, 0" color="#36393F"></box>
-    <box id="sidemenu" pos="70%, 0" size="30%, 100%" min-size="800, 0" margin="0, 0" color="#36393F">
+    <box id="renderview" pos="0, 0"    size="100%, 80%" margin="-800, 0" color="#FFFFFF"></box>
+    <box id="filesmenu"  pos="0, 100%" size="100%, 400" offset="0, -400" margin="-800, 0" color="#36393F"></box>
+    <box id="sidemenu"   pos="100%, 0" size="800, 100%" offset="-800, 0" color="#36393F">
         <tabs id="sidemenutabs" pos="0, 0" size="100%, 100%">
             <tab name="Renderdata">
                 <scroller pos="0, 0" size="100%, 100%">
@@ -36,7 +36,7 @@
                     </group>
                 </scroller>
             </tab>
-            <tab name="Examples" active="true">
+            <tab name="Examples">
                 <dropdown id="examplesdropdown" pos="20, 20" size="200, 50" title="Examples" fontsize="20">
                     <!--<item>Test1</item>-->
                 </dropdown>
@@ -47,13 +47,90 @@
             </tab>
             <tab name="World">
             </tab>
-            <tab name="2D Noisepatterns">
+            <tab name="2D Noisepatterns" active="true">
                 <button id="generatebutton" pos="10, 10" size="100, 30" fontsize="20">Generate</button>
                 <scroller pos="0, 50" size="100%, 100%" margin="0, -50">
-                    <box id="perlinnoise"  size="100%, 500" pos="50%, 40"   margin="-20, 0" origin="50%, 0" invert="true" />
-                    <text pos="10, 10">Perlin Noise</text>
-                    <box id="simplexnoise" size="100%, 500" pos="50%, 580"  margin="-20, 0" origin="50%, 0" invert="true" />
-                    <text pos="10, 560">Simplex Noise</text>
+                    <text pos="10, 10" fontsize="20">Classic Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 40">
+                        <box id="randomnoise" size="25%, 100%" pos="0, 0" />
+                        <box id="noise" size="25%, 100%" pos="25%, 0" />
+                        <box id="noised" size="25%, 100%" pos="50%, 0" />
+                        <box id="gridnoise" size="25%, 100%" pos="75%, 0" />
+                    </gui>
+
+                    <text pos="10, 230" fontsize="20">Gradient Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 260">
+                        <box id="gradientnoise" size="25%, 100%" pos="0, 0" />
+                        <box id="gradientnoised" size="25%, 100%" pos="25%, 0" />
+                        <box id="gradientnoisedisorder" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 450" fontsize="20">Perlin Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 480">
+                        <box id="perlinnoise" size="25%, 100%" pos="0, 0" />
+                        <box id="perlinnoised" size="25%, 100%" pos="25%, 0" />
+                        <box id="organicnoise" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 670" fontsize="20">Cellular Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 700">
+                        <box id="cellularnoise1" size="25%, 100%" pos="0, 0" />
+                        <box id="cellularnoise2" size="25%, 100%" pos="25%, 0" />
+                        <box id="metaballsnoise" size="25%, 100%" pos="50%, 0" />
+                        <box id="cellularnoised" size="25%, 100%" pos="75%, 0" />
+                    </gui>
+
+                    <text pos="10, 890" fontsize="20">Cellular Noise metrics</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 920">
+                        <box id="cellularmanhattannoise" size="25%, 100%" pos="0, 0" />
+                        <box id="cellularchebyshevnoise" size="25%, 100%" pos="25%, 0" />
+                        <box id="cellulartriangularnoise" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 1110" fontsize="20">Voronoi Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 1140">
+                        <box id="voronoinoise" size="25%, 100%" pos="0, 0" />
+                        <box id="cracksnoise" size="25%, 100%" pos="25%, 0" />
+                        <box id="voronoipattern" size="25%, 100%" pos="50%, 0" />
+                        <box id="voronoiids" size="25%, 100%" pos="75%, 0" />
+                    </gui>
+
+                    <text pos="10, 1330" fontsize="20">Hexagons Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 1360">
+                        <box id="hexagonsnoise1" size="25%, 100%" pos="0, 0" />
+                        <box id="hexagonsdnoise" size="25%, 100%" pos="25%, 0" />
+                        <box id="hexagonsnoise2" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 1550" fontsize="20">Pattern Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 1580">
+                        <box id="checkerboardnoise" size="25%, 100%" pos="0, 0" />
+                        <box id="randomlinesnoise" size="25%, 100%" pos="25%, 0" />
+                        <box id="dotsnoise" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 1770" fontsize="20">Pattern Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 1800">
+                        <box id="metaballsnoise2" size="25%, 100%" pos="0, 0" />
+                        <box id="wavepattern" size="25%, 100%" pos="25%, 0" />
+                        <box id="stairspattern" size="25%, 100%" pos="50%, 0" />
+                        <box id="crosspattern" size="25%, 100%" pos="75%, 0" />
+                    </gui>
+
+                    <text pos="10, 1990" fontsize="20">Tile Hexagons Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 2020">
+                        <box id="tilehexagonsuv" size="25%, 100%" pos="0, 0" />
+                        <box id="tilehexagonspos" size="25%, 100%" pos="25%, 0" />
+                        <box id="tilehexagonsradii" size="25%, 100%" pos="50%, 0" />
+                    </gui>
+
+                    <text pos="10, 2210" fontsize="20">FBM Noise</text>
+                    <gui size="100%, 180" margin="-20, 0" pos="10, 2240">
+                        <box id="fbmnoise" size="25%, 100%" pos="0, 0" />
+                        <box id="fbmperlinnoise" size="25%, 100%" pos="25%, 0" />
+                        <box id="fbmgridnoise" size="25%, 100%" pos="50%, 0" />
+                        <box id="fbmmetaballsnoise" size="25%, 100%" pos="75%, 0" />
+                    </gui>
                 </scroller>
             </tab>
         </tabs>

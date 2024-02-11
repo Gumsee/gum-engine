@@ -33,7 +33,7 @@ public:
 	ObjectManager(vec3 *sunDirection);
 	~ObjectManager();
 
-	static std::string MODEL_ASSETS_PATH;
+	static Gum::File MODEL_ASSETS_PATH;
 
 
 	enum ExceptionTypes

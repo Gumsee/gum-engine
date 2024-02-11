@@ -40,10 +40,10 @@ BoneRenderer::BoneRenderer(AnimatedModel* model)
 
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram(true);
+        pShader = new ShaderProgram("BoneRendererShader", true);
         pShader->addShader(new Shader(BoneRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(BoneRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("BoneRendererShader", { {"vertices", 0}, {"transMatrices", 3} });
+        pShader->build({ {"vertices", 0}, {"transMatrices", 3} });
 
         for(int i = 0; i < 100; i++)
             pShader->addUniform("bones[" + std::to_string(i) + "]");
@@ -79,10 +79,7 @@ void BoneRenderer::recursiveUpdateBoneMats(Bone *currentBone, mat4 parentTransfo
 
 void BoneRenderer::render()
 {
-    pShader->use();
-    pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-    pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    
+    pShader->use();    
     recursiveUpdateBoneMats(pModel->getSkeleton()->getRootBone(), mat4());
     
     pBoneObject->render();

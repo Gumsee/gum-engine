@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string GBufferVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GBufferVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 1) in vec2 TextureCoords;
     layout (location = 2) in vec3 Normals;
@@ -69,17 +68,15 @@ R"(
         vs_out.viewPos = viewPos;
         gl_Position = positionRelativeToCam;
     }
-)";
+);
 
 
-static const std::string GBufferGeometryShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GBufferGeometryShader = GLSL(
     
-)";
+);
 
 
-static const std::string GBufferFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string GBufferFragmentShader = GLSL(
     layout (location = 0) out vec4 gPosition;
     layout (location = 1) out vec4 gNormal;
     layout (location = 2) out vec4 gAlbedoSpec;
@@ -189,4 +186,4 @@ R"(
         gAlbedoSpec = vec4(FinishedColor.rgb, 1);
         gObjectData = vec4(roughnessStrength, specularStrength, reflFactor, AOStrength);
     }
-)";
+);

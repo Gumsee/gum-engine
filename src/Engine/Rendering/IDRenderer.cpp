@@ -10,10 +10,10 @@ IDRenderer::IDRenderer(Box* canvas)
 
     if(pMeshIDShader == nullptr)
     {
-        pMeshIDShader = new ShaderProgram(true);
+        pMeshIDShader = new ShaderProgram("MeshIDShader", true);
         pMeshIDShader->addShader(new Shader(MeshIDVertexShader, Shader::TYPES::VERTEX_SHADER));
         pMeshIDShader->addShader(new Shader(MeshIDFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pMeshIDShader->build("MeshIDShader", { {"vertices", 0}, {"TransMatrix", 3}, {"individualColor", 10} });
+        pMeshIDShader->build({ {"vertices", 0}, {"TransMatrix", 3}, {"individualColor", 10} });
     }
 }
 

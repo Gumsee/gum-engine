@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string NormalRendererVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string NormalRendererVertexShader = GLSL(
     layout (location = 0) in vec3 vertices;
     layout (location = 2) in vec3 normals;
     layout (location = 3) in mat4 transMatrices;
@@ -21,10 +20,9 @@ R"(
         mat3 normalMatrix = mat3(transpose(inverse(viewModel)));
         vs_out.normal = normalize(vec3(vec4(normalMatrix * normals, 0.0)));
 	}
-)";
+);
 
-static const std::string NormalRendererGeometryShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string NormalRendererGeometryShader = GLSL(
     layout (triangles) in;
     layout (line_strip, max_vertices = 6) out;
 
@@ -50,10 +48,9 @@ R"(
         GenerateLine(1); // second vertex normal
         GenerateLine(2); // third vertex normal
     }  
-)";
+);
 
-static const std::string NormalRendererFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string NormalRendererFragmentShader = GLSL(
 	in vec3 Texcoord;
     out vec4 FragColor;
 	
@@ -61,4 +58,4 @@ R"(
 	{
         FragColor = vec4(1,1,0,1);
 	}
-)";
+);

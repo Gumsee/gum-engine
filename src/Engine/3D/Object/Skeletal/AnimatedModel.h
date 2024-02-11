@@ -12,7 +12,7 @@ private:
     Skeleton* pSkeleton;
 
 public:
-	AnimatedModel(std::string file, std::string name);
+	AnimatedModel(const Gum::File& file, const std::string& name);
 	~AnimatedModel();
 
 	void render();

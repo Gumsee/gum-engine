@@ -1,81 +1,76 @@
 #pragma once
-#include "../Shaders/ShaderManager.h"
+#include <Graphics/ShaderProgram.h>
 
 
-static const std::string ThicklinesVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
-layout (location = 0) in vec3 points;
-layout (location = 3) in mat4 TransMatrix;
+static const std::string ThicklinesVertexShader = GLSL(
+    layout (location = 0) in vec3 points;
+    layout (location = 3) in mat4 TransMatrix;
 
-uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat4 viewMatrix;
 
-out mat4 projMatrix;
-out mat4 viewMat;
+    out mat4 projMatrix;
+    out mat4 viewMat;
 
-void main()
-{
-    projMatrix = projectionMatrix;
-    viewMat = viewMatrix;
-	gl_Position = projectionMatrix * viewMatrix * TransMatrix * vec4(points, 1.0);
-}
-)";
+    void main()
+    {
+        projMatrix = projectionMatrix;
+        viewMat = viewMatrix;
+        gl_Position = projectionMatrix * viewMatrix * TransMatrix * vec4(points, 1.0);
+    }
+);
 
-static const std::string ThicklinesGeometryShader = Shader::SHADER_VERSION_STR + 
-R"(
-layout (lines) in;
-layout (triangle_strip, max_vertices = 4) out;
+static const std::string ThicklinesGeometryShader = GLSL(
+    layout (lines) in;
+    layout (triangle_strip, max_vertices = 4) out;
 
-in mat4 projMatrix[];
-in mat4 viewMat[];
-    
-uniform vec2  viewportSize;
-uniform float u_thickness = 30;
+    in mat4 projMatrix[];
+    in mat4 viewMat[];
+        
+    uniform vec2  viewportSize;
+    uniform float u_thickness = 30;
 
-void main()
-{
-    vec4 p1 = gl_in[0].gl_Position;
-    vec4 p2 = gl_in[1].gl_Position;
+    void main()
+    {
+        vec4 p1 = gl_in[0].gl_Position;
+        vec4 p2 = gl_in[1].gl_Position;
 
-    vec2 dir    = normalize((p2.xy/p2.w - p1.xy/p1.w) * viewportSize);
-    vec2 offset = vec2(-dir.y, dir.x) * u_thickness / viewportSize;
+        vec2 dir    = normalize((p2.xy/p2.w - p1.xy/p1.w) * viewportSize);
+        vec2 offset = vec2(-dir.y, dir.x) * u_thickness / viewportSize;
 
-    gl_Position = p1 + vec4(offset.xy * p1.w, 0.0, 0.0);
-    EmitVertex();
-    gl_Position = p1 - vec4(offset.xy * p1.w, 0.0, 0.0);
-    EmitVertex();
-    gl_Position = p2 + vec4(offset.xy * p2.w, 0.0, 0.0);
-    EmitVertex();
-    gl_Position = p2 - vec4(offset.xy * p2.w, 0.0, 0.0);
-    EmitVertex();
-}
-)";
+        gl_Position = p1 + vec4(offset.xy * p1.w, 0.0, 0.0);
+        EmitVertex();
+        gl_Position = p1 - vec4(offset.xy * p1.w, 0.0, 0.0);
+        EmitVertex();
+        gl_Position = p2 + vec4(offset.xy * p2.w, 0.0, 0.0);
+        EmitVertex();
+        gl_Position = p2 - vec4(offset.xy * p2.w, 0.0, 0.0);
+        EmitVertex();
+    }
+);
 
-static const std::string ThicklinesFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
-uniform vec4 color = vec4(1,0,0,1);
+static const std::string ThicklinesFragmentShader = GLSL(
+    uniform vec4 color = vec4(1,0,0,1);
 
-out vec4 finalColor;
+    out vec4 finalColor;
 
-void main()
-{
-	finalColor = color;
-}
-)";
+    void main()
+    {
+        finalColor = color;
+    }
+);
 
 static void initThicklinesShader()
 {
     ShaderProgram* shader;
-    shader = new ShaderProgram(true);
+    shader = new ShaderProgram("ThicklinesShader", true);
     shader->addShader(new Shader(ThicklinesVertexShader, Shader::TYPES::VERTEX_SHADER));
     shader->addShader(new Shader(ThicklinesGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
     shader->addShader(new Shader(ThicklinesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-    shader->build("ThicklinesShader", { {"vertices", 0}, {"TransMatrix", 3} });
+    shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
     shader->addUniform("color");
     shader->addUniform("viewportSize");
-
-    Gum::ShaderManager::addShaderProgram(shader);
 }
 
 

@@ -4,7 +4,6 @@
 #include <System/MemoryManagement.h>
 #include "Essentials/Settings.h"
 #include "LightningShader.h"
-#include "../../Shaders/ShaderManager.h"
 #include "../../PostProcessing/PostProcessing.h"
 #include "../Renderer3D.h"
 #include "../World3D.h"
@@ -66,10 +65,10 @@ void Lightning::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram(true);
-        pShader->addShader(Gum::ShaderManager::getShader(Gum::PostProcessing::iVertexShaderID));
+        pShader = new ShaderProgram("LightningShader", true);
+        pShader->addShader(Gum::PostProcessing::VertexShader);
         pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("LightningShader");
+        pShader->build();
 
         //Textures
         pShader->addTexture("gPosition", 0);

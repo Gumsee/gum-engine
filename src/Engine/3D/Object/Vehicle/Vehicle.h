@@ -8,7 +8,7 @@ class Vehicle : public SceneObject
 private:
 
 public:
-	Vehicle(std::string file, std::string name);
+	Vehicle(const Gum::File& file, const std::string& name);
 	~Vehicle();
 
 	void render();

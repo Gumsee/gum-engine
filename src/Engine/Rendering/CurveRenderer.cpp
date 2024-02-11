@@ -1,15 +1,12 @@
 #include "CurveRenderer.h"
 #include "Camera.h"
 #include "Graphics/Variables.h"
-#include "Maths/MatrixFunctions.h"
 #include "Maths/vec.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"
 #include "Renderer.h"
-#include "../Shaders/ShaderManager.h"
-#include "System/Output.h"
 #include <string>
 
 CurveRenderer::CurveRenderer(Curve* curve)
@@ -17,8 +14,8 @@ CurveRenderer::CurveRenderer(Curve* curve)
     pCurve = curve;
     this->iNumSegments = 40;
 
-    pShader = Gum::ShaderManager::getShaderProgram("SimpleShader");
-    pIDShader = Gum::ShaderManager::getShaderProgram("ThicklinesShader");
+    pShader = ShaderProgram::getShaderProgramByName("SimpleShader");
+    pIDShader = ShaderProgram::getShaderProgramByName("ThicklinesShader");
 
     pTransMatricesVBO = new VertexBufferObject<mat4>();
     pTransMatricesVBO->setData({mTransformation}, Gum::Graphics::DataState::STATIC);
@@ -72,7 +69,6 @@ void CurveRenderer::prerender()
     //pShader->loadUniform("stripCount", 1);
     pShader->loadUniform("color", vec4(1,0,1,1));
     pShader->loadUniform("transformationMatrix", mTransformation);
-    pShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
 }
 
 void CurveRenderer::render()
@@ -92,7 +88,6 @@ void CurveRenderer::renderID()
     pIDShader->use();
     pIDShader->loadUniform("color", pCurve->getIndividualColor());
     pIDShader->loadUniform("transformationMatrix", mTransformation);
-    pIDShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
     pVAO->bind();
     pVAO->render(1);
     pVAO->unbind();

@@ -1,10 +1,9 @@
 #include "Difference.h"
-#include "../../../Shaders/ShaderManager.h"
 
 Difference::Difference(Box *canvas)
 {
     init(canvas);
-	this->pShader = Gum::ShaderManager::getShaderProgram("DifferenceShader");
+	this->pShader = ShaderProgram::getShaderProgramByName("DifferenceShader");
 }
 
 

@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string ContrastChangerFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ContrastChangerFragmentShader = GLSL(
     in vec2 Texcoord;
 
     out vec4 FragColor;
@@ -15,4 +14,4 @@ R"(
         FragColor = texture(texture0, Texcoord);
         FragColor.rgb = (FragColor.rgb - 0.5) * (1.0 + contrast) + 0.5;
     }
-)";
+);

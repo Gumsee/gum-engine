@@ -1,7 +1,7 @@
 #include "ReflectiveTextureCube.h"
+#include <Graphics/ShaderProgram.h>
 #include <gum-maths.h>
 #include <System/Output.h>
-#include "../Shaders/ShaderManager.h"
 
 ReflectiveTextureCube::ReflectiveTextureCube(ivec2 resolution)
 {
@@ -23,7 +23,7 @@ void ReflectiveTextureCube::render()
 	/// IN WORK 
 	// Render in all 6 directions
 
-	ShaderProgram *shader = Gum::ShaderManager::getShaderProgram("lowquality");
+	ShaderProgram *shader = ShaderProgram::getShaderProgramByName("lowquality");
 	#ifdef DEBUG
 		Gum::Output::debug("Rendering ReflectiveTexture Cube!");
 	#endif

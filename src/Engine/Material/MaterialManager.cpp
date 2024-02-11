@@ -5,6 +5,7 @@
 namespace Gum {
 namespace MaterialManager
 {
+	Gum::File MATERIAL_ASSETS_PATH;
 	std::map<std::string, Material*> Materials;
 	Material *pDefaultMaterial;
 

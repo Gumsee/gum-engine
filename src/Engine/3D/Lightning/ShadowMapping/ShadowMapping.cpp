@@ -4,7 +4,6 @@
 #include "Graphics/Graphics.h"
 #include "Graphics/TextureDepth3D.h"
 #include "ShadowMappingShader.h"
-#include "../../../Shaders/ShaderManager.h"
 #include "../../Camera3D.h"
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
@@ -22,7 +21,7 @@ ShadowMapping::ShadowMapping()
         Settings::getSetting(Settings::RENDERDISTANCE) / 5.0f,
         (float)Settings::getSetting(Settings::RENDERDISTANCE)
     };
-    vLightMatrices.resize(vShadowCascadeLevels.size());
+    vLightMatrices.resize(vShadowCascadeLevels.size() + 1);
 
     pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
     TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment(vShadowCascadeLevels.size());
@@ -78,7 +77,7 @@ std::vector<vec4> ShadowMapping::getFrustumCornersWorldSpace(mat4& proj, const m
 
 mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPlane, const float farPlane)
 {
-    mat4 proj = Gum::Maths::perspective(Camera::getActiveCamera()->getFOV() + 20, pFramebuffer->getAspectRatioWidthToHeight(), nearPlane, farPlane);
+    mat4 proj = Gum::Maths::perspective(Camera::getActiveCamera()->getFOV() * 1.5f, pFramebuffer->getAspectRatioWidthToHeight(), nearPlane, farPlane);
     std::vector<vec4> corners = getFrustumCornersWorldSpace(proj, Camera::getActiveCamera()->getViewMatrix());
 
     vec3 center = vec3(0, 0, 0);
@@ -167,12 +166,11 @@ void ShadowMapping::initShader()
 {
     if(pShader == nullptr)
     {
-        pShader = new ShaderProgram(true);
+        pShader = new ShaderProgram("ShadowMapShader", true);
         pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
         pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build("ShadowMapShader");
+        pShader->build();
         pShader->addUniform("lightSpaceMatrices", 5);
-        Gum::ShaderManager::addShaderProgram(pShader);
     }
 }

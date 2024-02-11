@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string ShadowMappingVertexShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ShadowMappingVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 3) in mat4 TransMatrix;
 
@@ -10,10 +9,9 @@ R"(
     {
         gl_Position = TransMatrix * vec4(vertexPosition, 1.0f);
     }
-)";
+);
 
-static const std::string ShadowMappingGeometryShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ShadowMappingGeometryShader = GLSL(
     layout(triangles, invocations = 5) in;
     layout(triangle_strip, max_vertices = 3) out;
     
@@ -30,11 +28,10 @@ R"(
         }
         EndPrimitive();
     } 
-)";
+);
 
-static const std::string ShadowMappingFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string ShadowMappingFragmentShader = GLSL(
     void main()
     {
     }
-)";
+);

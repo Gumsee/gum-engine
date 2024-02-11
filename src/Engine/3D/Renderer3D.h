@@ -14,9 +14,9 @@ class Renderer3D : public Renderer
 {
 private:
     World3D* pWorld;
-    #ifdef DEBUG
+   // #ifdef DEBUG
         Grid* pGrid;
-    #endif
+    //#endif
 
 	//Occlusion Culling
 	EnvironmentMap *pEnvironmentMap;

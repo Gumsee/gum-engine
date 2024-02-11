@@ -44,11 +44,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/)
         else()
             message(FATAL_ERROR Library for GUMGRAPHICS cannot not found)
         endif() 
-    if(GUMESSENTIALS_FOUND)
-            include_directories(${GUMESSENTIALS_INCLUDE_DIRS})
-        else()
-            message(FATAL_ERROR Library for GUMESSENTIALS cannot not found)
-        endif() 
     if(GUMCODECS_FOUND)
             include_directories(${GUMCODECS_INCLUDE_DIRS})
         else()
@@ -58,6 +53,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/)
             include_directories(${GUMPRIMITIVES_INCLUDE_DIRS})
         else()
             message(FATAL_ERROR Library for GUMPRIMITIVES cannot not found)
+        endif() 
+    if(GUMESSENTIALS_FOUND)
+            include_directories(${GUMESSENTIALS_INCLUDE_DIRS})
+        else()
+            message(FATAL_ERROR Library for GUMESSENTIALS cannot not found)
         endif() 
     if(GUMGLFW_FOUND)
             include_directories(${GUMGLFW_INCLUDE_DIRS})
@@ -188,6 +188,42 @@ file(GLOB HEADERS Engine/PostProcessing/Effects/*.h)
 install(
     FILES ${HEADERS}
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/CombineTextures/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/CombineTextures/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/Difference/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/Difference/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/GaussianBlur/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/GaussianBlur/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/ContrastChanger/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/ContrastChanger/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/Brightfilter/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/Brightfilter/
+) 
+
+file(GLOB HEADERS Engine/PostProcessing/Effects/BloomEffect/*.h)
+install(
+    FILES ${HEADERS}
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/Engine/PostProcessing/Effects/BloomEffect/
 ) 
 
 file(GLOB HEADERS Engine/PostProcessing/ImageCorrection/*.h)

@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Shader.h>
 
-static const std::string BrightfilterFragmentShader = Shader::SHADER_VERSION_STR + 
-R"(
+static const std::string BrightfilterFragmentShader = GLSL(
     in vec2 Texcoord;
     
     out vec4 FragColor;
@@ -15,4 +14,4 @@ R"(
         float brightness = (color.r * 0.2126) + (color.g * 0.7152) + (color.b * 0.0722);
         FragColor = color * brightness;
     }
-)";
+);

@@ -18,10 +18,11 @@ private:
 	EnvironmentMap* pPreFilterMap;
 	unsigned int captureRBOPreFiltered;
 
-	ShaderProgram *HDRToCubeMapShader;
-	ShaderProgram *IrradianceMapShader;
-	ShaderProgram *PreFilteredMapShader;
-	ShaderProgram *BRDFMapShader;
+	static inline ShaderProgram *SkyShader = nullptr;
+	static inline ShaderProgram *HDRToCubeMapShader = nullptr;
+	static inline ShaderProgram *IrradianceMapShader = nullptr;
+	static inline ShaderProgram *PreFilteredMapShader = nullptr;
+	static inline ShaderProgram *BRDFMapShader = nullptr;
 
 	Box *pBRDFCanvas;
 
