@@ -15,7 +15,7 @@ Renderer::Renderer(Box* canvas, const Type& type)
 
     pFramebuffer = new Framebuffer(canvas->getSize());
     pFramebuffer->setClearColor(color(5, 79, 135, 255));
-    pFramebuffer->addTextureAttachment(0, "Renderer3DFB", Gum::Graphics::Datatypes::FLOAT);
+    pFramebuffer->addTextureAttachment<float>(0, "Renderer3DFB");
     pFramebuffer->addDepthTextureAttachment();
     //pFramebuffer->addDepthStencilTextureAttachment();
 

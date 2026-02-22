@@ -11,6 +11,7 @@ protected:
 	std::string sName;
 	std::string sType;
     ShaderProgram* pShader;
+	std::unordered_map<unsigned int, Texture*> mTextures;
 
 public:
 	Layer(std::string name, std::string type);
@@ -19,11 +20,15 @@ public:
 	virtual void render() override {};
 
     //Getter
-    std::string getName()                 { return this->sName; }
-    std::string getType()                 { return this->sType; }
-    ShaderProgram* getShader()            { return this->pShader; }
+    std::string getName();
+    std::string getType();
+    ShaderProgram* getShader();
 
     //Setter
-    void setName(std::string name)        { sName = name; }
-    void setShader(ShaderProgram* shader) { this->pShader = shader; }
+    void setName(std::string name);
+    void setShader(ShaderProgram* shader);
+	void setTexture(Texture *tex, int index);
+	void delTexture(int index);
+	void bindTextures();
+	void unbindTextures();
 };

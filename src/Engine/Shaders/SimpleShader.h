@@ -33,5 +33,4 @@ static void initSimpleShader()
     shader->addShader(new Shader(SimpleFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
     shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
-    shader->addUniform("color");
 }

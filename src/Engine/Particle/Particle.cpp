@@ -1,7 +1,7 @@
 #include "Particle.h"
 #include "../Rendering/Camera.h"
 
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <gum-maths.h>
 
 Particle::Particle(vec3 pos, float lifetime, int maxlifetime)
@@ -16,7 +16,7 @@ Particle::~Particle() { }
 
 bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Particle::ParticleStage*> *stages, vec3 winddir)
 {
-	elapsedTime += FPS::get();
+	elapsedTime += Time::getFrametime();
 
 	int Stageindex0 = Stageindex1 - 1;
 	if(Stageindex0 < 0)
@@ -42,7 +42,7 @@ bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Partic
 		finalspeed = 0;
 	}
 	
-	vec3 FinalVelocity = (Velocity * finalspeed + randomAddition + winddir) * FPS::get();
+	vec3 FinalVelocity = (Velocity * finalspeed + randomAddition + winddir) * Time::getFrametime();
 	if(std::isnan(FinalVelocity.x))
 	{
 		FinalVelocity = vec3(0);

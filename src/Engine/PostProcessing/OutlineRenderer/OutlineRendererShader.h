@@ -4,7 +4,7 @@
 
 static const std::string OutlineRendererVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
-    layout (location = 2) in vec3 Normals;
+    layout (location = 3) in mat4 TransMatrix;
 
 	uniform mat4 viewMatrix;
 	uniform mat4 projectionMatrix;
@@ -17,34 +17,22 @@ static const std::string OutlineRendererVertexShader = GLSL(
 );
 
 static const std::string OutlineRendererFragmentShader = GLSL(
-    out vec4 FragColor;
+    out float FragColor;
 
 	void main()
 	{
-		FragColor = vec4(1,1,1,1);
+		FragColor = 1;
 	}
-);
-
-
-static const std::string OutlineRendererProcessingVertexShader = GLSL(
-    in vec3 vertexPosition;
-    out vec2 Texcoord;
-
-    void main()
-    {
-        gl_Position = vec4(vertexPosition, 1.0f);
-        Texcoord = (vertexPosition.xy + vec2(1.0)) / 2.0;
-    }
 );
 
 static const std::string OutlineRendererProcessingFragmentShader = GLSL(
 	in vec2 Texcoord;
     out vec4 FragColor;
     uniform sampler2D textureSampler;
+    uniform vec4 color;
 
 	void main()
 	{
-		vec3 color;
 		bool hasWhite = false;
 		bool hasBlack = false;
 		
@@ -52,12 +40,12 @@ static const std::string OutlineRendererProcessingFragmentShader = GLSL(
 		{
 			for (int j = -2; j < 2; j+=2) 
 			{
-				vec3 texsample = texelFetch(textureSampler, ivec2(gl_FragCoord) + ivec2(i, j), 0).rgb;
-				if(texsample == vec3(0,0,0))
+				float texsample = texelFetch(textureSampler, ivec2(gl_FragCoord) + ivec2(i, j), 0).r;
+				if(texsample == 0.0)
 				{
 					hasBlack = true;
 				}
-				if(texsample == vec3(1,1,1))
+				if(texsample == 1.0)
 				{
 					hasWhite = true;
 				}
@@ -65,8 +53,8 @@ static const std::string OutlineRendererProcessingFragmentShader = GLSL(
 		}
 
 		if(hasWhite && hasBlack)
-			FragColor = vec4(0.36, 0.38, 0.64, 1.0);
+			FragColor = color;
 		else
-			FragColor = vec4(0,0,0, 0.0);
+			FragColor = vec4(0,0,0,0);
 	}
 );

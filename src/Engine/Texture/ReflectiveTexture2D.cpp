@@ -6,7 +6,7 @@ ReflectiveTexture2D::ReflectiveTexture2D(Renderer3D* renderer, ivec2 resolution)
     this->pRenderer = renderer;
     v2Resolution = resolution;
     pFrameBuffer = new Framebuffer(resolution);
-    pFrameBuffer->addTextureAttachment(0, "ReflectionTexture2D");
+    pFrameBuffer->addTextureAttachment<unsigned char>(0, "ReflectionTexture2D");
     pFrameBuffer->addDepthTextureAttachment("ReflectionDepthTexture2D");
     pFrameBuffer->addDepthAttachment();
 }

@@ -31,9 +31,6 @@ namespace Particles
             pBillboardShader->addShader(new Shader(BillboardVertexShader, Shader::TYPES::VERTEX_SHADER));
             pBillboardShader->addShader(new Shader(BillboardFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
             pBillboardShader->build({{"vertexPosition", 0}});
-            pBillboardShader->addUniform("billboardCenter");
-            pBillboardShader->addUniform("billboardSize");
-            pBillboardShader->addUniform("fixedSize");
             pBillboardShader->addTexture("textureSampler", 0);
         }
     }

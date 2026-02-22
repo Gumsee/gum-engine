@@ -16,7 +16,7 @@ void PostProcessingEffect::init(Box* canvas)
 {
     this->pRenderCanvas = canvas;
 	this->pFramebuffer = new Framebuffer(pRenderCanvas->getSize());
-    this->pFramebuffer->addTextureAttachment(0, "PostProcessingEffect", Gum::Graphics::Datatypes::FLOAT);
+    this->pFramebuffer->addTextureAttachment<float>(0, "PostProcessingEffect");
 }
 
 Texture* PostProcessingEffect::render(Texture* texture) { return texture; }

@@ -31,7 +31,6 @@ static ShaderProgram* initDefaultLayerShader()
         shader->addShader(new Shader(DefaultLayerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         shader->build({ {"vertices", 0} });
-        shader->addUniform("color");
         return shader;
     }
     

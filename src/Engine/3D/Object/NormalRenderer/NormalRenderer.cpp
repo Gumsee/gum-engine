@@ -13,8 +13,6 @@ NormalRenderer::NormalRenderer(World3D* world, const float& normallength)
         pShader->addShader(new Shader(NormalRendererGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
         pShader->addShader(new Shader(NormalRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build({ {"vertices", 0}, {"normals", 2}, {"transMatrices", 3} });
-
-        pShader->addUniform("length");
     }
 }
 

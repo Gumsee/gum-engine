@@ -5,7 +5,8 @@
 #include <Graphics/TextureCube.h>
 #include <functional>
 
-class EnvironmentMap : public TextureCube
+template<typename T>
+class tEnvironmentMap : public tTextureCube<T>
 {
 private:
 	Framebuffer *pFramebuffer;
@@ -14,8 +15,8 @@ private:
     std::vector<mat4> vCaptureViews;
 
 public:
-	EnvironmentMap(const ivec2& resolution, std::string name = "EnvironmentMap", const unsigned short& datatype = Gum::Graphics::Datatypes::UNSIGNED_CHAR);
-	~EnvironmentMap();
+	tEnvironmentMap(const ivec2& resolution, std::string name = "EnvironmentMap");
+	~tEnvironmentMap();
 
 	void render(std::function<void()> renderfunc);
 
@@ -23,3 +24,9 @@ public:
     void setSize(const ivec2& size);
     Framebuffer* getFramebuffer();
 };
+
+template class tEnvironmentMap<unsigned char>;
+template class tEnvironmentMap<float>;
+
+typedef tEnvironmentMap<unsigned char> EnvironmentMap;
+typedef tEnvironmentMap<float> EnvironmentMapf;

@@ -1,6 +1,7 @@
 #pragma once
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include "../../Texture/EnvironmentMap.h"
+#include <Graphics/Texture3D.h>
 #include <Graphics/Framebuffer.h>
 #include <Graphics/TextureCube.h>
 #include <Graphics/Object3D.h>
@@ -9,16 +10,20 @@
 class SkyBox : public Object3D
 {
 private:
-	bool gradiant;
-	bool isSpinning = false;
+	bool bRenderSky = true;
+	bool bRenderClouds = true;
 
-	EnvironmentMap* pTexture;
-    EnvironmentMap* pIrradianceMap;
+    Texture3Df* cloudNoise3D;
+    Texture2Df* cloudNoise2D;
+	EnvironmentMapf* pTexture;
+    EnvironmentMapf* pIrradianceMap;
 	Framebuffer* pBRDFFramebuffer;
-	EnvironmentMap* pPreFilterMap;
+	EnvironmentMapf* pPreFilterMap;
 	unsigned int captureRBOPreFiltered;
 
 	static inline ShaderProgram *SkyShader = nullptr;
+	static inline ShaderProgram *HDRShader = nullptr;
+	static inline ShaderProgram *CloudShader = nullptr;
 	static inline ShaderProgram *HDRToCubeMapShader = nullptr;
 	static inline ShaderProgram *IrradianceMapShader = nullptr;
 	static inline ShaderProgram *PreFilteredMapShader = nullptr;
@@ -51,10 +56,10 @@ public:
 	* 6 GL_TEXTURE_CUBE_MAP_NEGATIVE_Z = Front
 	*/
 	void setTexture(Texture *tex);
-	TextureCube *getTexture();
-	TextureCube *getIrradianceMap();
-	TextureCube *getPreFilterMap();
+	TextureCubef *getTexture();
+	TextureCubef *getIrradianceMap();
+	TextureCubef *getPreFilterMap();
 	Texture2D *getBRDFConvMap();
-	void useGradiant(bool gradiant);
-	void spin(bool spin);
+	void renderSky(bool rendersky);
+	void renderClouds(bool renderclouds);
 };

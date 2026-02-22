@@ -22,10 +22,10 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
     pBlurFramebufferV = new Framebuffer(canvas->getSize() / BlurryDivider1);
     pBlurFramebufferV2 = new Framebuffer(canvas->getSize() / BlurryDivider2);
 
-    pBlurFramebufferH->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
-    pFramebuffer->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
-    pBlurFramebufferV->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
-    pBlurFramebufferV2->addTextureAttachment(0)->setFiltering(Texture::LINEAR);
+    pBlurFramebufferH->addTextureAttachment<unsigned char>(0)->setFiltering(Texture::LINEAR);
+    pFramebuffer->addTextureAttachment<unsigned char>(0)->setFiltering(Texture::LINEAR);
+    pBlurFramebufferV->addTextureAttachment<unsigned char>(0)->setFiltering(Texture::LINEAR);
+    pBlurFramebufferV2->addTextureAttachment<unsigned char>(0)->setFiltering(Texture::LINEAR);
 
 
     if(VblurShader == nullptr)
@@ -36,7 +36,6 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
         VblurShader->build();
 
         VblurShader->addTexture("textureSampler", 0);
-        VblurShader->addUniform("specialVar");
     }
 
     if(HblurShader == nullptr)
@@ -47,7 +46,6 @@ GaussianBlur::GaussianBlur(Box *canvas, int stage)
         HblurShader->build();
 
         HblurShader->addTexture("textureSampler", 0);
-        HblurShader->addUniform("specialVar");
     }
 }
 

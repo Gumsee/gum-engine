@@ -1,19 +1,17 @@
 #include "EnvironmentMap.h"
 #include <Graphics/WrapperFunctions.h>
-#include "../3D/Renderer3D.h"
-#include "../3D/World3D.h"
 #include "Graphics/Framebuffer.h"
 #include "Graphics/TextureCube.h"
-#include "Graphics/Variables.h"
 
-EnvironmentMap::EnvironmentMap(const ivec2& resolution, std::string name, const unsigned short& datatype)
- : TextureCube(name, datatype)
+template<typename T>
+tEnvironmentMap<T>::tEnvironmentMap(const ivec2& resolution, std::string name)
+ : tTextureCube<T>(name)
 {
     pFramebuffer = new Framebuffer(resolution);
 
-    clampToEdge();
-    setFiltering(Texture::FilteringTypes::LINEAR);
-    setSize(resolution);
+    this->clampToEdge();
+    this->setFiltering(Texture::FilteringType::LINEAR);
+    this->setSize(resolution);
 
     pFramebuffer->addDepthAttachment();
     pFramebuffer->addCubeTextureAttachment(0, this);
@@ -29,11 +27,13 @@ EnvironmentMap::EnvironmentMap(const ivec2& resolution, std::string name, const 
 	vCaptureViews.push_back(Gum::Maths::view(vec3(0.0f, 0.0f, 0.0f), vec3( 0.0f,  0.0f,  1.0f), vec3(0.0f, -1.0f,  0.0f)));
 }
 
-EnvironmentMap::~EnvironmentMap()
+template<typename T>
+tEnvironmentMap<T>::~tEnvironmentMap()
 {
 }
 
-void EnvironmentMap::render(std::function<void()> renderfunc)
+template<typename T>
+void tEnvironmentMap<T>::render(std::function<void()> renderfunc)
 {
 	Camera* oldcam = Camera::getActiveCamera();
     Framebuffer* oldFramebuffer = Framebuffer::CurrentlyBoundFramebuffer;
@@ -43,7 +43,7 @@ void EnvironmentMap::render(std::function<void()> renderfunc)
     for (unsigned int i = 0; i < vCaptureViews.size(); ++i)
     {
 		pCaptureCamera->overrideViewMatrix(vCaptureViews[i]);
-        pFramebuffer->attachTexture(0, this, Framebuffer::TextureTargets::CUBEMAP_POSITIVE_X + i, iCurrentMipmapLevel);
+        pFramebuffer->attachTexture(0, this, Framebuffer::TextureTargets::CUBEMAP_POSITIVE_X + i, this->iCurrentMipmapLevel);
         pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 
         renderfunc();
@@ -55,11 +55,12 @@ void EnvironmentMap::render(std::function<void()> renderfunc)
 
 //	GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
 
-void EnvironmentMap::setSize(const ivec2& size)
+template<typename T>
+void tEnvironmentMap<T>::setSize(const ivec2& size)
 {
-    TextureCube::setSize(size);
+    tTextureCube<T>::setSize(size);
     pFramebuffer->setSize(size);
 }
-ivec2 EnvironmentMap::getSize() const         { return pFramebuffer->getSize(); }
+template<typename T> ivec2 tEnvironmentMap<T>::getSize() const         { return pFramebuffer->getSize(); }
 
-Framebuffer* EnvironmentMap::getFramebuffer() { return pFramebuffer; }
+template<typename T> Framebuffer* tEnvironmentMap<T>::getFramebuffer() { return pFramebuffer; }

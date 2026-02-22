@@ -44,7 +44,7 @@ void Lightning::updateShader(ShadowMapping *shadowmap, World3D* world)
 	pShader->loadUniform("SunDirection", *world->getLightManager()->getSun()->getDirection());
 	pShader->loadUniform("viewmat", Camera::getActiveCamera()->getViewMatrix());
 	pShader->loadUniform("viewPos", Camera::getActiveCamera()->getPosition());
-	pShader->loadUniform("viewDir", Camera::getActiveCamera()->getViewDirection());
+	//pShader->loadUniform("viewDir", Camera::getActiveCamera()->getViewDirection());
 	pShader->loadUniform("shadowMapMatrices", shadowmap->getMatrices());
     pShader->loadUniform("cascadeCount", (int)shadowmap->getCascadeLevels().size());
     pShader->loadUniform("cascadePlaneDistances", shadowmap->getCascadeLevels());
@@ -81,25 +81,6 @@ void Lightning::initShader()
         pShader->addTexture("prefilterMap", 7);
         pShader->addTexture("brdfLUT", 8);
         pShader->addTexture("ShadowMap", 9);
-
-        pShader->addUniform("viewmat");
-        pShader->addUniform("viewPos");
-        pShader->addUniform("viewDir");
-        pShader->addUniform("cascadeCount");
-        pShader->addUniform("cascadePlaneDistances", 5);
-        pShader->addUniform("shadowMapMatrices", 5);
-        pShader->addUniform("ShadowMapSize");
-        pShader->addUniform("numLights");
-        pShader->addUniform("farPlane");
-        pShader->addUniform("pixelSize");
-
-        for (int i = 0; i < GUM_MAX_LIGHTS; i++)
-        {
-            pShader->addUniform("lights[" + std::to_string(i) + "].Position");
-            pShader->addUniform("lights[" + std::to_string(i) + "].Color");		
-        }
-        pShader->addUniform("SunColor");
-        pShader->addUniform("SunDirection");
     }
 }
 
@@ -112,8 +93,8 @@ void Lightning::loadLight(Light* light, int index)
 	}
 
 	pShader->use();
-	pShader->loadUniform("lights[" + std::to_string(index) + "].Position", light->getPosition());
-	pShader->loadUniform("lights[" + std::to_string(index) + "].Color", light->getColor());
+	pShader->loadUniform("lightPosition[" + std::to_string(index) + "]", light->getPosition());
+	pShader->loadUniform("lightColor[" + std::to_string(index) + "]", light->getColor());
 
 	/*
 	const float linear = 0.7;

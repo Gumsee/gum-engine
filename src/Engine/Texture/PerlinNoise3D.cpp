@@ -15,7 +15,7 @@ PerlinNoise3D::PerlinNoise3D(ivec3 size, float seed, std::string name)
 
     //(generate texel code omitted)
     repeat();
-    setFiltering(FilteringTypes::LINEAR);
+    setFiltering(FilteringType::LINEAR);
     regenerate();
     this->bLoaded = true;
 }

@@ -6,7 +6,7 @@
 World3D* createBasicCubeExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(true); //PREFILTER MAP RENDERN BEI GRADIANT
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(true); //PREFILTER MAP RENDERN BEI GRADIANT
 	//pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/spaichingen_hill_8k.hdr", true));
 
 

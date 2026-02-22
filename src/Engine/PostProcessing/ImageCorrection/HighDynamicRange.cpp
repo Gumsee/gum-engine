@@ -6,7 +6,6 @@
 HighDynamicRange::HighDynamicRange(Box *canvas)
 {
     init(canvas);
-    pShader = nullptr;
     if(pShader == nullptr)
     {
         pShader = new ShaderProgram("HighDynamicRangeShader", true);
@@ -16,7 +15,6 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
 
         //Textures
         pShader->addTexture("textureSampler", 0);
-        pShader->addUniform("exposure");
     }
 }
 

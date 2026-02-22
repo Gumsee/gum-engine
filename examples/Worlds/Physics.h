@@ -7,7 +7,7 @@
 World3D* createPhysicsExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(true);
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(true);
 
     Camera::getActiveCamera()->setZoomFactor(10);
     ((Camera3D*)Camera::getActiveCamera())->setOffset(50);

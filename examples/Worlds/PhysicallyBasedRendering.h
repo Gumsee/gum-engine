@@ -7,7 +7,7 @@
 World3D* createPhysicallyBasedRenderingExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(false);
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(false);
 	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/forest.hdr", true));
 
 

@@ -108,9 +108,9 @@ World3D* World3D::readFromFile(XMLReader& reader)
     XMLNode *skynode = worldNode->findChild("sky");
     if(skynode != nullptr)
     {
-        bool gradient = skynode->getAttribute("gradient") == "true";
+        bool hdr = skynode->getAttribute("hdr") == "true";
         Gum::Unicode skytexture = skynode->getAttribute("texture");
-        world->getObjectManager()->getSkybox()->useGradiant(gradient);
+        world->getObjectManager()->getSkybox()->renderSky(!hdr);
         world->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture(skytexture.toString(), true));
     }
      

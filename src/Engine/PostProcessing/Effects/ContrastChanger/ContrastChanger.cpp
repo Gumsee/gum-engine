@@ -16,7 +16,6 @@ ContrastChanger::ContrastChanger(Box *canvas, const float& contrast)
         this->pShader->build();
 
         this->pShader->addTexture("texture0", 0);
-	    this->pShader->addUniform("contrast");
     }
 }
 

@@ -12,7 +12,7 @@ PerlinNoise::PerlinNoise(ivec2 size, float seed, std::string name)
     this->seed = seed;
 
     repeat();
-    setFiltering(FilteringTypes::LINEAR);
+    setFiltering(FilteringType::LINEAR);
     this->regenerate();
     this->bLoaded = true;
 }

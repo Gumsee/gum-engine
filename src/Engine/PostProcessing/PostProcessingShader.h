@@ -6,16 +6,16 @@ static const std::string PostProcessingVertexShader = GLSL(
     in vec2 vertexPosition;
     out vec2 Texcoord;
     out mat4 projection;
-    out mat4 viewMatrix;
+    out mat4 view;
 
     uniform mat4 transformationMatrix;
     uniform mat4 projectionMatrix;
-    uniform mat4 viewmat;
+    uniform mat4 viewMatrix;
 
 
     void main()
     {
-        viewMatrix = viewmat;
+        view = viewMatrix;
         projection = projectionMatrix;
         gl_Position = vec4(vertexPosition * 2.0 - vec2(1.0), 0.0f, 1.0f);
         Texcoord = vertexPosition;// ( + vec2(1.0)) / 2.0;

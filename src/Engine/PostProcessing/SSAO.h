@@ -10,7 +10,7 @@ class Renderer;
 class SSAO
 {
 private:
-	Texture2D *pNoiseTexture;
+	Texture2Df *pNoiseTexture;
 	ShaderProgram *pShader;
 	ShaderProgram *pBlurShader;
 
@@ -55,7 +55,7 @@ public:
 	int getNoiseSize() const;
 	float getRadius() const;
 	long long getExecutionTime() const;
-	Texture2D* getResultTexture();
-	Texture2D* getNoiseTexture();
+	Texture2Df* getResultTexture();
+	Texture2Df* getNoiseTexture();
 };
 

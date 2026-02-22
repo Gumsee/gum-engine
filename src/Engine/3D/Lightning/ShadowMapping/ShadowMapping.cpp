@@ -171,6 +171,5 @@ void ShadowMapping::initShader()
         pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
         pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build();
-        pShader->addUniform("lightSpaceMatrices", 5);
     }
 }

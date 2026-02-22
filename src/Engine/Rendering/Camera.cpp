@@ -61,6 +61,7 @@ mat4 Camera::getProjectionMatrix() const		{ return this->mActiveProjectionMatrix
 mat4 Camera::getOrtho() const				    { return this->mOrthographicMatrix; }
 mat4 Camera::getPerspective() const             { return this->mPerspectiveMatrix; }
 vec3 Camera::getViewDirection() const			{ return this->v3ViewDirection; }
+vec3 Camera::getStrafeDirection() const         { return this->v3StrafeDirection; }
 vec3 Camera::getPosition() const			    { return this->v3ActualPosition; }
 float Camera::getFOV() const                    { return this->fFOV; }
 float Camera::getZoom() const                   { return this->fZoomfactor; }
@@ -71,10 +72,11 @@ Camera* Camera::getActiveCamera()               { return pActiveCamera; }
 //
 // Setter
 //
-void Camera::setZoomFactor(const float& factor) { fZoomfactor = factor; updateProjection(v2CurrentResolution); }
-void Camera::setZoomSpeed(const float& speed)   { fZoomSpeed = speed; updateProjection(v2CurrentResolution); }
-void Camera::setFOV(const float& fov)           { fFOV = fov; updateProjection(v2CurrentResolution); }
-void Camera::overrideViewMatrix(mat4 matrix)    { this->mViewMatrix = matrix; }
+void Camera::setZoomFactor(const float& factor)   { fZoomfactor = factor; updateProjection(v2CurrentResolution); }
+void Camera::setZoomSpeed(const float& speed)     { fZoomSpeed = speed; updateProjection(v2CurrentResolution); }
+void Camera::setFOV(const float& fov)             { fFOV = fov; updateProjection(v2CurrentResolution); }
+void Camera::overrideViewMatrix(mat4 matrix)      { this->mViewMatrix = matrix; }
+void Camera::setMovementSpeed(const float& speed) { this->fMovementSpeed = speed; }
 
 void Camera::onViewUpdate(std::function<void()> callback)
 {

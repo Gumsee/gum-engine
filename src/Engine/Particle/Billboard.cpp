@@ -1,6 +1,6 @@
 #include "Billboard.h"
 #include <Maths/MatrixFunctions.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include "../Rendering/Camera.h"
 #include "../Rendering/Renderer.h"
 #include "Graphics/Graphics.h"

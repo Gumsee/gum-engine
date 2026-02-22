@@ -5,14 +5,14 @@
 #include <Engine/3D/Object/Terrain/Terrain.h>
 #include <Engine/Texture/TextureManager.h>
 #include <Engine/3D/World3D.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <Graphics/Material.h>
 #include <System/Output.h>
 
 World3D* createVehicleExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(true); //PREFILTER MAP RENDERN BEI GRADIANT
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(true); //PREFILTER MAP RENDERN BEI GRADIANT
 	//pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/spaichingen_hill_8k.hdr", true));
 
 
@@ -33,7 +33,7 @@ World3D* createVehicleExample()
 
 
     pWorld3D->addUpdatable([]() {
-        //wall->getInstance()->increaseRotation(vec3(0, 20 * FPS::get(), 0));
+        //wall->getInstance()->increaseRotation(vec3(0, 20 * Time::getFrametime(), 0));
     });
 
 

@@ -4,7 +4,7 @@
 World3D* Examples::createIrradiancePBRExample()
 {
     World3D* pWorld3D = new World3D(Gum::Window->getSize());
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(false);
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(false);
 	pWorld3D->getObjectManager()->getSkybox()->setTexture(GumEngine::Textures->getTexture("Sky/spaichingen_hill_8k.hdr", true));
 
 

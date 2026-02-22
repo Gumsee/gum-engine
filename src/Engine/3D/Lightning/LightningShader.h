@@ -5,11 +5,6 @@ static const std::string LightningFragmentShader = GLSL(
 	in vec2 Texcoord;
 
     out vec4 FragColor;
-    
-	struct Light {
-	    vec3 Position;
-	    vec3 Color;
-	};
 
 	uniform samplerCube ReflectionMap;
 	uniform samplerCube IrradianceMap;
@@ -32,7 +27,8 @@ static const std::string LightningFragmentShader = GLSL(
 	uniform mat4 viewmat;
 	uniform vec3 viewPos;
 	uniform vec2 pixelSize;
-	uniform Light lights[128];
+    uniform vec3 lightPosition[128];
+    uniform vec3 lightColor[128];
 	uniform int numLights;
 
 	const float PI = 3.14159265359;
@@ -199,11 +195,11 @@ static const std::string LightningFragmentShader = GLSL(
 	    for(int i = 0; i < numLights; i++)
 	    {
 	        // calculate per-light radiance
-	        vec3 LightDir = normalize(lights[i].Position - Position);
+	        vec3 LightDir = normalize(lightPosition[i] - Position);
 	        vec3 Half = normalize(viewDir + LightDir);
-	        float distance = length(lights[i].Position - Position);
+	        float distance = length(lightPosition[i] - Position);
 	        float attenuation = 1.0 / (distance * distance);
-	        vec3 radiance = lights[i].Color * attenuation;
+	        vec3 radiance = lightColor[i] * attenuation;
 
 	        // Cook-Torrance BRDF
 	        float NDF = DistributionGGX(Normal, Half, roughnessFactor);   

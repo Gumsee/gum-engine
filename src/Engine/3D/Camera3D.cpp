@@ -5,7 +5,7 @@
 #include <Desktop/IO/Controls.h>
 #include <Essentials/Settings.h>
 #include <Desktop/Window.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <Maths/MatrixFunctions.h>
 #include <System/MemoryManagement.h>
 #include "World3D.h"
@@ -101,16 +101,16 @@ void Camera3D::update()
         case Modes::FREECAM:
         {
             fMovementSpeed = Gum::Maths::clamp(
-                fMovementSpeed + Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * 0.01f, 0.1f, 1.0f
+                fMovementSpeed + Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * 0.5f, 0.1f, 100.0f
             );
 
             mouseUpdate();
-            if (Gum::IO::Controls::checkControl("Forward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveForward(fMovementSpeed); }
-            if (Gum::IO::Controls::checkControl("Backward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveBackward(fMovementSpeed); }
-            if (Gum::IO::Controls::checkControl("Left", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveLeft(fMovementSpeed); }
-            if (Gum::IO::Controls::checkControl("Right", Gum::Window::CurrentlyBoundWindow->getKeyboard())) 	{ moveRight(fMovementSpeed); }
-            if (Gum::IO::Controls::checkControl("Down", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveDown(fMovementSpeed); }
-            if (Gum::IO::Controls::checkControl("Up", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	 	{ moveUp(fMovementSpeed);	}
+            if (Gum::IO::Controls::checkControl("Forward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveForward(fMovementSpeed * Time::getFrametime()); }
+            if (Gum::IO::Controls::checkControl("Backward", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	{ moveBackward(fMovementSpeed * Time::getFrametime()); }
+            if (Gum::IO::Controls::checkControl("Left", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveLeft(fMovementSpeed * Time::getFrametime()); }
+            if (Gum::IO::Controls::checkControl("Right", Gum::Window::CurrentlyBoundWindow->getKeyboard())) 	{ moveRight(fMovementSpeed * Time::getFrametime()); }
+            if (Gum::IO::Controls::checkControl("Down", Gum::Window::CurrentlyBoundWindow->getKeyboard()))  	{ moveDown(fMovementSpeed * Time::getFrametime()); }
+            if (Gum::IO::Controls::checkControl("Up", Gum::Window::CurrentlyBoundWindow->getKeyboard()))	 	{ moveUp(fMovementSpeed * Time::getFrametime());	}
             updateView();
             break;
         }

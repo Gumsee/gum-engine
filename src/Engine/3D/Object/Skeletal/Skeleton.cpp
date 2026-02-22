@@ -1,7 +1,7 @@
 #include "Skeleton.h"
 #include "Primitives/SkeletalAnimation.h"
 #include <Essentials/Tools.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <System/Output.h>
 
 Skeleton::Skeleton(Bone *rootbone, unsigned int numbones)

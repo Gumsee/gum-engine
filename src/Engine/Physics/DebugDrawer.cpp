@@ -93,6 +93,5 @@ void DebugDrawer::initShader()
         pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShaderProgram->build();
-        pShaderProgram->addUniform("color");
     }
 }

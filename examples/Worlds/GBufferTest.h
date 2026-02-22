@@ -7,8 +7,8 @@
 World3D* createGBufferExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(false); //PREFILTER MAP RENDERN BEI GRADIANT
-	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/spaichingen_hill_8k.hdr", true));
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(false); //PREFILTER MAP RENDERN BEI GRADIANT
+	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("sky/spaichingen_hill_8k.hdr", true));
 
 
 	PointLight* pSpinningLight = new PointLight(vec3(10, 1, 0),   vec3(30), "light2");
@@ -18,6 +18,7 @@ World3D* createGBufferExample()
 
 	//Object *RoughBronzeObj = new Object("shaderBall.obj", "RoughBronze");
     SceneObject *RoughBronzeObj = new SceneObject(Mesh::generateCube(vec3(10)), "RoughBronze");
+    RoughBronzeObj->addInstance();
 	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/albedo.png"), 0);
 	//RoughBronzeObj->getMaterial()->setTexture(GumEngine::Textures->getTexture("RustedIron/normal.png"), 14);
 	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RustedIron/ao.png"), 7);
@@ -29,6 +30,7 @@ World3D* createGBufferExample()
     pWorld3D->getObjectManager()->addObject(RoughBronzeObj);
 
     SceneObject* floorPlane = new SceneObject(Mesh::generatePlane(vec2(30,30)), "floorPlane");
+    floorPlane->addInstance();
 	floorPlane->getMaterial()->setTexture(Gum::TextureManager::getTexture("Cobblestone/diffuse.png"), 2);
 	floorPlane->getMaterial()->setTexture(Gum::TextureManager::getTexture("Cobblestone/ao.png"), 7);
 	floorPlane->getMaterial()->setTexture(Gum::TextureManager::getTexture("Cobblestone/roughness.png"), 8);

@@ -48,6 +48,7 @@ public:
 	void renderDefered(G_Buffer* gbuffer, Box* rendercanvas);
 	void renderForward();
 	void renderEverything();
+	void renderEverythingMeshesOnly();
     void renderIDs();
 
 	/**
@@ -58,7 +59,7 @@ public:
 	 *	Kind:		What kind of object should be created
 	 *	Identifier:	The Identifier thats used in the program
 	 */
-	Object3D* addObject(Object3D* obj, ShaderProgram* shader = Lightning::getDefaultShaderProgram());
+	Object3D* addObject(Object3D* obj, ShaderProgram* shader = Lightning::getDefaultShaderProgram(), bool defered = true);
 	Object3D* addObjectForwardRendered(Object3D* obj, ShaderProgram* shader);
 
 	void removeObject(Object3D *objToDelete);

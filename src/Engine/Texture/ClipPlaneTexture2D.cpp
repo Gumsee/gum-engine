@@ -5,7 +5,7 @@ ClipPlaneTexture2D::ClipPlaneTexture2D(Renderer3D* renderer, ivec2 resolution)
     this->pRenderer = renderer;
     v2Resolution = resolution;
     pFramebuffer = new Framebuffer(resolution);
-    pFramebuffer->addTextureAttachment(0, "ReflectionTexture2D");
+    pFramebuffer->addTextureAttachment<unsigned char>(0, "ReflectionTexture2D");
     pFramebuffer->addDepthTextureAttachment("ReflectionDepthTexture2D");
     pFramebuffer->addDepthAttachment();
 }

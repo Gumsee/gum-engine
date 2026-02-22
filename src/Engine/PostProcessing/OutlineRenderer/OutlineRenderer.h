@@ -10,7 +10,10 @@ class OutlineRenderer
 {
 private:
     ShaderProgram* pShader;
+    ShaderProgram* pProcessingShader;
     Box* pCanvas;
+    Framebuffer* pFramebuffer;
+    color cColor;
 
 public:
     OutlineRenderer(Box* rendercanvas);
@@ -19,4 +22,8 @@ public:
     void render(Renderable* renderable, mat4 transform);
  
     void initShader();
+    void updateSize();
+
+    void setColor(const color& col);
+    color getColor() const;
 };

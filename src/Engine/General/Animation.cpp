@@ -1,5 +1,5 @@
 #include "Animation.h"
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 
 Animation::Animation()
 {
@@ -37,7 +37,7 @@ void Animation::updateAnimation()
     interpolatedFrame->position = vec3::mix(lastFrame->position, nextFrame->position, factor);
     
     
-    time += FPS::get();
+    time += Time::getFrametime();
     if(time > Frames[Frames.size() - 1]->time)
     {
         time = 0;

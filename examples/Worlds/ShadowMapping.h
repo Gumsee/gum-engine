@@ -5,7 +5,7 @@
 #include <Engine/Texture/TextureManager.h>
 #include <Engine/3D/World3D.h>
 #include <Engine/3D/Renderer3D.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <Graphics/Material.h>
 #include <System/Output.h>
 #include "../Examples.h"
@@ -14,7 +14,7 @@
 World3D* createShadowMappingExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(false); //PREFILTER MAP RENDERN BEI GRADIANT
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(false); //PREFILTER MAP RENDERN BEI GRADIANT
 	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/aerodynamics_workshop_8k.hdr", true));
 
 

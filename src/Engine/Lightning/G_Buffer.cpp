@@ -17,10 +17,10 @@ G_Buffer::G_Buffer(Box* canvas)
     pRenderCanvas = canvas;
 
     gBuffer = new Framebuffer(pRenderCanvas->getSize());
-    gBuffer->addTextureAttachment(0, "G_BufferPositionMap", Gum::Graphics::Datatypes::FLOAT);
-    gBuffer->addTextureAttachment(1, "G_BufferNormalMap", Gum::Graphics::Datatypes::FLOAT);
-    gBuffer->addTextureAttachment(2, "G_BufferDiffuseMap");
-    gBuffer->addTextureAttachment(3, "G_BufferObjectDataMap");
+    gBuffer->addTextureAttachment<float>(0, "G_BufferPositionMap");
+    gBuffer->addTextureAttachment<float>(1, "G_BufferNormalMap");
+    gBuffer->addTextureAttachment<unsigned char>(2, "G_BufferDiffuseMap");
+    gBuffer->addTextureAttachment<unsigned char>(3, "G_BufferObjectDataMap");
 
     //gBuffer->addDepthAttachment();
     gBuffer->addDepthTextureAttachment();
@@ -79,33 +79,6 @@ void G_Buffer::initShader()
         pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         pShader->build();
-        pShader->addUniform("color");
-        pShader->addUniform("viewPos");
-        pShader->addUniform("TextureMultiplier");
-        pShader->addUniform("transformationMatrix");
-        for(int i = 0; i < 100; i++)
-            pShader->addUniform("gBones[" + std::to_string(i) + "]");
-        
-        pShader->addUniform("hasNormalMap");
-        pShader->addUniform("hasSpecularMap");
-        pShader->addUniform("hasReflectionMap");
-        pShader->addUniform("hasRefractionMap");
-        pShader->addUniform("hasRoughnessMap");
-        pShader->addUniform("hasDisplacementMap");
-        pShader->addUniform("hasAmbientOcclusionMap");
-        pShader->addUniform("hasTexture");
-
-        pShader->addUniform("inverseCulling");
-        pShader->addUniform("reflectivity");
-        pShader->addUniform("refractivity");
-        pShader->addUniform("specularity");
-        pShader->addUniform("roughness");
-        pShader->addUniform("ClipPlane");
-        pShader->addUniform("flipNormal");
-        pShader->addUniform("isInstanced");
-        pShader->addUniform("isSkeletal");
-
-
         pShader->addTexture("texture0", GUM_MATERIAL_TEXTURE0);
         pShader->addTexture("ambientOcclusionmap", GUM_MATERIAL_AMBIENT_OCCLUSION_MAP);
         pShader->addTexture("roughnessmap", GUM_MATERIAL_ROUGHNESS_MAP);

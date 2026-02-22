@@ -1,16 +1,23 @@
 #pragma once
+#include <GUI/ShaderCanvas/ShaderCanvas.h>
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/VertexArrayObject.h"
+#include "Graphics/VertexBufferObject.h"
 #include <Graphics/Renderable.h>
 #include <Primitives/Transformable.h>
 
-class Gizmo : public Transformable<3U>, public Renderable
+class Gizmo : public Renderable, public Transformable<3U>
 {
 private:
-    VertexArrayObject* pPositionVAO;
-    inline static ShaderProgram* pShader = nullptr;
+    static inline ShaderProgram* pShader = nullptr;
+    VertexArrayObject* pLineVAO;
+    VertexBufferObject<vec2>* pLineVBO;
+    std::vector<vec2> vLineVBOData;
 
-    static void initShader();
+    void addCircle(vec2 at, float radius);
+    void addLine(vec2 from, vec2 to);
+
+    void drawTranslationGizmo(int type);
 
 public:
     Gizmo();

@@ -32,13 +32,13 @@ SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer)
 
 
     pSSAOFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOFramebuffer->addTextureAttachment(0, "SSAOTexture", Gum::Graphics::Datatypes::FLOAT);
+    pSSAOFramebuffer->addTextureAttachment<float>(0, "SSAOTexture");
 
     
     pSSAOBlurFramebuffer = new Framebuffer(pRenderer->getRenderCanvas()->getSize());
-    pSSAOBlurFramebuffer->addTextureAttachment(0, "SSAOBlurTexture", Gum::Graphics::Datatypes::FLOAT);
+    pSSAOBlurFramebuffer->addTextureAttachment<float>(0, "SSAOBlurTexture");
 
-    pNoiseTexture = new Texture2D("SSAONoiseTexture", Gum::Graphics::Datatypes::FLOAT);
+    pNoiseTexture = new Texture2Df("SSAONoiseTexture");
 
 	generateKernel();
 }
@@ -138,7 +138,7 @@ void SSAO::generateKernel()
     pNoiseTexture->setSize(ivec2(NoiseSize, NoiseSize));
     pNoiseTexture->setNumChannels(2);
     pNoiseTexture->setData(&ssaoNoise[0]);
-    pNoiseTexture->setFiltering(Texture::FilteringTypes::NEAREST_NEIGHBOR);
+    pNoiseTexture->setFiltering(Texture::FilteringType::NEAREST_NEIGHBOR);
     pNoiseTexture->repeat();
 
     
@@ -180,8 +180,8 @@ int SSAO::getKernelSize() const			    { return kernelSize; }
 int SSAO::getNoiseSize() const			    { return NoiseSize; }
 float SSAO::getRadius() const			    { return radius; }
 long long SSAO::getExecutionTime() const	{ return microseconds; }
-Texture2D* SSAO::getResultTexture()         { return (Texture2D*)pSSAOBlurFramebuffer->getTextureAttachment(0); }
-Texture2D* SSAO::getNoiseTexture() 	        { return pNoiseTexture; }
+Texture2Df* SSAO::getResultTexture()        { return (Texture2Df*)pSSAOBlurFramebuffer->getTextureAttachment(0); }
+Texture2Df* SSAO::getNoiseTexture() 	    { return pNoiseTexture; }
 
 
 
@@ -219,14 +219,6 @@ void SSAO::initShader()
         pShader->addTexture("texPosition", 0);
         pShader->addTexture("texNormal", 1);
         pShader->addTexture("texNoise", 2);
-        pShader->addUniform("projectionMatrix");
-        pShader->addUniform("viewMatrix");
-        pShader->addUniform("kernelSize");
-        pShader->addUniform("radius");
-        pShader->addUniform("power");
-        pShader->addUniform("noiseScale");
-        for (unsigned int i = 0; i < kernelSize; ++i)
-            pShader->addUniform("samples[" + std::to_string(i) + "]");
     }
 
     if(pBlurShader == nullptr)
@@ -236,6 +228,5 @@ void SSAO::initShader()
         pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pBlurShader->build();
         pBlurShader->addTexture("ssaoInput", 0);
-        pBlurShader->addUniform("NoiseSize");
     }
 }

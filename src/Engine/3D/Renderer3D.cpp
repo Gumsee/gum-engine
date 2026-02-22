@@ -48,7 +48,7 @@ void Renderer3D::renderInternal()
 
     //Render the Shadowmap
     pShadowMaps->render(*pWorld->getLightManager()->getSun()->getDirection(), [this](){
-        pWorld->getObjectManager()->renderEverything();
+        pWorld->getObjectManager()->renderEverythingMeshesOnly();
     });
 
     //SSAO
@@ -97,7 +97,6 @@ void Renderer3D::renderIDsInternal()
     if(pWorld == nullptr)
         return;
 
-    pIDRenderer->getMeshShader()->use();
     pWorld->getObjectManager()->renderIDs();
     pWorld->renderRenderableIDs();
 }

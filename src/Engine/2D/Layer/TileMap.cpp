@@ -89,7 +89,6 @@ void TileMap::initShader()
         pShader->addShader(new Shader(SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         pShader->build({{"vertices", 0}, {"TransMatrix", 1}});
-        pShader->addUniform("color");
         pShader->addTexture("textureSampler", 0);
     }
 

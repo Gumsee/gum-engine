@@ -20,10 +20,10 @@ private:
 
     VertexArrayObject* pControlVAO;
     VertexBufferObject<vec3> *pControlPointsBuffer;
-    int iNumSegments;
+    float fThickness;
 
 public:
-    CurveRenderer(Curve* curve);
+    CurveRenderer(Curve* curve, float thickness = 1.0f);
     ~CurveRenderer();
 
     void onProjectionUpdate() override;
@@ -33,7 +33,7 @@ public:
     void render() override;
     void renderID() override;
 
-    void setSegments(int segments);
+    void updateData();
 
     Curve* getCurve();
 };

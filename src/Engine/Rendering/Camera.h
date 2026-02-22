@@ -24,7 +24,7 @@ protected:
 	vec3 v3ActualPosition, v3ViewDirection, v3Up, v3StrafeDirection;
 	mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
 	mat3 mRotator;
-	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 0.5f;
+	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 20.0f;
     float& fPitch = qRotation.x;
     float& fYaw = qRotation.y;
     float& fRoll = qRotation.z;
@@ -56,6 +56,7 @@ public:
     mat4 getOrtho() const;
     mat4 getPerspective() const;
     vec3 getViewDirection() const;
+    vec3 getStrafeDirection() const;
     vec3 getPosition() const override;
     float getSpeed() const;
     float getFOV() const;
@@ -69,6 +70,7 @@ public:
     void setZoomSpeed(const float& speed);
     void setFOV(const float& fov);
     void overrideViewMatrix(mat4 matrix);
+    void setMovementSpeed(const float& speed);
 
     static void onViewUpdate(std::function<void()> callback);
 };

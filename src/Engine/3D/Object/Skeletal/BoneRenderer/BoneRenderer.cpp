@@ -44,9 +44,6 @@ BoneRenderer::BoneRenderer(AnimatedModel* model)
         pShader->addShader(new Shader(BoneRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
         pShader->addShader(new Shader(BoneRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build({ {"vertices", 0}, {"transMatrices", 3} });
-
-        for(int i = 0; i < 100; i++)
-            pShader->addUniform("bones[" + std::to_string(i) + "]");
     }
 
 

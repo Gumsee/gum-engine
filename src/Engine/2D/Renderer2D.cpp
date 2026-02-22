@@ -74,6 +74,9 @@ void Renderer2D::updateFramebufferSize()
     Renderer::updateFramebufferSize();
     pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
 
+    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
+
     if(pWorld != nullptr)
         pWorld->updateProjection();
 }
@@ -101,7 +104,6 @@ void Renderer2D::initShader()
         pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
         pParallaxSkyShader->build({{"vertices", 0}});
-        pParallaxSkyShader->addUniform("color");
         pParallaxSkyShader->addTexture("textureSampler", 0);
     }
 }

@@ -31,9 +31,11 @@ Background::~Background()
 void Background::render()
 {
     pShader->use();
+    bindTextures();
     pVertexArrayObject->bind();
     pVertexArrayObject->renderIndexed(iNumLayers);
     pVertexArrayObject->unbind();
+    unbindTextures();
 }
 
 void Background::addLayer()

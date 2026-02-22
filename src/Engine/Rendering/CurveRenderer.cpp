@@ -9,12 +9,16 @@
 #include "Renderer.h"
 #include <string>
 
-CurveRenderer::CurveRenderer(Curve* curve)
+CurveRenderer::CurveRenderer(Curve* curve, float thickness)
 {
     pCurve = curve;
-    this->iNumSegments = 40;
+    this->fThickness = thickness;
 
-    pShader = ShaderProgram::getShaderProgramByName("SimpleShader");
+    if(thickness > 1.0f)
+        pShader = ShaderProgram::getShaderProgramByName("ThicklinesShader");
+    else
+        pShader = ShaderProgram::getShaderProgramByName("SimpleShader");
+    
     pIDShader = ShaderProgram::getShaderProgramByName("ThicklinesShader");
 
     pTransMatricesVBO = new VertexBufferObject<mat4>();
@@ -45,11 +49,8 @@ CurveRenderer::~CurveRenderer()
 void CurveRenderer::onProjectionUpdate()
 {
     ShaderProgram* oldShader = ShaderProgram::getCurrentlyBoundShader();
-    pShader->use();
-    pShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
 
     pIDShader->use();
-    pIDShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
     pIDShader->loadUniform("viewportSize", (vec2)Renderer::getActiveRenderer()->getFramebuffer()->getSize());
 
     if(oldShader != nullptr)
@@ -68,7 +69,8 @@ void CurveRenderer::prerender()
     //pShader->loadUniform("segmentCount", iNumSegments);
     //pShader->loadUniform("stripCount", 1);
     pShader->loadUniform("color", vec4(1,0,1,1));
-    pShader->loadUniform("transformationMatrix", mTransformation);
+    if(fThickness > 1.0f)
+        pShader->loadUniform("thickness", fThickness/vec3::distance(Camera::getActiveCamera()->getPosition(), getPosition()));
 }
 
 void CurveRenderer::render()
@@ -86,17 +88,17 @@ void CurveRenderer::render()
 void CurveRenderer::renderID()
 {
     pIDShader->use();
-    pIDShader->loadUniform("color", pCurve->getIndividualColor());
-    pIDShader->loadUniform("transformationMatrix", mTransformation);
+    pIDShader->loadUniform("color", pCurve->getIndividualColor().getGLColor());
     pVAO->bind();
     pVAO->render(1);
     pVAO->unbind();
     pIDShader->unuse();
 }
 
-void CurveRenderer::setSegments(int segments)
+void CurveRenderer::updateData()
 {
-    this->iNumSegments = segments;
+    pPointsBuffer->setData(pCurve->getData(), Gum::Graphics::DataState::STATIC);
+    pVAO->setVertexCount(pCurve->getData().size());
 }
 
 Curve* CurveRenderer::getCurve()

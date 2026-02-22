@@ -18,6 +18,7 @@ ObjectManager::ObjectManager(vec3 *sunDirection)
 	Gum::Output::info("Initializing Object3D Manager...");
 
     pSkyBox = new SkyBox(Mesh::generateUVSphere(5, 15), sunDirection, "Skybox");
+    pSkyBox->renderSky(true);
 }
 ObjectManager::~ObjectManager() 
 {
@@ -108,6 +109,17 @@ void ObjectManager::renderEverything()
             obj->render();
 }
 
+void ObjectManager::renderEverythingMeshesOnly()
+{
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+            obj->renderMesh();
+        
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+            obj->renderMesh();
+}
+
 
 void ObjectManager::renderIDs()
 {
@@ -144,12 +156,15 @@ void ObjectManager::updateShaderPrograms(Camera* camera)
 }
 
 
-Object3D* ObjectManager::addObject(Object3D* obj, ShaderProgram* shader)
+Object3D* ObjectManager::addObject(Object3D* obj, ShaderProgram* shader, bool defered)
 {		
     if(obj->getShaderProgram() == nullptr)
         obj->setShaderProgram(shader);
 	
-    mObjectsDefered[shader].push_back(obj);
+    if(defered)
+        mObjectsDefered[shader].push_back(obj);
+    else
+        mObjectsForward[shader].push_back(obj);
 
     if(pAddObjectCallback != nullptr)
         pAddObjectCallback(obj);

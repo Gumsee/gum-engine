@@ -28,7 +28,7 @@ static const std::string ThicklinesGeometryShader = GLSL(
     in mat4 viewMat[];
         
     uniform vec2  viewportSize;
-    uniform float u_thickness = 30;
+    uniform float thickness = 30;
 
     void main()
     {
@@ -36,7 +36,7 @@ static const std::string ThicklinesGeometryShader = GLSL(
         vec4 p2 = gl_in[1].gl_Position;
 
         vec2 dir    = normalize((p2.xy/p2.w - p1.xy/p1.w) * viewportSize);
-        vec2 offset = vec2(-dir.y, dir.x) * u_thickness / viewportSize;
+        vec2 offset = vec2(-dir.y, dir.x) * thickness / viewportSize;
 
         gl_Position = p1 + vec4(offset.xy * p1.w, 0.0, 0.0);
         EmitVertex();
@@ -69,8 +69,6 @@ static void initThicklinesShader()
     shader->addShader(new Shader(ThicklinesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
     shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
-    shader->addUniform("color");
-    shader->addUniform("viewportSize");
 }
 
 

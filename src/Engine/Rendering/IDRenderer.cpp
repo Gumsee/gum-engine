@@ -6,7 +6,8 @@ IDRenderer::IDRenderer(Box* canvas)
 {
     pCanvas = canvas;
 
-    addTextureAttachment(0, "IndividualMap");
+    addTextureAttachment<unsigned char>(0, "IndividualMap", 3);
+    addDepthAttachment();
 
     if(pMeshIDShader == nullptr)
     {

@@ -26,5 +26,6 @@ static const std::string MeshIDFragmentShader = GLSL(
     void main()
     {
         finalColor = individualColorFS;
+        finalColor = vec4(individualColorFS.rgb, 1);
     }
 );

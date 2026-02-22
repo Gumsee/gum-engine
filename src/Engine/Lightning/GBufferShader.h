@@ -21,8 +21,7 @@ static const std::string GBufferVertexShader = GLSL(
 
     //Skeletal Stuff
     const int MAX_WEIGHTS = 4;//max number of joints that can affect a vertex
-    const int MAX_BONES = 100;
-    uniform mat4 gBones[MAX_BONES];
+    uniform mat4 gBones[100];
     uniform int isSkeletal;
     
     uniform mat4 projectionMatrix;

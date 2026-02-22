@@ -13,6 +13,7 @@
 #include "Engine/Material/MaterialManager.h"
 #include "Engine/PostProcessing/Effects/Effects.h"
 #include "Engine/Texture/TextureManager.h"
+#include "Essentials/Time.h"
 #include "Essentials/Tools.h"
 #include "Essentials/Unicode.h"
 #include "Essentials/Noise.h"
@@ -78,7 +79,7 @@ Gum::Filesystem::File Examples::assetPath = Gum::Filesystem::File(std::string(EX
 int main(int argc, char** argv)
 {
     Gum::Display::init();
-    pMainWindow = new Gum::Window("GUI Example", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
+    pMainWindow = new Gum::Window("Gumball Examples", ivec2(75, 75), GUM_WINDOW_SIZE_IN_PERCENT | GUM_WINDOW_RESIZABLE);
     pMainWindow->setVerticalSync(false);
 	pMainWindow->getMouse()->trap(false);
 	pMainWindow->getMouse()->hide(false);
@@ -107,7 +108,7 @@ int main(int argc, char** argv)
     //pMainCamera->setRotationalSpeed(0.2f);
 
     pMainRenderer = new Renderer3D(pRenderCanvas);
-    pMainRenderer->setWorld((World3D*)getExampleWorld("PhysicallyBasedRendering"));
+    pMainRenderer->setWorld((World3D*)getExampleWorld("BasicCube"));
     pMainRenderer->setExposure(1.0f);
 
     pMainWindow->onResized([](ivec2 size) {
@@ -171,6 +172,7 @@ int main(int argc, char** argv)
 
     //getExampleWorld("PhysicallyBasedRendering")->saveToFile(assetPath + Gum::Filesystem::File("/worlds/physicallybased.wld"));
 
+    int oldtime = 0;
     while(pMainWindow->isOpen())
     {
         Gum::Display::pollEvents();
@@ -185,8 +187,12 @@ int main(int argc, char** argv)
         pGUI->render();
         pGUI->update();
 
-        /*vec4 campos = Camera::getActiveCamera()->getViewMatrix() * vec4(0, 0, 0, 1);
-        Gum::Output::print(campos);*/
+        //vec4 campos = Camera::getActiveCamera()->getViewMatrix() * vec4(0, 0, 0, 1);
+        if((int)Time::getTime() != oldtime)
+        {
+            Gum::Output::print(Time::getFPS());
+            oldtime = (int)Time::getTime();
+        }
 
         if(pRenderCanvas->hasClickedInside(GUM_MOUSE_BUTTON_RIGHT))
         {
@@ -200,7 +206,7 @@ int main(int argc, char** argv)
 
         //pMainWindow.update();
         Texture::loadTextures();
-        FPS::update();
+        Time::update();
     }
 
 

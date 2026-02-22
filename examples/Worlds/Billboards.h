@@ -6,7 +6,7 @@
 World3D* createBillboardsExample()
 {
     World3D* pWorld3D = new World3D();
-	pWorld3D->getObjectManager()->getSkybox()->useGradiant(true);
+	pWorld3D->getObjectManager()->getSkybox()->renderSky(true);
 
     //Default
     Billboard* fixedBillboard = new Billboard(vec3(5,0,0));

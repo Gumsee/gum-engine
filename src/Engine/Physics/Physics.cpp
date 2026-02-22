@@ -12,7 +12,7 @@
 
 #include <Desktop/IO/Mouse.h>
 #include <Desktop/Window.h>
-#include <Essentials/FPS.h>
+#include <Essentials/Time.h>
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
 
@@ -88,7 +88,7 @@ Physics::~Physics()
 void Physics::update()
 {
     btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
-	world->stepSimulation(FPS::get(), 100, 1.0f/240);
+	world->stepSimulation(Time::getFrametime(), 100, 1.0f/240);
 
 	vec3 out_origin = Camera::getActiveCamera()->getPosition();
 	vec3 out_end = out_origin + Gum::Window::CurrentlyBoundWindow->getMouse()->getRayDirection()*1000.0f;

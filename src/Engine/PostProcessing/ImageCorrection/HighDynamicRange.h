@@ -4,7 +4,7 @@
 class HighDynamicRange : public PostProcessingEffect
 {
 private:
-	ShaderProgram *pShader;
+	static inline ShaderProgram *pShader = nullptr;
 	using PostProcessingEffect::render;
 
 public:

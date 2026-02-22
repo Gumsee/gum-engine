@@ -14,7 +14,6 @@ CombineTextures::CombineTextures(Box *canvas, const float& exposure)
         pShader->addShader(Gum::PostProcessing::VertexShader);
         pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
         pShader->build();
-        pShader->addUniform("exposure");
         pShader->addTexture("texture0", 0);
         pShader->addTexture("texture1", 1);
 	}

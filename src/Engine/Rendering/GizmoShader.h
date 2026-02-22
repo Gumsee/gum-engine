@@ -2,29 +2,24 @@
 #include <Graphics/Shader.h>
 
 static const std::string GizmoVertexShader = GLSL(
-    layout (location = 0) in vec3 vertices;
-    layout (location = 1) in vec3 colors;
-    layout (location = 2) in mat4 TransMatrix;
+    layout (location = 0) in vec2 vertices;
+    layout (location = 1) in vec4 colors;
 
-    out vec3 fsColor;
-
-    uniform mat4 projectionMatrix;
-    uniform mat4 viewMatrix;
+    out vec4 color;
 
     void main()
     {
-        fsColor = colors;
-        gl_Position = projectionMatrix * viewMatrix * TransMatrix * vec4(vertices, 1.0);
+        color = colors;
+        gl_Position = vec4(vertices, 0, 1);
     }
 );
 
 static const std::string GizmoFragmentShader = GLSL(
-    in vec3 fsColor;
-
     out vec4 finalColor;
+    in vec4 color;
 
     void main()
     {
-        finalColor = vec4(fsColor, 1.0);
+        finalColor = vec4(1,0,0,1);
     }
 );
