@@ -12,7 +12,7 @@ PostProcessingEffect::~PostProcessingEffect()
     Gum::_delete(pFramebuffer);
 }
 
-void PostProcessingEffect::init(Box* canvas)
+void PostProcessingEffect::init(Canvas* canvas)
 {
     this->pRenderCanvas = canvas;
 	this->pFramebuffer = new Framebuffer(pRenderCanvas->getSize());
@@ -24,4 +24,9 @@ Texture* PostProcessingEffect::render(Texture* texture) { return texture; }
 void PostProcessingEffect::setSize(ivec2 size)
 {
     this->pFramebuffer->setSize(size);
+}
+
+Framebuffer* PostProcessingEffect::getFramebuffer()
+{
+  return pFramebuffer;
 }

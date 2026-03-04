@@ -1,5 +1,4 @@
 #pragma once
-#include <GUI/ShaderCanvas/ShaderCanvas.h>
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"

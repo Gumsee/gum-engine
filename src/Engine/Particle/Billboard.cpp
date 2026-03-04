@@ -9,7 +9,6 @@
 #include "Graphics/VertexBufferObject.h"
 #include "System/MemoryManagement.h"
 #include "System/Output.h"
-#include <Desktop/Window.h>
 
 Billboard::Billboard(vec3 Position)
 {

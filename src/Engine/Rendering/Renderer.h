@@ -2,13 +2,12 @@
 #include <chrono>
 
 #include <Graphics/Framebuffer.h>
-#include <GUI/Primitives/Box.h>
+#include "Canvas.h"
 
 #include "../PostProcessing/Effects/PostProcessingEffect.h"
 #include "../PostProcessing/ImageCorrection/HighDynamicRange.h"
 
 #include "IDRenderer.h"
-#include "OcclusionMask.h"
 
 class Renderer
 {
@@ -26,10 +25,9 @@ private:
 protected:
 	Framebuffer* pFramebuffer;
     IDRenderer* pIDRenderer;
-    Box* pRenderCanvas;
+    Canvas* pRenderCanvas;
     float fExposure;
 
-	OcclusionMask* pOcclusionMask;
     HighDynamicRange* pHighDynamicRange;
     std::vector<PostProcessingEffect*> vPostProcessingEffects;
 
@@ -41,7 +39,7 @@ protected:
     virtual void renderIDsInternal() {};
 
 public:
-    Renderer(Box* canvas, const Type& type);
+    Renderer(Canvas* canvas, const Type& type);
     virtual ~Renderer();
 
 
@@ -55,15 +53,15 @@ public:
 
     //Setter
     void setExposure(const float& exposure);
-    void setResolution(const ivec2& resolution);
-    void setRenderCanvas(Box* canvas);
+    void setRenderCanvas(Canvas* canvas);
 
     //Getter
 	long long getExecutionTime() const;
-    Box* getRenderCanvas();
+    Canvas* getRenderCanvas();
     float getExposure() const;
     Type getType() const;
     Framebuffer* getFramebuffer();
+    HighDynamicRange* getHighDynamicRange();
     IDRenderer* getIDRenderer();
     static Renderer* getActiveRenderer();
 };

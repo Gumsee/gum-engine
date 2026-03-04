@@ -13,13 +13,11 @@
 #include <chrono>
 #include <iostream>
 
-SSAO::SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer) 
+SSAO::SSAO(Canvas *canvas, G_Buffer *gbuffer, Renderer* renderer) 
 {
 	this->pRenderer = renderer;
-	this->rect = gui;
+	this->pCanvas = canvas;
 	this->gbuffer = gbuffer;
-	this->pShader = nullptr;
-	this->pBlurShader = nullptr;
 
 	this->NoiseSize = 4;
 	this->kernelSize = 8;
@@ -49,10 +47,10 @@ SSAO::~SSAO()
 	Gum::_delete(pSSAOBlurFramebuffer);
 	Gum::_delete(pNoiseTexture);
 
-	pShader->removeShader(0);
-	pBlurShader->removeShader(0);
-	Gum::_delete(pShader);
-	Gum::_delete(pBlurShader);
+	//pShader->removeShader(0);
+	//pBlurShader->removeShader(0);
+	//Gum::_delete(pShader);
+	//Gum::_delete(pBlurShader);
 }
 
 
@@ -82,7 +80,7 @@ void SSAO::render()
 	pShader->loadUniform("far", (float)Settings::getSetting(Settings::RENDERDISTANCE));
 	pShader->loadUniform("power", (float)power);
 
-	rect->render();
+	pCanvas->render();
 	pShader->unuse();
 
 	pSSAOBlurFramebuffer->bind();
@@ -91,7 +89,7 @@ void SSAO::render()
 
 	pBlurShader->use();
     pBlurShader->loadUniform("NoiseSize", (int)NoiseSize);
-	rect->render();
+	pCanvas->render();
 	pBlurShader->unuse();
 
     pSSAOFramebuffer->getTextureAttachment(0)->unbind(0);

@@ -1,14 +1,14 @@
 #pragma once
 #include <Graphics/Framebuffer.h>
 #include <Graphics/ShaderProgram.h>
-#include <GUI/Primitives/Box.h>
+#include "../../Rendering/Canvas.h"
 
 class PostProcessingEffect
 {
 protected:
-	Box *pRenderCanvas;
+	Canvas *pRenderCanvas;
 	Framebuffer *pFramebuffer;
-    void init(Box* canvas);
+    void init(Canvas* canvas);
 
 public:
     PostProcessingEffect();
@@ -17,4 +17,6 @@ public:
 	virtual Texture* render(Texture* texture);
 
 	virtual void setSize(ivec2 size);
+
+  Framebuffer* getFramebuffer();
 };

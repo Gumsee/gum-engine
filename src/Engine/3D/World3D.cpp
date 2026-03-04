@@ -1,7 +1,5 @@
 #include "World3D.h"
-#include <GumEngine/Engine/3D/Object/SceneObject.h>
 #include <System/MemoryManagement.h>
-#include <Desktop/Window.h>
 #include <string>
 #include "Camera3D.h"
 #include "Codecs/XMLNode.h"
@@ -11,19 +9,17 @@
 #include "Graphics/ShaderProgram.h"
 #include "Object/ObjectManager.h"
 #include "../Material/MaterialManager.h"
-#include "../Texture/TextureManager.h"
 #include "Object/PhysicsObjectInstance.h"
 #include "Primitives/Transformable.h"
 #include "System/Output.h"
 
 
-World3D::World3D()
+World3D::World3D(SkyBox* othersky)
     : World(WORLD3D)
 {
     pLightManager = new LightManager(this); 
-    pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection()); 
+    pObjectManager = new ObjectManager(pLightManager->getSun()->getDirection(), othersky); 
     pPhysics = new Physics();
-    //vCamera.push_back(new Camera(context->getSize(), this, context));
 }
 
 World3D::~World3D()
@@ -31,8 +27,6 @@ World3D::~World3D()
     Gum::_delete(pLightManager);
     Gum::_delete(pObjectManager);
     Gum::_delete(pPhysics);
-    for(size_t i = 0; i < vCamera.size(); i++)
-        Gum::_delete(vCamera[i]);
 }
 
 void World3D::update()
@@ -111,7 +105,7 @@ World3D* World3D::readFromFile(XMLReader& reader)
         bool hdr = skynode->getAttribute("hdr") == "true";
         Gum::Unicode skytexture = skynode->getAttribute("texture");
         world->getObjectManager()->getSkybox()->renderSky(!hdr);
-        world->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture(skytexture.toString(), true));
+        world->getObjectManager()->getSkybox()->setTexture(Texture::autoLoad(skytexture.toString(), true));
     }
      
     for(XMLNode* objsHolderNode : reader.getNodeListByName("objects"))

@@ -6,11 +6,11 @@
 
 #include <System/MemoryManagement.h>
 
-Renderer2D::Renderer2D(Box* canvas)
+Renderer2D::Renderer2D(Canvas* canvas)
     : Renderer(canvas, RENDERER2D)
 {
     pWorld = nullptr;
-	pGBuffer = new G_Buffer(pRenderCanvas);
+	pGBuffer = new G_Buffer(pRenderCanvas->getSize());
 
     initShader();
 
@@ -29,6 +29,8 @@ void Renderer2D::renderInternal()
     if(pWorld == nullptr)
         return;
 
+    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
     pFramebuffer->bind();
     pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
     pWorld->renderSky();
@@ -74,9 +76,6 @@ void Renderer2D::updateFramebufferSize()
     Renderer::updateFramebufferSize();
     pGBuffer->getFramebuffer()->setSize(pRenderCanvas->getSize());
 
-    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
-
     if(pWorld != nullptr)
         pWorld->updateProjection();
 }
@@ -89,9 +88,9 @@ World2D* Renderer2D::getWorld()    { return this->pWorld; }
 void Renderer2D::setWorld(World2D* world) 
 { 
     this->pWorld = world; 
-    world->getLightManager()->addCallback([](Light* light, int index) {
-        //pLightning->loadLight(light, index);
-    });
+    //world->getLightManager()->addCallback([](Light* light, int index) {
+    //    //pLightning->loadLight(light, index);
+    //});
 }
 
 

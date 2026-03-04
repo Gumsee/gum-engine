@@ -9,7 +9,7 @@ private:
     Texture* pSecondTexture;
 
 public:
-	Difference(Box *canvas);
+	Difference(Canvas *canvas);
 	~Difference();
 
 	Texture* render(Texture* texture) override;

@@ -4,13 +4,13 @@
 #include <cstdlib>
 #include <Graphics/WrapperFunctions.h>
 
-PerlinNoise3D::PerlinNoise3D(ivec3 size, float seed, std::string name)
+PerlinNoise3D::PerlinNoise3D(ivec3 size, int seed, std::string name)
+  : iSeed(seed)
 {
     //Set properties
     this->sName = name;
 	this->iType = TEXTURE3D;
 	this->v3Size = size;
-    this->seed = seed;
 
 
     //(generate texel code omitted)
@@ -93,7 +93,7 @@ void PerlinNoise3D::regenerate()
             std::vector<double> currentNoise;
             for(int z = 0; z < v3Size.z; z++)  // Z Iteration
             {
-                currentNoise.push_back(Noise(seed, x, y, z));
+                currentNoise.push_back(Noise(iSeed, x, y, z));
             }
             currentVector.push_back(currentNoise);
         }
@@ -108,7 +108,7 @@ void PerlinNoise3D::regenerate()
         {
             for(int z = 0; z < v3Size.z; z++)
             {
-                float val = turbulence(seed, x, y, z, 256);
+                float val = turbulence(iSeed, x, y, z, 256);
                 val = rand() % 256;
                 val /= 256;
                 pixels.push_back(val);

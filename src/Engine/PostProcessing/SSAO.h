@@ -1,8 +1,7 @@
 #pragma once
 #include <Graphics/Framebuffer.h>
 #include <Graphics/ShaderProgram.h>
-#include <GUI/Primitives/Box.h>
-
+#include "../Rendering/Canvas.h"
 #include "../Lightning/G_Buffer.h"
 
 class Renderer;
@@ -11,13 +10,13 @@ class SSAO
 {
 private:
 	Texture2Df *pNoiseTexture;
-	ShaderProgram *pShader;
-	ShaderProgram *pBlurShader;
+	static inline ShaderProgram *pShader = nullptr;
+	static inline ShaderProgram *pBlurShader = nullptr;
 
 	Renderer* pRenderer;
 
-	Box *rect;
-	G_Buffer *gbuffer;
+	Canvas* pCanvas;
+	G_Buffer* gbuffer;
 
 	unsigned int kernelSize;
 	unsigned int NoiseSize;
@@ -40,7 +39,7 @@ private:
     void initShader();
 
 public:
-	SSAO(Box *gui, G_Buffer *gbuffer, Renderer* renderer);
+	SSAO(Canvas* canvas, G_Buffer *gbuffer, Renderer* renderer);
 	~SSAO();
 
 	void render();

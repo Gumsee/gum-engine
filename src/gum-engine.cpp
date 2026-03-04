@@ -3,26 +3,35 @@
 #include "Engine/Particle/ShaderInitializer.h"
 #include "Engine/Material/MaterialManager.h"
 #include "Engine/Lightning/LightManager.h"
-#include "Engine/Texture/TextureManager.h"
 #include "Engine/Shaders/SimpleShader.h"
 #include "Engine/Shaders/ThicklinesShader.h"
 
 namespace Gum { 
 namespace Engine
 {
+    bool ENGINE_INITIALIZED = false;
 	void init()
     {
+        if(ENGINE_INITIALIZED)
+            return;
         Gum::MaterialManager::init();
         Gum::PostProcessing::initShaders();
         Gum::Particles::initShaders();
         initSimpleShader();
         initThicklinesShader();
+
+        ENGINE_INITIALIZED = true;
     }
 
 	void cleanup()
     {
+        if(!ENGINE_INITIALIZED)
+            return;
         Gum::MaterialManager::cleanup();
-        Gum::TextureManager::cleanup();
+        Texture::cleanupAllLoadedTextures();
+        ShaderProgram::destroyAllShaders();
         LightManager::cleanup();
+
+        ENGINE_INITIALIZED = false;
     }
 }};

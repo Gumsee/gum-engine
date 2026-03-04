@@ -1,6 +1,5 @@
 #include "World2D.h"
 #include <System/MemoryManagement.h>
-#include <Desktop/Window.h>
 #include "Camera2D.h"
 #include "Graphics/ShaderProgram.h"
 #include "Layer/TileMap.h"
@@ -13,15 +12,12 @@ World2D::World2D()
 {
     pLightManager = new LightManager(this);
     pPhysics = new Physics();
-    //vCamera.push_back(new Camera(context->getSize(), this, context));
 }
 
 World2D::~World2D()
 {
     Gum::_delete(pLightManager);
     Gum::_delete(pPhysics);
-    for(size_t i = 0; i < vCamera.size(); i++)
-        Gum::_delete(vCamera[i]);
 }
 
 void World2D::update()
@@ -99,5 +95,5 @@ void World2D::addLayer(Layer* layer) { vLayers.push_back(layer); }
 // Getter
 //
 LightManager* World2D::getLightManager()                  { return this->pLightManager; }
-unsigned int World2D::numLayers() const                   { return this->vLayers.size(); }
+unsigned int World2D::numLayers() const                   { return (unsigned int)this->vLayers.size(); }
 Layer* World2D::getSpriteLayer(const unsigned int& layer) { return this->vLayers[layer]; }

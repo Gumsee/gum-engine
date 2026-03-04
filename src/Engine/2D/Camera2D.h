@@ -18,7 +18,7 @@ private:
 
 public:
     Camera2D(const ivec2& resolution, World2D* world);
-    ~Camera2D();
+    ~Camera2D() override;
 
     void update() override;
     void updateProjection(const ivec2& resolution) override;

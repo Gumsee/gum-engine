@@ -102,26 +102,18 @@ float Terrain::getHeight(float x, float z)
 {
 	float gridSquareSizeX = v2Size.x / ((float)v2Resolution.x - 1);
 	float gridSquareSizeZ = v2Size.y / ((float)v2Resolution.y - 1);
-	int gridX = floor(x / gridSquareSizeX);
-	int gridZ = floor(z / gridSquareSizeZ);
+	int gridX = (int)floor(x / gridSquareSizeX);
+	int gridZ = (int)floor(z / gridSquareSizeZ);
 	if (gridX >= v2Resolution.x - 1 || gridZ >= v2Resolution.y - 1 || gridX < 0 || gridZ < 0)
-	{
 		return 0;
-	}
+        
 	float xCoord = std::fmod(x, gridSquareSizeX) / gridSquareSizeX;
 	float zCoord = std::fmod(z, gridSquareSizeZ) / gridSquareSizeZ;
-	float answer = 0;
-
+    
 	if (xCoord <= (1 - zCoord))
-	{
-		answer = Tools::barryCentric(vec3(0, heights[gridX][gridZ], 0), vec3(1, heights[gridX + 1][gridZ], 0), vec3(0, heights[gridX][gridZ + 1], 1), vec2(xCoord, zCoord));
-	}
+		return Tools::barryCentric(vec3(0, heights[gridX][gridZ], 0), vec3(1, heights[gridX + 1][gridZ], 0), vec3(0, heights[gridX][gridZ + 1], 1), vec2(xCoord, zCoord));
 	else
-	{
-		answer = Tools::barryCentric(vec3(1, heights[gridX + 1][gridZ], 0), vec3(1, heights[gridX + 1][gridZ + 1], 1), vec3(0, heights[gridX][gridZ + 1], 1), vec2(xCoord, zCoord));
-	}
-	return answer;
-
+		return Tools::barryCentric(vec3(1, heights[gridX + 1][gridZ], 0), vec3(1, heights[gridX + 1][gridZ + 1], 1), vec3(0, heights[gridX][gridZ + 1], 1), vec2(xCoord, zCoord));
 }
 
 
@@ -142,25 +134,23 @@ float Terrain::getInterpolatedNoise(float x, float z)
 {
 	int intX = (int)x;
 	int intZ = (int)z;
-	float fracX = x - intX;
-	float fracZ = z - intZ;
+	double fracX = x - intX;
+	double fracZ = z - intZ;
 
-	float v1 = getSmoothNoise(intX, intZ);
-	float v2 = getSmoothNoise(intX + 1, intZ);
-	float v3 = getSmoothNoise(intX, intZ + 1);
-	float v4 = getSmoothNoise(intX + 1, intZ + 1);
-	float i1 = interpolate(v1, v2, fracX);
-	float i2 = interpolate(v3, v4, fracX);
-	return interpolate(i1, i2, fracZ);
+	double v1 = getSmoothNoise(intX, intZ);
+	double v2 = getSmoothNoise(intX + 1, intZ);
+	double v3 = getSmoothNoise(intX, intZ + 1);
+	double v4 = getSmoothNoise(intX + 1, intZ + 1);
+	double i1 = interpolate(v1, v2, fracX);
+	double i2 = interpolate(v3, v4, fracX);
+	return (float)interpolate(i1, i2, fracZ);
 }
 
 float Terrain::getSmoothNoise(int x, int z) 
 {
-	float corners = (Noise(x - 1, z - 1) + Noise(x + 1, z - 1) + Noise(x - 1, z + 1)
-		+ Noise(x + 1, z + 1)) / 16;
-	float sides = (Noise(x - 1, z) + Noise(x + 1, z) + Noise(x, z - 1)
-		+ Noise(x, z + 1)) / 8;
-	float center = Noise(x, z) / 4;
+	float corners = (Noise(x - 1, z - 1) + Noise(x + 1, z - 1) + Noise(x - 1, z + 1) + Noise(x + 1, z + 1)) / 16.0f;
+	float sides = (Noise(x - 1, z) + Noise(x + 1, z) + Noise(x, z - 1) + Noise(x, z + 1)) / 8.0f;
+	float center = Noise(x, z) / 4.0f;
 	return corners + sides + center;
 }
 

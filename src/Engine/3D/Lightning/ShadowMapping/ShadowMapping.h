@@ -2,7 +2,6 @@
 #include <Graphics/ShaderProgram.h>
 #include <Graphics/Framebuffer.h>
 #include <Graphics/Texture.h>
-#include <Desktop/Window.h>
 #include <functional>
 
 class Renderer3D;

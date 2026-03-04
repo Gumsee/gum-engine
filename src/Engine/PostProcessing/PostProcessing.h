@@ -6,5 +6,6 @@ namespace PostProcessing
 {
     extern ShaderProgram *PostProcessingShader;
     extern Shader* VertexShader;
+    extern Shader* FragmentShader;
     extern void initShaders();
 }}

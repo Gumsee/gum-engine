@@ -1,5 +1,4 @@
 #pragma once
-#include <GUI/Primitives/Box.h>
 #include <Graphics/Framebuffer.h>
 #include <Graphics/Texture.h>
 #include <Graphics/ShaderProgram.h>
@@ -8,7 +7,6 @@
 class G_Buffer
 {
 private:
-    Box* pRenderCanvas;
     Framebuffer* gBuffer;
 	long long microseconds;
 	int depthBuffer;
@@ -18,7 +16,7 @@ private:
     void initShader();
 
 public:
-    G_Buffer(Box* canvas);
+    G_Buffer(const ivec2& canvassize);
     ~G_Buffer();
 
     void bind();

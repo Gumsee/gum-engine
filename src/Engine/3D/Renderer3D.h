@@ -18,12 +18,12 @@ private:
         Grid* pGrid;
     //#endif
 
-	//Occlusion Culling
-	EnvironmentMap *pEnvironmentMap;
-	ShadowMapping *pShadowMaps;
-	SSAO *pSSAO;
-	Lightning *pLightning;
-	G_Buffer *pGBuffer;
+    //Occlusion Culling
+    EnvironmentMap *pEnvironmentMap;
+    ShadowMapping *pShadowMaps;
+    SSAO *pSSAO;
+    Lightning *pLightning;
+    G_Buffer *pGBuffer;
     
     ShaderProgram* pParticleShader;
     ShaderProgram* pBillboardShader;
@@ -32,8 +32,10 @@ private:
     void renderInternal()  override;
     void renderIDsInternal()  override;
 
+    bool bRenderSky;
+
 public:
-    Renderer3D(Box* canvas);
+    Renderer3D(Canvas* canvas);
     ~Renderer3D();
 
     void update() override;
@@ -41,6 +43,7 @@ public:
 
     //Setter
     void setWorld(World3D* world);
+    void renderSky(bool rendersky);
 
     //Getter
     SSAO* getSSAO();

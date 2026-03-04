@@ -21,7 +21,7 @@ private:
 
 protected:
     vec2 v2CurrentResolution;
-	vec3 v3ActualPosition, v3ViewDirection, v3Up, v3StrafeDirection;
+	vec3 v3ActualPosition, v3ViewDirection, v3WorldUp, v3WorldFront, v3WorldUpFrontCross, v3StrafeDirection;
 	mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
 	mat3 mRotator;
 	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 20.0f;
@@ -31,15 +31,17 @@ protected:
     static std::function<void()> pOnViewUpdate;
 
     void updateView();
+    
+    Camera(const ivec2& resolution, const Type& type);
 
 public:
-    Camera(const ivec2& resolution, const Type& type);
-    virtual ~Camera();
+    virtual ~Camera() {};
 
-    virtual void update() {};
+    virtual void update() = 0;
     virtual void updateProjection(const ivec2& resolution) {};
     void makeActive();
     void invertPitch();
+		vec3 calcMouseRayDirection();		
 
     //Moving/Strafing
     void moveForward(const float& f);
@@ -51,6 +53,8 @@ public:
 
 
     //Getter
+    vec3 getUpDirection() const;
+    vec3 getFrontDirection() const;
     mat4 getProjectionMatrix() const;
     mat4 getViewMatrix() const;
     mat4 getOrtho() const;
@@ -71,6 +75,8 @@ public:
     void setFOV(const float& fov);
     void overrideViewMatrix(mat4 matrix);
     void setMovementSpeed(const float& speed);
+    void setWorldUpDirection(const vec3& up);
+    void setWorldFrontDirection(const vec3& front);
 
     static void onViewUpdate(std::function<void()> callback);
 };

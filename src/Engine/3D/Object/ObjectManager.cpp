@@ -1,5 +1,4 @@
 #include "ObjectManager.h"
-#include "Desktop/Window.h"
 #include "../Lightning/ShadowMapping/ShadowMapping.h"
 #include "../Camera3D.h"
 #include "../Renderer3D.h"
@@ -13,24 +12,35 @@
 
 Gum::File ObjectManager::MODEL_ASSETS_PATH = Gum::File("", Gum::Filesystem::DIRECTORY);
 
-ObjectManager::ObjectManager(vec3 *sunDirection) 	
+ObjectManager::ObjectManager(vec3 *sunDirection, SkyBox* othersky) 	
+  : pSkyBox(othersky)
 {
-	Gum::Output::info("Initializing Object3D Manager...");
+	  //Gum::Output::info("Initializing Object3D Manager...");
+    bSelfManagedSkybox = true;
+    bSelfManagedObjects = false;
 
-    pSkyBox = new SkyBox(Mesh::generateUVSphere(5, 15), sunDirection, "Skybox");
-    pSkyBox->renderSky(true);
+    if(othersky == nullptr)
+    {
+      pSkyBox = new SkyBox(Mesh::generateSphere(1.0f, 5, 15), sunDirection, "Skybox");
+      //pSkyBox = new SkyBox(Mesh::generateCube(vec3(1.0f)), sunDirection, "Skybox");
+      pSkyBox->renderSky(true);
+      bSelfManagedSkybox = false;
+    }
 }
 ObjectManager::~ObjectManager() 
 {
 	Gum::_delete(pSkyBox);
 
-	for(auto objs : mObjectsDefered)
+  if(!bSelfManagedObjects)
+  {
+    for(auto objs : mObjectsDefered)
         for(Object3D* obj : objs.second)
-		    Gum::_delete(obj);
+            Gum::_delete(obj);
 
-	for(auto objs : mObjectsForward)
+    for(auto objs : mObjectsForward)
         for(Object3D* obj : objs.second)
-		    Gum::_delete(obj);
+            Gum::_delete(obj);
+  }
 
 	mObjectsForward.clear();
 	mObjectsDefered.clear();
@@ -45,7 +55,7 @@ void ObjectManager::renderSky()
     pSkyBox->getShaderProgram()->unuse();
 }
 
-void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
+void ObjectManager::renderDefered(G_Buffer* gbuffer, Canvas* rendercanvas)
 {
     Framebuffer* currentFramebuffer = Framebuffer::CurrentlyBoundFramebuffer;
 
@@ -74,10 +84,12 @@ void ObjectManager::renderDefered(G_Buffer* gbuffer, Box* rendercanvas)
         pSkyBox->getIrradianceMap()->bind(6);
         pSkyBox->getPreFilterMap()->bind(7);
         pSkyBox->getBRDFConvMap()->bind(8);
+        #ifndef GUM_ENGINE_NO_SHADOWMAP
         ((Renderer3D*)Renderer3D::getActiveRenderer())->getShadowMapping()->getResultTexture()->bind(9);
+        #endif
 
         shader->use();
-        rendercanvas->renderCustom();
+        rendercanvas->render();
 
         gbuffer->getFramebuffer()->blitDepthToOtherFramebuffer(currentFramebuffer);
     }
@@ -203,7 +215,25 @@ bool ObjectManager::hasObject(std::string name)
 
 void ObjectManager::removeObject(Object3D *objToDelete)
 {
-	
+	for(auto objs : mObjectsDefered)
+    {
+        auto foundit = std::find(objs.second.begin(), objs.second.end(), objToDelete);
+        if(foundit != objs.second.end())
+        {
+            objs.second.erase(foundit);
+            return;
+        }
+    }
+        
+	for(auto objs : mObjectsForward)
+    {
+        auto foundit = std::find(objs.second.begin(), objs.second.end(), objToDelete);
+        if(foundit != objs.second.end())
+        {
+            objs.second.erase(foundit);
+            return;
+        }
+    }
 }
 
 Object3DInstance* ObjectManager::getInstanceByID(const unsigned int& id)
@@ -241,13 +271,12 @@ Object3DInstance* ObjectManager::getInstanceByID(const unsigned int& id)
 //
 // Super slow:
 //
-unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer) const
+unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer, ivec2 mousepos) const
 {
-	vec2 pos = Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition();
-	pos.y = renderer->getRenderCanvas()->getSize().y - pos.y;
-    color col = renderer->getGBuffer()->getFramebuffer()->getPixel(pos);
+	mousepos.y = renderer->getRenderCanvas()->getSize().y - mousepos.y;
+    color col = renderer->getGBuffer()->getFramebuffer()->getPixel(mousepos);
 
-	int pickedID = col.r + col.g * 256 + col.b * 256*256;
+	unsigned int pickedID = (unsigned int)col.r + (unsigned int)col.g * 256 + (unsigned int)col.b * 256*256;
 	return pickedID;
 }
 
@@ -257,6 +286,7 @@ unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer) const
 //
 void ObjectManager::setSkybox(SkyBox *skybox)                 { this->pSkyBox = skybox; }
 void ObjectManager::onAddObject(AddObjectCallback callback)   { this->pAddObjectCallback = callback; }
+void ObjectManager::selfManageObjects(bool selfmanaged)       { this->bSelfManagedObjects = selfmanaged; }
 
 
 //

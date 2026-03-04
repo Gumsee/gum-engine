@@ -1,7 +1,7 @@
 #include "IDRenderer.h"
 #include "IDRendererShader.h"
 
-IDRenderer::IDRenderer(Box* canvas)
+IDRenderer::IDRenderer(Canvas* canvas)
     : Framebuffer(canvas->getSize(), false)
 {
     pCanvas = canvas;

@@ -7,17 +7,19 @@
 #include "Lightning/ShadowMapping/ShadowMapping.h"
 #include "../Rendering/IDRenderer.h"
 
-#include <Desktop/Window.h>
 #include <System/MemoryManagement.h>
 
-Renderer3D::Renderer3D(Box* canvas)
+Renderer3D::Renderer3D(Canvas* canvas)
     : Renderer(canvas, RENDERER3D)
 {
     pWorld = nullptr;
-	pGBuffer      = new G_Buffer(pRenderCanvas);
-	pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
-	pLightning    = new Lightning(pRenderCanvas, this);
+    bRenderSky = true;
+    pGBuffer      = new G_Buffer(pRenderCanvas->getSize());
+    pSSAO         = new SSAO(pRenderCanvas, pGBuffer, this);
+    pLightning    = new Lightning(pRenderCanvas);
+    #ifndef GUM_ENGINE_NO_SHADOWMAP
     pShadowMaps   = new ShadowMapping();
+    #endif
     //#ifdef DEBUG
     pGrid         = new Grid();
     //#endif
@@ -30,11 +32,10 @@ Renderer3D::Renderer3D(Box* canvas)
 
 Renderer3D::~Renderer3D()
 {
-    Gum::_delete(pOcclusionMask);
     Gum::_delete(pFramebuffer);
-	Gum::_delete(pGBuffer);
-	Gum::_delete(pSSAO);
-	Gum::_delete(pLightning);
+    Gum::_delete(pGBuffer);
+    Gum::_delete(pSSAO);
+    Gum::_delete(pLightning);
     Gum::_delete(pShadowMaps);
     Gum::_delete(pHighDynamicRange);
 }
@@ -44,19 +45,26 @@ void Renderer3D::renderInternal()
 {
     if(pWorld == nullptr)
         return;
+
+    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
     //GumEngine::DefaultOutlineRenderer->resetFramebuffer();
 
     //Render the Shadowmap
+    #ifndef GUM_ENGINE_NO_SHADOWMAP
     pShadowMaps->render(*pWorld->getLightManager()->getSun()->getDirection(), [this](){
         pWorld->getObjectManager()->renderEverythingMeshesOnly();
     });
+    #endif
 
     //SSAO
     //pSSAO->render();
 
     pFramebuffer->bind();
     pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH | Framebuffer::ClearFlags::STENCIL);
-    pWorld->renderSky();
+    if(bRenderSky)
+      pWorld->renderSky();
+
     pLightning->updateShader(pShadowMaps, pWorld);
     pWorld->getObjectManager()->renderDefered(pGBuffer, pRenderCanvas);
     
@@ -64,7 +72,7 @@ void Renderer3D::renderInternal()
     pWorld->getObjectManager()->renderForward();
 
     //#ifdef DEBUG
-    pGrid->render();
+    //pGrid->render();
     //#endif
 
     pWorld->renderRenderable();
@@ -73,7 +81,7 @@ void Renderer3D::renderInternal()
     pParticleShader->use();
     pWorld->renderParticles(pParticleShader);
 
-	pBillboardShader->use();
+	  pBillboardShader->use();
     pWorld->renderBillboards(pBillboardShader);
 
 
@@ -117,9 +125,6 @@ void Renderer3D::updateFramebufferSize()
     if(Camera::getActiveCamera() == nullptr)
         return;
 
-    ShaderProgram::loadUniformForAll("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-    ShaderProgram::loadUniformForAll("canvassize", pRenderCanvas->getSize());
-
     if(pWorld != nullptr)
     {
         pWorld->getObjectManager()->updateShaderPrograms(Camera::getActiveCamera());
@@ -140,6 +145,7 @@ World3D* Renderer3D::getWorld()                 { return this->pWorld; }
 //
 // Setter
 //
+void Renderer3D::renderSky(bool rendersky)      { this->bRenderSky = rendersky; }
 void Renderer3D::setWorld(World3D* world) 
 { 
     this->pWorld = world; 

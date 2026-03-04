@@ -50,7 +50,8 @@ void tEnvironmentMap<T>::render(std::function<void()> renderfunc)
     }
 
     oldcam->makeActive();
-    oldFramebuffer->bind();
+    if(oldFramebuffer != nullptr)
+      oldFramebuffer->bind();
 }
 
 //	GumEngine::Objects->render(GumEngine::Objects->WITHOUTREFLECTIVE);
@@ -64,3 +65,6 @@ void tEnvironmentMap<T>::setSize(const ivec2& size)
 template<typename T> ivec2 tEnvironmentMap<T>::getSize() const         { return pFramebuffer->getSize(); }
 
 template<typename T> Framebuffer* tEnvironmentMap<T>::getFramebuffer() { return pFramebuffer; }
+
+template class tEnvironmentMap<unsigned char>;
+template class tEnvironmentMap<float>;

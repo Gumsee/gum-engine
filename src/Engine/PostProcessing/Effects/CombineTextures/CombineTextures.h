@@ -10,7 +10,7 @@ private:
     float fExposure;
 
 public:
-	CombineTextures(Box *canvas, const float& exposure = 1.0f);
+	CombineTextures(Canvas *canvas, const float& exposure = 1.0f);
 	~CombineTextures();
 
 

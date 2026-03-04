@@ -1,13 +1,16 @@
 #include "PhysicsObjectInstance.h"
 #include <Graphics/Object3DInstance.h>
 #include <System/Output.h>
+#include "../World3D.h"
+
+#ifdef GUM_USE_BULLET_PHYSICS
 #include <btBulletCollisionCommon.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 #include <BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h>
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <LinearMath/btVector3.h>
-#include "../World3D.h"
+#endif
 
 /**
  * type: Type of Collision Shape
@@ -29,6 +32,8 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
     this->iType = OBJECT3D_INSTANCE_TYPE_PHYSICS;
     
     bool isActive = mass == 0.0f;
+
+#ifdef GUM_USE_BULLET_PHYSICS
     btTransform Transform;
     Transform.setIdentity();
     Transform.setOrigin(btVector3(vPosition.x, vPosition.y, vPosition.z));
@@ -173,6 +178,7 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
     });
     
     ((btDiscreteDynamicsWorld*)world->getPhysics()->getWorld())->addRigidBody(body);
+    #endif
     this->setActivation(isActive);
 }
 
@@ -184,12 +190,14 @@ PhysicsObjectInstance::~PhysicsObjectInstance()
 
 void PhysicsObjectInstance::onTransformUpdate()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
     btRigidBody* body = ((btRigidBody*)pRigidbody->getBody());
     btTransform transform; 
     body->getMotionState()->getWorldTransform(transform); 
     transform.setFromOpenGLMatrix(&(mTransformation)[0][0]); 
     body->setWorldTransform(transform);
     body->getMotionState()->setWorldTransform(transform); 
+    #endif
 }
 
 bool PhysicsObjectInstance::isCollidingWithRay(vec3 ray)

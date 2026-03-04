@@ -5,11 +5,7 @@
 class PerlinNoise3D : public Texture3D
 {
 private:
-    int maxPrimeIndex = 10;
-    int numOctaves = 9;
-    float persistence = 0.65;
-    int primeIndex = 3;
-    float seed;
+    int iSeed;
 
     std::vector<std::vector<std::vector<double> > > noise;
 
@@ -18,7 +14,7 @@ private:
     double turbulence(int seed, double x, double y, double z, double size);
 
 public:
-    PerlinNoise3D(ivec3 size, float seed, std::string name);
+    PerlinNoise3D(ivec3 size, int seed, std::string name);
     ~PerlinNoise3D();
 
     void regenerate();

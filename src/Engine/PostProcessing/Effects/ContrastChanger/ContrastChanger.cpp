@@ -3,7 +3,7 @@
 #include "../../PostProcessing.h"
 
 
-ContrastChanger::ContrastChanger(Box *canvas, const float& contrast)
+ContrastChanger::ContrastChanger(Canvas *canvas, const float& contrast)
 {
     init(canvas);
     this->fContrast = contrast;
@@ -32,7 +32,7 @@ Texture* ContrastChanger::render(Texture* texture)
 	pShader->use();
 	pShader->loadUniform("contrast", fContrast);
 	texture->bind();
-	pRenderCanvas->renderCustom();
+	pRenderCanvas->render();
 	texture->unbind();
 
 	pShader->unuse();

@@ -24,13 +24,14 @@ typedef std::function<void(Object3D*)> AddObjectCallback;
 class ObjectManager
 {
 private:
-	SkyBox *pSkyBox;
-	std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsForward;
-	std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsDefered;
+    SkyBox *pSkyBox;
+    std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsForward;
+    std::unordered_map<ShaderProgram*, std::vector<Object3D*> > mObjectsDefered;
     AddObjectCallback pAddObjectCallback;
+    bool bSelfManagedObjects, bSelfManagedSkybox;
 	
 public:
-	ObjectManager(vec3 *sunDirection);
+	ObjectManager(vec3 *sunDirection, SkyBox* othersky = nullptr);
 	~ObjectManager();
 
 	static Gum::File MODEL_ASSETS_PATH;
@@ -45,7 +46,7 @@ public:
 
 
 	void renderSky();
-	void renderDefered(G_Buffer* gbuffer, Box* rendercanvas);
+	void renderDefered(G_Buffer* gbuffer, Canvas* rendercanvas);
 	void renderForward();
 	void renderEverything();
 	void renderEverythingMeshesOnly();
@@ -68,6 +69,7 @@ public:
     //Setter
 	void setSkybox(SkyBox *skybox);
     void onAddObject(AddObjectCallback callback);
+    void selfManageObjects(bool selfmanaged);
 
     //Getter
 	Object3D* getObject(const std::string& name);
@@ -77,5 +79,5 @@ public:
 	SkyBox *getSkybox();
 	unsigned int numObjects();
 
-	unsigned int getObjectUnderMouse(Renderer3D* renderer) const;
+	unsigned int getObjectUnderMouse(Renderer3D* renderer, ivec2 mousepos) const;
 };

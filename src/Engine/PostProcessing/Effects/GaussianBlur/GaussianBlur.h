@@ -15,7 +15,7 @@ private:
 	static inline ShaderProgram *VblurShader = nullptr;
 
 public:
-	GaussianBlur(Box *canvas, int stage);
+	GaussianBlur(Canvas *canvas, int stage);
 	~GaussianBlur();
 
 	Texture* render(Texture* RenderResult);

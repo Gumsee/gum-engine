@@ -16,7 +16,7 @@ Camera3D::Camera3D(const ivec2& resolution, World3D* world)
 	this->fMouseAngle = 0.0f;
 	this->fAngleAroundPos = 0.0f;
     pOffsetToPos = new SmoothFloat(10, 5);
-    pOffsetToPos->setMin(3);
+    pOffsetToPos->setMin(1);
     pOffsetToPos->setMax(100);
 
     iProjectionMode = ProjectionModes::PERSPECTIVE;
@@ -39,6 +39,7 @@ void Camera3D::updateProjection(const ivec2& resolution)
 {
     fZoomfactor = pOffsetToPos->get();
     v2CurrentResolution = resolution;
+    
     float halfheight = Framebuffer::CurrentlyBoundFramebuffer->getSize().y * (pOffsetToPos->get() / pOffsetToPos->getMax()) * 0.025f;
     float halfwidth = Framebuffer::CurrentlyBoundFramebuffer->getAspectRatioWidthToHeight() * halfheight;
     mOrthographicMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
@@ -72,7 +73,6 @@ void Camera3D::update()
             pOffsetToPos->increaseTarget(Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * -1 * fZoomSpeed);
             if(pOffsetToPos->update())
                 updateProjection(v2CurrentResolution);
-                
 
             Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
             fPitch -= -(float)mouse->getDelta().y * ROTATIONAL_SPEED;
@@ -83,18 +83,21 @@ void Camera3D::update()
             fRoll = fPitch;
             fPitch = Gum::Maths::clamp(fPitch, -89.99f, 89.99f);
 
-            v3ActualPosition.x = vPosition.x - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos);
-            v3ActualPosition.y = vPosition.y + pOffsetToPos->get() * Gum::Maths::sindeg(fPitch);
-            v3ActualPosition.z = vPosition.z - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::cosdeg(fAngleAroundPos);
-
-            //viewMat = Math::view(v3ActualPosition, v3Position, UP);
-            v3ViewDirection = vec3::normalize(vPosition - v3ActualPosition);
-            updateView();
+            //v3ActualPosition.x = vPosition.x - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos);
+            //v3ActualPosition.y = vPosition.y + pOffsetToPos->get() * Gum::Maths::sindeg(fPitch);
+            //v3ActualPosition.z = vPosition.z - pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::cosdeg(fAngleAroundPos);
 
             
+            v3ActualPosition = vPosition 
+            + v3WorldFront * pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos)
+            + v3WorldUp * pOffsetToPos->get() * Gum::Maths::sindeg(fPitch)
+            + v3WorldUpFrontCross * pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::cosdeg(fAngleAroundPos);
 
-            v3StrafeDirection = vec3::cross(v3ViewDirection, v3Up);
-            mRotator = Gum::Maths::rotateMatrix(v3Up * fAngleAroundPos) * Gum::Maths::rotateMatrix(v3StrafeDirection * fRoll);
+            v3ViewDirection = vec3::normalize(vPosition - v3ActualPosition);
+            v3StrafeDirection = vec3::cross(v3ViewDirection, v3WorldUp);
+            updateView();
+
+            //mRotator = Gum::Maths::rotateMatrix(v3WorldUp * fAngleAroundPos) * Gum::Maths::rotateMatrix(v3StrafeDirection * fRoll);
             break;
         }
 
@@ -121,11 +124,11 @@ void Camera3D::update()
 
 void Camera3D::mouseUpdate()
 {
-    v3StrafeDirection = vec3::cross(v3ViewDirection, v3Up);
+    v3StrafeDirection = vec3::cross(v3ViewDirection, v3WorldUp);
     Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
     if(mouse->getDelta() != ivec2(0,0))
     {
-        mRotator = Gum::Maths::rotateMatrix(v3Up * -(float)mouse->getDelta().x * ROTATIONAL_SPEED) *
+        mRotator = Gum::Maths::rotateMatrix(v3WorldUp * -(float)mouse->getDelta().x * ROTATIONAL_SPEED) *
                   Gum::Maths::rotateMatrix(v3StrafeDirection * -(float)mouse->getDelta().y * ROTATIONAL_SPEED);
 
         v3ViewDirection = mRotator * v3ViewDirection;
@@ -135,7 +138,7 @@ void Camera3D::mouseUpdate()
 
 void Camera3D::lookAt(const vec3& lookat)
 { 
-    mViewMatrix = Gum::Maths::view(v3ActualPosition, lookat, v3Up); 
+    mViewMatrix = Gum::Maths::view(v3ActualPosition, lookat, v3WorldUp); 
     v3ViewDirection = vec3(-mViewMatrix[0][2], -mViewMatrix[1][2], -mViewMatrix[1][2]);
     pOnViewUpdate();
 }

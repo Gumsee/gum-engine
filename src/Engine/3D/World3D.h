@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <Graphics/Object3D.h>
+#include <Codecs/XMLReader.h>
 
 #include "../Rendering/World.h"
 #include "../Particle/Billboard.h"
@@ -15,7 +16,7 @@ private:
 	LightManager* pLightManager;
 
 public:
-    World3D();
+    World3D(SkyBox* othersky = nullptr);
     ~World3D();
 
     void update() override;

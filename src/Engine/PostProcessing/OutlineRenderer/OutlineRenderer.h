@@ -1,22 +1,21 @@
 #pragma once
-#include "Graphics/Renderable.h"
-#include <GUI/Primitives/Box.h>
 #include <Graphics/ShaderProgram.h>
 #include <Graphics/Framebuffer.h>
-
 #include <Graphics/Object3DInstance.h>
+#include <Graphics/Renderable.h>
+#include "../../Rendering/Canvas.h"
 
 class OutlineRenderer
 {
 private:
     ShaderProgram* pShader;
     ShaderProgram* pProcessingShader;
-    Box* pCanvas;
+    Canvas* pCanvas;
     Framebuffer* pFramebuffer;
     color cColor;
 
 public:
-    OutlineRenderer(Box* rendercanvas);
+    OutlineRenderer(Canvas* rendercanvas);
     ~OutlineRenderer();
 
     void render(Renderable* renderable, mat4 transform);

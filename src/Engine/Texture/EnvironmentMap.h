@@ -25,8 +25,5 @@ public:
     Framebuffer* getFramebuffer();
 };
 
-template class tEnvironmentMap<unsigned char>;
-template class tEnvironmentMap<float>;
-
 typedef tEnvironmentMap<unsigned char> EnvironmentMap;
 typedef tEnvironmentMap<float> EnvironmentMapf;

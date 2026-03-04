@@ -3,7 +3,7 @@
 #include "HighDynamicRangeShader.h"
 #include "../PostProcessing.h"
 
-HighDynamicRange::HighDynamicRange(Box *canvas)
+HighDynamicRange::HighDynamicRange(Canvas *canvas)
 {
     init(canvas);
     if(pShader == nullptr)
@@ -21,8 +21,6 @@ HighDynamicRange::HighDynamicRange(Box *canvas)
 
 HighDynamicRange::~HighDynamicRange()
 {
-    pShader->removeShader(0);
-    Gum::_delete(pShader);
 }
 
 Texture* HighDynamicRange::render(Texture* texture, float exposure)
@@ -32,7 +30,7 @@ Texture* HighDynamicRange::render(Texture* texture, float exposure)
     pShader->loadUniform("exposure", exposure);
 
     texture->bind();
-    pRenderCanvas->renderCustom();
+    pRenderCanvas->render();
     texture->unbind();
 
     pShader->unuse();

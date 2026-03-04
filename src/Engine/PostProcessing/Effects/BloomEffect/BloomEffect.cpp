@@ -1,7 +1,7 @@
 #include "BloomEffect.h"
 #include <System/MemoryManagement.h>
 
-BloomEffect::BloomEffect(Box* canvas)
+BloomEffect::BloomEffect(Canvas* canvas)
 {
 	init(canvas);
     Gum::_delete(pFramebuffer);

@@ -12,7 +12,6 @@
 #include "Engine/3D/Lightning/ShadowMapping/ShadowMapping.h"
 #include "Engine/Material/MaterialManager.h"
 #include "Engine/PostProcessing/Effects/Effects.h"
-#include "Engine/Texture/TextureManager.h"
 #include "Essentials/Time.h"
 #include "Essentials/Tools.h"
 #include "Essentials/Unicode.h"
@@ -89,7 +88,6 @@ int main(int argc, char** argv)
     Framebuffer::CurrentlyBoundFramebuffer->setClearColor(Gum::GUI::getTheme()->backgroundColor);
 
     ObjectManager::MODEL_ASSETS_PATH = Examples::assetPath + Gum::File("/objects/", Gum::Filesystem::DIRECTORY);;
-    Gum::TextureManager::TEXTURE_ASSETS_PATH = Examples::assetPath + Gum::File("/textures/", Gum::Filesystem::DIRECTORY);;
     Gum::MaterialManager::MATERIAL_ASSETS_PATH = Examples::assetPath + Gum::File("/materials/", Gum::Filesystem::DIRECTORY);
     Gum::Engine::init();
 

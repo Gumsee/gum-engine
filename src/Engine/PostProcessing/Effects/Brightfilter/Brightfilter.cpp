@@ -2,7 +2,7 @@
 #include "BrightfilterShader.h"
 #include "../../PostProcessing.h"
 
-Brightfilter::Brightfilter(Box* canvas)
+Brightfilter::Brightfilter(Canvas* canvas)
 {
 	init(canvas);
     
@@ -26,7 +26,7 @@ Texture* Brightfilter::render(Texture* texture)
 	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::STENCIL);
 	pShader->use();
 	texture->bind(0);
-	pRenderCanvas->renderCustom();
+	pRenderCanvas->render();
 	texture->unbind(0);
 	pShader->unuse();
 	pFramebuffer->unbind();

@@ -6,7 +6,6 @@
 #include "Graphics/Variables.h"
 #include "Graphics/VertexArrayObject.h"
 #include "Graphics/VertexBufferObject.h"
-#include "GUI/Primitives/Box.h"
 #include "Primitives/Transformable.h"
 #include "Renderer.h"
 #include "System/Output.h"

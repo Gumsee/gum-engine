@@ -1,17 +1,17 @@
 #pragma once
 #include <Graphics/ShaderProgram.h>
 #include <Graphics/Framebuffer.h>
-#include <GUI/Primitives/Box.h>
+#include "Canvas.h"
 
 class IDRenderer : private Framebuffer
 {
 private:
     inline static ShaderProgram* pMeshIDShader = nullptr;
 
-    Box* pCanvas;
+    Canvas* pCanvas;
 
 public:
-    IDRenderer(Box* canvas);
+    IDRenderer(Canvas* canvas);
     ~IDRenderer();
 
     using Framebuffer::bind;

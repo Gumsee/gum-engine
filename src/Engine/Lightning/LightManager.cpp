@@ -3,7 +3,6 @@
 #include <System/MemoryManagement.h>
 #include "../Rendering/Camera.h"
 #include "../3D/World3D.h"
-#include "../Texture/TextureManager.h"
 #include "../Particle/Billboard.h"
 #include "../Lightning/lightbulb.h"
 

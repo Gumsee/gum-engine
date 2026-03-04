@@ -1,6 +1,6 @@
 #include "Difference.h"
 
-Difference::Difference(Box *canvas)
+Difference::Difference(Canvas *canvas)
 {
     init(canvas);
 	this->pShader = ShaderProgram::getShaderProgramByName("DifferenceShader");
@@ -18,7 +18,7 @@ Texture* Difference::render(Texture* texture)
 
     texture->bind(0);
     pSecondTexture->bind(1);
-	pRenderCanvas->renderCustom();
+	pRenderCanvas->render();
     pSecondTexture->unbind(1);
     texture->unbind(0);
 

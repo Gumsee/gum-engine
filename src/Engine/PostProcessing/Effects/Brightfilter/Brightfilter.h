@@ -7,7 +7,7 @@ private:
 	static inline ShaderProgram *pShader = nullptr;
 
 public:
-	Brightfilter(Box* canvas);
+	Brightfilter(Canvas* canvas);
 	~Brightfilter();
 
 	Texture* render(Texture* texture);

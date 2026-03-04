@@ -1,24 +1,27 @@
 #include "Physics.h"
-#include <LinearMath/btAlignedAllocator.h>
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
-//#include <BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h>
-#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
-#include <BulletCollision/CollisionDispatch/btGhostObject.h>
-#include <BulletDynamics/ConstraintSolver/btConstraintSolver.h>
-#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
-#include <stdio.h>
-//#include <BulletDynamics/Featherstone/btMultiBodyMLCPConstraintSolver.h>
+
 
 #include <Desktop/IO/Mouse.h>
 #include <Desktop/Window.h>
 #include <Essentials/Time.h>
 #include <System/Output.h>
 #include <System/MemoryManagement.h>
+#include <stdio.h>
 
 #include "../Rendering/Camera.h"
 #include "../3D/Object/CollisionObject.h"
+
+#ifdef GUM_USE_BULLET_PHYSICS
+#include <LinearMath/btAlignedAllocator.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+#include <BulletCollision/CollisionDispatch/btCollisionObject.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <BulletDynamics/ConstraintSolver/btConstraintSolver.h>
+#include "BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h"
 #include "DebugDrawer.h"
+#endif
+#include <Essentials/Settings.h>
 
 Physics::Physics()
 {
@@ -28,6 +31,8 @@ Physics::Physics()
     
 	Gum::Output::log("Initializing Physics! \t\t\t!!!IN WORK!!!");
 	Gum::Output::debug("Physics: Creating collisionConfiguarion");
+    
+    #ifdef GUM_USE_BULLET_PHYSICS
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
 
 	///use the default collision dispatcher. For parallel processing you can use a diffent dispatcher (see Extras/BulletMultiThreaded)
@@ -66,6 +71,7 @@ Physics::Physics()
     this->m_ghostPairCallback = m_ghostPairCallback;
     this->solver = solver;
     this->pDynamicWorld = dynamicWorld;
+    #endif
 
 
 	//Setting default Debugging Shader
@@ -76,6 +82,7 @@ Physics::Physics()
 
 Physics::~Physics()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
 	Gum::_delete<btDefaultCollisionConfiguration>(collisionConfiguration);
 	Gum::_delete<btCollisionDispatcher>(dispatcher);
 	Gum::_delete<btDbvtBroadphase>(overlappingPairCache);
@@ -83,10 +90,12 @@ Physics::~Physics()
 	Gum::_delete<btSequentialImpulseConstraintSolver>(solver);
 	Gum::_delete<btDiscreteDynamicsWorld>(pDynamicWorld);
 	//Gum::_delete(pDebugDrawer);
+    #endif
 }
 
 void Physics::update()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
     btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 	world->stepSimulation(Time::getFrametime(), 100, 1.0f/240);
 
@@ -111,6 +120,7 @@ void Physics::update()
 		//onHoverObject->setMouseHover(true);
 
 	}
+    #endif
 }
 
 
@@ -123,6 +133,7 @@ void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType 
 
 void Physics::addDebugDrawer()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
 	DebugDrawer* pDebugDrawer = new DebugDrawer();
 
 	//btIDebugDraw *draw = new DebugDrawer();
@@ -130,6 +141,7 @@ void Physics::addDebugDrawer()
 	
 	pDebugDrawer->setDebugMode(btIDebugDraw::DebugDrawModes::DBG_DrawAabb | btIDebugDraw::DebugDrawModes::DBG_DrawWireframe | btIDebugDraw::DebugDrawModes::DBG_DrawText);
 	//drawer->setDebugMode(btIDebugDraw::DebugDrawModes::DBG_DrawWireframe);
+    #endif
 }
 
 
@@ -138,6 +150,7 @@ void Physics::drawDebug()
 {
 	if(Settings::getSetting(Settings::Names::SHOWDEBUGINFO)) 
 	{
+        #ifdef GUM_USE_BULLET_PHYSICS
         btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 		//pDebugDrawer->prepare();
 		world->debugDrawWorld();
@@ -149,6 +162,7 @@ void Physics::drawDebug()
         }
 
 		//pDebugDrawer->finish();
+        #endif
 	}
 }
 
@@ -156,6 +170,7 @@ void Physics::drawDebug()
 
 void Physics::addWall(vec3 pos, vec3 size)
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
 	btBoxShape *ColShape;
 	ColShape = new btBoxShape(btVector3(btScalar(size.x), btScalar(size.y), btScalar(size.z)));
 	btVector3 localInertia(0, 0, 0);
@@ -166,6 +181,7 @@ void Physics::addWall(vec3 pos, vec3 size)
 
     btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 	world->addRigidBody(new btRigidBody(0, myMotionState, ColShape, localInertia));
+    #endif
 }
 
 

@@ -9,19 +9,15 @@
 #include "../World3D.h"
 #include "ShadowMapping/ShadowMapping.h"
 
-Lightning::Lightning(Box* canvas, Renderer3D *renderer)
+Lightning::Lightning(Canvas* canvas)
 {
-	this->pShader = nullptr;
     this->pRenderCanvas = canvas;
-	this->pRenderer = renderer;
-	initShader();
+	  initShader();
 }
 
 
 Lightning::~Lightning() 
-{ 
-	pShader->removeShader(0);
-	Gum::_delete(pShader);
+{
 }
 
 
@@ -37,7 +33,7 @@ void Lightning::updateShader(ShadowMapping *shadowmap, World3D* world)
 	// 	pShader->loadUniform("lightAttenuation[" + std::to_string(i) + "]", *lights->getNearestPointLights()[i]->getAttenuation());
 	// }
 
-	pixelSize = vec2(1.0f) / pRenderer->getRenderCanvas()->getSize();
+	pixelSize = vec2(1.0f) / pRenderCanvas->getSize();
 
 	pShader->loadUniform("numLights", (int)world->getLightManager()->numPointLights());
 	pShader->loadUniform("SunColor", world->getLightManager()->getSun()->getColor());
@@ -45,9 +41,11 @@ void Lightning::updateShader(ShadowMapping *shadowmap, World3D* world)
 	pShader->loadUniform("viewmat", Camera::getActiveCamera()->getViewMatrix());
 	pShader->loadUniform("viewPos", Camera::getActiveCamera()->getPosition());
 	//pShader->loadUniform("viewDir", Camera::getActiveCamera()->getViewDirection());
+	#ifndef GUM_ENGINE_NO_SHADOWMAP
 	pShader->loadUniform("shadowMapMatrices", shadowmap->getMatrices());
     pShader->loadUniform("cascadeCount", (int)shadowmap->getCascadeLevels().size());
     pShader->loadUniform("cascadePlaneDistances", shadowmap->getCascadeLevels());
+	#endif
     pShader->loadUniform("farPlane", (int)Settings::getSetting(Settings::RENDERDISTANCE));
 	pShader->loadUniform("pixelSize", pixelSize);
 	pShader->unuse();

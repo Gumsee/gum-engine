@@ -8,7 +8,7 @@ private:
     float fContrast;
 
 public:
-	ContrastChanger(Box *canvas, const float& contrast);
+	ContrastChanger(Canvas *canvas, const float& contrast);
 	~ContrastChanger();
 
 	Texture* render(Texture* texture);

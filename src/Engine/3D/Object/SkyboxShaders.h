@@ -33,6 +33,15 @@ static const std::string HDRFragmentShader = GLSL(
 	}
 );
 
+#ifdef GUM_PRIMITIVES_MESH_UP_Z
+#define TEXTURE_UP Texcoord.z
+#define SUN_UP sunDir.z
+#define P_UP p.z
+#else
+#define TEXTURE_UP Texcoord.y
+#define SUN_UP sunDir.y
+#define P_UP p.y
+#endif
 static const std::string SkyboxFragmentShader = GLSL(
     in vec3 Texcoord;
     out vec4 color;
@@ -47,6 +56,7 @@ static const std::string SkyboxFragmentShader = GLSL(
     const vec3 nitrogen = vec3(0.650, 0.570, 0.475);
     const vec3 Kr = Br / pow(nitrogen, vec3(4.0));
     const vec3 Km = Bm / pow(nitrogen, vec3(0.84));
+    
 
     float hash(float n)
     {
@@ -77,20 +87,20 @@ static const std::string SkyboxFragmentShader = GLSL(
 
     vec3 getExtinction(vec3 p)
     {
-        vec3 day_extinction = exp(-exp(-((p.y - sunDir.y * 4.0) * (exp(-p.y * 16.0) + 0.1) / 80.0) / Br) * (exp(-p.y * 16.0) + 0.1) * Kr / Br) * exp(-p.y * exp(-p.y * 8.0 ) * 4.0) * exp(-p.y * 2.0) * 4.0;
-        vec3 night_extinction = vec3(1.0 - exp(-sunDir.y)) * 0.2;
-        return mix(day_extinction, night_extinction, sunDir.y * 0.2 + 0.5);
+        vec3 day_extinction = exp(-exp(-((P_UP - SUN_UP * 4.0) * (exp(-P_UP * 16.0) + 0.1) / 80.0) / Br) * (exp(-P_UP * 16.0) + 0.1) * Kr / Br) * exp(-P_UP * exp(-P_UP * 8.0 ) * 4.0) * exp(-P_UP * 2.0) * 4.0;
+        vec3 night_extinction = vec3(1.0 - exp(-SUN_UP)) * 0.2;
+        return mix(day_extinction, night_extinction, SUN_UP * 0.2 + 0.5);
     }
 
     void main()
     {
         color.a = 1.0;
-        if(Texcoord.y < -0.1)
+        if(TEXTURE_UP < -0.1)
         {
             vec3 p = Texcoord;
-            p.y = -0.1;
+            P_UP = -0.1;
             vec3 extinction = getExtinction(p);
-            color.rgb = extinction * (1.0 - smoothstep(0.0, 1.0, -Texcoord.y * 0.5));
+            color.rgb = extinction * (1.0 - smoothstep(0.0, 1.0, -TEXTURE_UP * 0.5));
             return;
         }
         
@@ -102,14 +112,14 @@ static const std::string SkyboxFragmentShader = GLSL(
         color.rgb = rayleigh * mie * extinction;
 
         // Cirrus Clouds
-        float density = smoothstep(1.0 - cirrus, 1.0, fbm(Texcoord.xyz / Texcoord.y * 2.0 + time * 0.05)) * 0.3;
-        color.rgb = mix(color.rgb, extinction * 4.0, density * max(Texcoord.y, 0.0));
+        float density = smoothstep(1.0 - cirrus, 1.0, fbm(Texcoord.xyz / TEXTURE_UP * 2.0 + time * 0.05)) * 0.3;
+        color.rgb = mix(color.rgb, extinction * 4.0, density * max(TEXTURE_UP, 0.0));
 
         // Cumulus Clouds
         for (int i = 0; i < 3; i++)
         {
-            float density = smoothstep(1.0 - cumulus, 1.0, fbm((0.7 + float(i) * 0.01) * Texcoord.xyz / Texcoord.y + time * 0.3));
-            color.rgb = mix(color.rgb, extinction * density * 5.0, min(density, 1.0) * max(Texcoord.y, 0.0));
+            float density = smoothstep(1.0 - cumulus, 1.0, fbm((0.7 + float(i) * 0.01) * Texcoord.xyz / TEXTURE_UP + time * 0.3));
+            color.rgb = mix(color.rgb, extinction * density * 5.0, min(density, 1.0) * max(TEXTURE_UP, 0.0));
         }
     }
 );
@@ -117,9 +127,9 @@ static const std::string SkyboxFragmentShader = GLSL(
 static const std::string SkyboxHDRToCubeFragmentShader = GLSL(
     in vec3 Texcoord;
     out vec4 FragColor;
-	uniform sampler2D hdrTexture;
-	uniform int gradiant;
-	uniform vec3 SunDirection;
+    uniform sampler2D hdrTexture;
+    uniform int gradiant;
+    uniform vec3 SunDirection;
 	
 	const vec2 invAtan = vec2(0.1591, 0.3183);
 	vec2 SampleSphericalMap(vec3 v)
@@ -135,7 +145,7 @@ static const std::string SkyboxHDRToCubeFragmentShader = GLSL(
 		if(gradiant > 0) 
 		{ 
 			float sun = clamp(dot(normalize(SunDirection * vec3(1,-1,1)), normalize(Texcoord)), 0.0, 1.0);
-			vec3 col = mix(vec3(0.68,0.68,0.7), vec3(0.52941, 0.80784, 0.98039), Texcoord.y * 0.5 + 0.5);
+			vec3 col = mix(vec3(0.68,0.68,0.7), vec3(0.52941, 0.80784, 0.98039), -TEXTURE_UP * 0.5 + 0.5);
 			col += 0.5*vec3(1.0,0.5,0.1)*pow(sun, 20.0);
 			FragColor = vec4(col - 0.3, 1.0);
 		} 
@@ -150,11 +160,60 @@ static const std::string SkyboxHDRToCubeFragmentShader = GLSL(
 	}
 );
 
+#ifdef GUM_PRIMITIVES_MESH_UP_Z
+    #define UP vec3(0.0, 0.0, 1.0)
+    #define TEXCOORD_UP vec3(Texcoord.x, Texcoord.y, -Texcoord.z)
+#else
+    #define UP vec3(0.0, 1.0, 0.0)
+    #define TEXCOORD_UP Texcoord
+#endif
 static const std::string SkyboxIrradianceFragmentShader = GLSL(
+  out vec4 FragColor;
+	in vec3 Texcoord;
+
+  uniform samplerCube cubeMap;
+
+  void main()
+  {		
+    // The world vector acts as the normal of a tangent surface
+      // from the origin, aligned to WorldPos. Given this normal, calculate all
+      // incoming radiance of the environment. The result of this radiance
+      // is the radiance of light coming from -Normal direction, which is what
+      // we use in the PBR shader to sample irradiance.
+      vec3 N = normalize(TEXCOORD_UP);
+
+      vec3 irradiance = vec3(0.0);   
+      
+      // tangent space calculation from origin point
+      vec3 up    = UP;
+      vec3 right = normalize(cross(up, N));
+      up         = normalize(cross(N, right));
+        
+      float sampleDelta = 0.025;
+      float nrSamples = 0.0;
+      for(float phi = 0.0; phi < 2.0 * PI; phi += sampleDelta)
+      {
+          for(float theta = 0.0; theta < 0.5 * PI; theta += sampleDelta)
+          {
+              // spherical to cartesian (in tangent space)
+              vec3 tangentSample = vec3(sin(theta) * cos(phi),  sin(theta) * sin(phi), cos(theta));
+              // tangent space to world
+              vec3 sampleVec = tangentSample.x * right + tangentSample.y * up + tangentSample.z * N; 
+
+              irradiance += texture(cubeMap, sampleVec).rgb * cos(theta) * sin(theta);
+              nrSamples++;
+          }
+      }
+      irradiance = PI * irradiance * (1.0 / float(nrSamples));
+      
+      FragColor = vec4(irradiance, 1.0);
+  }
+);
+/*GLSL(
 	in vec3 Texcoord;
     out vec4 FragColor;
 	uniform samplerCube cubeMap;
-	const float PI = 3.14159265359;
+	//const float PI = 3.14159265359;
 	const float TWO_PI = PI * 2;
 	const float HALF_PI = PI * 0.5;
     const float sampleDelta = 0.025;
@@ -167,7 +226,7 @@ static const std::string SkyboxIrradianceFragmentShader = GLSL(
         vec3 normal = normalize(Texcoord);
     
         vec3 irradiance = vec3(0.0);
-        vec3 up    = vec3(0.0, 1.0, 0.0);
+        vec3 up    = UP;
         vec3 right = normalize(cross(up, normal));
         up         = cross(normal, right);
     
@@ -192,7 +251,7 @@ static const std::string SkyboxIrradianceFragmentShader = GLSL(
         irradiance *= PI * invTotalSamples;
         FragColor = vec4(irradiance, 1.0);
 	}
-);
+);*/
 
 
 static const std::string SkyboxBRDFVertexShader = GLSL(
@@ -210,7 +269,7 @@ static const std::string SkyboxBRDFFragmentShader = GLSL(
     in vec2 TexCoord;
     out vec4 FragColor;
     
-    const float PI = 3.14159265359;
+    //const float PI = 3.14159265359;
     float RadicalInverse_VdC(uint bits) 
     {
         bits = (bits << 16u) | (bits >> 16u);
@@ -327,7 +386,7 @@ static const std::string SkyboxPrefilterFragmentShader = GLSL(
 	uniform samplerCube cubeMap;
 	uniform float roughness;
 	
-	const float PI = 3.14159265359;
+	//const float PI = 3.14159265359;
     
 	float DistributionGGX(vec3 N, vec3 H, float roughness)
 	{

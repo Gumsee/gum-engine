@@ -1,16 +1,15 @@
 #include "OutlineRenderer.h"
 #include <Graphics/Framebuffer.h>
-#include <Desktop/Window.h>
+#include <Graphics/Graphics.h>
+#include <Graphics/ShaderProgram.h>
+#include <Graphics/Variables.h>
 #include <System/MemoryManagement.h>
 
-#include "Graphics/Graphics.h"
-#include "Graphics/ShaderProgram.h"
-#include "Graphics/Variables.h"
 #include "OutlineRendererShader.h"
 #include "../PostProcessing.h"
 #include "../../Rendering/Camera.h"
 
-OutlineRenderer::OutlineRenderer(Box* rendercanvas)
+OutlineRenderer::OutlineRenderer(Canvas* rendercanvas)
 {
     pShader = nullptr;
     pCanvas = rendercanvas;
@@ -41,7 +40,7 @@ void OutlineRenderer::render(Renderable* renderable, mat4 transform)
     current->bind();
     pProcessingShader->use();
     pFramebuffer->getTextureAttachment(0)->bind(0);
-    pCanvas->renderCustom();
+    pCanvas->render();
     pFramebuffer->getTextureAttachment(0)->unbind(0);
 
     Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);

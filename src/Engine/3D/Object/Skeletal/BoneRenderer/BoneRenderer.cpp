@@ -47,7 +47,7 @@ BoneRenderer::BoneRenderer(AnimatedModel* model)
     }
 
 
-    for(size_t i = 0; i < pModel->getSkeleton()->getBoneMatrices().size(); i++)
+    for(unsigned int i = 0; i < (unsigned int)pModel->getSkeleton()->getBoneMatrices().size(); i++)
     {
         pBoneObject->getInstance(i)->setMatrix(pModel->getSkeleton()->getBoneMatrices()[i]);
         pBoneObject->getInstance(i)->updateMatrix();

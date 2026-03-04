@@ -13,12 +13,12 @@
 #include "System/Output.h"
 #include <Graphics/WrapperFunctions.h>
 
-mat3 m3  = mat3( 0.00,  0.80,  0.60,
-                    -0.80,  0.36, -0.48,
-                    -0.60, -0.48,  0.64 );
-mat3 m3i = mat3( 0.00, -0.80, -0.60,
-                    0.80,  0.36, -0.48,
-                    0.60, -0.48,  0.64 );
+mat3 m3  = mat3( 0.00f,  0.80f,  0.60f,
+                -0.80f,  0.36f, -0.48f,
+                -0.60f, -0.48f,  0.64f);
+mat3 m3i = mat3(0.00f, -0.80f, -0.60f,
+                0.80f,  0.36f, -0.48f,
+                0.60f, -0.48f,  0.64f );
 
 float hash1( float n )
 {
@@ -30,23 +30,23 @@ vec4 noised(vec3 x)
     vec3 p = vec3::floor(x);
     vec3 w = vec3::fract(x);
     #if 1
-    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
-    vec3 du = w*w*30.0*(w*(w-2.0)+1.0);
+    vec3 u = w*w*w*(w*(w*6.0f-15.0f)+10.0f);
+    vec3 du = w*w*30.0f*(w*(w-2.0f)+1.0f);
     #else
     vec3 u = w*w*(3.0-2.0*w);
     vec3 du = 6.0*w*(1.0-w);
     #endif
 
-    float n = p.x + 317.0*p.y + 157.0*p.z;
+    float n = p.x + 317.0f*p.y + 157.0f*p.z;
     
-    float a = hash1(n+0.0);
-    float b = hash1(n+1.0);
-    float c = hash1(n+317.0);
-    float d = hash1(n+318.0);
-    float e = hash1(n+157.0);
-    float f = hash1(n+158.0);
-    float g = hash1(n+474.0);
-    float h = hash1(n+475.0);
+    float a = hash1(n+0.0f);
+    float b = hash1(n+1.0f);
+    float c = hash1(n+317.0f);
+    float d = hash1(n+318.0f);
+    float e = hash1(n+157.0f);
+    float f = hash1(n+158.0f);
+    float g = hash1(n+474.0f);
+    float h = hash1(n+475.0f);
 
     float k0 =   a;
     float k1 =   b - a;
@@ -57,30 +57,30 @@ vec4 noised(vec3 x)
     float k6 =   a - b - e + f;
     float k7 = - a + b + c - d + e - f - g + h;
 
-    vec3 nn = du * 2.0 * vec3( k1 + k4*u.y + k6*u.z + k7*u.y*u.z,
+    vec3 nn = du * 2.0f * vec3( k1 + k4*u.y + k6*u.z + k7*u.y*u.z,
                                     k2 + k5*u.z + k4*u.x + k7*u.z*u.x,
                                     k3 + k6*u.x + k5*u.y + k7*u.x*u.y);
 
-    return vec4(-1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z), 
+    return vec4(-1.0f+2.0f*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z), 
                 nn.x, nn.y, nn.z);
 }
 
 
 vec4 fbmd_8(vec3 x)
 {
-    float f = 2.0;
-    float s = 0.65;
-    float a = 0.0;
-    float b = 0.5;
-    vec3  d = vec3(0.0);
-    mat3  m = mat3(1.0,0.0,0.0,
-                0.0,1.0,0.0,
-                0.0,0.0,1.0);
+    float f = 2.0f;
+    float s = 0.65f;
+    float a = 0.0f;
+    float b = 0.5f;
+    vec3  d = vec3(0.0f);
+    mat3  m = mat3(1.0f,0.0f,0.0f,
+                   0.0f,1.0f,0.0f,
+                   0.0f,0.0f,1.0f);
     for( int i=0; i<8; i++ )
     {
         vec4 n = noised(x);
         a += b*n.x;          // accumulate values		
-        if( i<4 )
+        if(i < 4)
             d += m * b * vec3(n.y, n.z, n.w);      // accumulate derivatives
         b *= s;
         x = m3 * x * f;
@@ -90,27 +90,21 @@ vec4 fbmd_8(vec3 x)
 }
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
+  : Object3D(mesh, name)
 {
     initShaders();
 	this->sunDir = SunDirection;
+  this->cloudNoise3D = nullptr;
+  this->cloudNoise2D = nullptr;
 
 	//Create and add Properties
-	sName = name;
-	pMesh = mesh;
-	load();
     addInstance();
 
     //TODO
-    cloudNoise3D = new Texture3Df("cloudNoise3D", ivec3(128,128,128), [](const ivec3& uv) {
-        vec4 col = fbmd_8(uv) * 255.0f;
-        //Gum::Output::print(col);
-        return rgba(col.x, col.y, col.z, col.w);
-    });
-
-    cloudNoise2D = new Texture2Df("cloudNoise2D", ivec2(32,32), [](const ivec2& uv) {
+    /*cloudNoise2D = new Texture2Df("cloudNoise2D", ivec2(32,32), [](const ivec2& uv) {
         vec4 col = vec4(1,0,1,1);
         return rgba(col.x, col.y, col.z, col.w);
-    });
+    });*/
 
     pTexture = new EnvironmentMapf(ivec2(1024, 1024), "Skybox");
     pIrradianceMap = new EnvironmentMapf(ivec2(32, 32), "IrradianceMap");
@@ -123,7 +117,7 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
     pBRDFFramebuffer->addTextureAttachment<float>(0, "SkyboxBRDFLUTMap", 2U);
     pBRDFFramebuffer->getTextureAttachment(0)->clampToEdge();
     pBRDFFramebuffer->getTextureAttachment(0)->setFiltering(Texture::FilteringType::LINEAR);
-    pBRDFCanvas = new Box(ivec2(0,0), pBRDFFramebuffer->getSize());
+    pBRDFCanvas = new Canvas(pBRDFFramebuffer->getSize());
 
     makeCubeMap(nullptr);
     updateTexture();
@@ -131,20 +125,20 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 
 SkyBox::~SkyBox() 
 {
-	Gum::_delete(pTexture);
+	  Gum::_delete(pTexture);
     Gum::_delete(pIrradianceMap);
-	Gum::_delete(pBRDFFramebuffer);
-	Gum::_delete(pPreFilterMap);
-	Gum::_delete(pBRDFCanvas);
+    Gum::_delete(pBRDFFramebuffer);
+    Gum::_delete(pPreFilterMap);
+    Gum::_delete(pBRDFCanvas);
 
     
-    HDRToCubeMapShader->removeShader(0);
-    IrradianceMapShader->removeShader(0);
-    PreFilteredMapShader->removeShader(0);
-	Gum::_delete(HDRToCubeMapShader);
-	Gum::_delete(IrradianceMapShader);
-	Gum::_delete(PreFilteredMapShader);
-	Gum::_delete(BRDFMapShader);
+    //HDRToCubeMapShader->removeShader(0);
+    //IrradianceMapShader->removeShader(0);
+    //PreFilteredMapShader->removeShader(0);
+    //Gum::_delete(HDRToCubeMapShader);
+    //Gum::_delete(IrradianceMapShader);
+    //Gum::_delete(PreFilteredMapShader);
+    //Gum::_delete(BRDFMapShader);
 }
 
 void SkyBox::render()
@@ -154,12 +148,12 @@ void SkyBox::render()
     if(bRenderSky)
     {
         Gum::Graphics::cullBackside(false);
-        cloudNoise2D->bind(0);
+        //cloudNoise2D->bind(0);
         getShaderProgram()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
         getShaderProgram()->loadUniform("sunDir", *this->sunDir);
         //getShaderProgram()->loadUniform("time", Time::getTime());
         renderMesh();
-        cloudNoise2D->unbind(0);
+        //cloudNoise2D->unbind(0);
         Gum::Graphics::cullBackside(true);
 
         //Load time only if clouds are enabled
@@ -173,7 +167,7 @@ void SkyBox::render()
             CloudShader->loadUniform("time", Time::getTime() * 0.5f);
             
             cloudNoise3D->bind(0);
-            Renderer::getActiveRenderer()->getRenderCanvas()->renderCustom();
+            Renderer::getActiveRenderer()->getRenderCanvas()->render();
             cloudNoise3D->unbind(0);
             current->use();
         }
@@ -188,7 +182,8 @@ void SkyBox::render()
         renderMesh();
         pTexture->unbind(0);
         Gum::Graphics::cullBackside(true);
-        current->use();
+        if(current != nullptr)
+          current->use();
     }
     Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
 }
@@ -198,9 +193,9 @@ void SkyBox::updateTexture()
     Gum::Graphics::cullBackside(false);
     Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
     Gum::Graphics::renderWireframe(false);
-	makeIrradianceMap();
-	makePrefilterMap();
-	makeBRDFMap();
+    makeIrradianceMap();
+    makePrefilterMap();
+    makeBRDFMap();
     Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
     Gum::Graphics::cullBackside(true);
 }
@@ -274,7 +269,7 @@ void SkyBox::makeIrradianceMap()
         IrradianceMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
         renderMesh();
     });
-	IrradianceMapShader->unuse();
+    IrradianceMapShader->unuse();
     pTexture->unbind(0);
 }
 
@@ -287,7 +282,7 @@ void SkyBox::makeCubeMap(Texture* texture)
         texture->bind(0);
 
     HDRToCubeMapShader->use();
-    //HDRToCubeMapShader->loadUniform("gradiant", (int)gradiant);
+    HDRToCubeMapShader->loadUniform("gradiant", (int)(texture == nullptr));
     HDRToCubeMapShader->loadUniform("SunDirection", *this->sunDir);
     pTexture->render([this]() {
         HDRToCubeMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
@@ -315,7 +310,18 @@ Texture2D* SkyBox::getBRDFConvMap()            { return (Texture2D*)pBRDFFramebu
 // Setter
 //
 void SkyBox::renderSky(bool rendersky)        { this->bRenderSky = rendersky; updateTexture(); }
-void SkyBox::renderClouds(bool renderclouds)  { this->bRenderClouds = renderclouds; }
+void SkyBox::renderClouds(bool renderclouds)
+{ 
+  if(renderclouds && cloudNoise3D == nullptr)
+  {
+    cloudNoise3D = new Texture3Df("cloudNoise3D", ivec3(128,128,128), [](const ivec3& uv) {
+        vec4 col = fbmd_8(uv) * 255.0f;
+        //Gum::Output::print(col);
+        return rgba(col.x, col.y, col.z, col.w);
+    });
+  }
+  this->bRenderClouds = renderclouds;
+}
 
 void SkyBox::initShaders()
 {

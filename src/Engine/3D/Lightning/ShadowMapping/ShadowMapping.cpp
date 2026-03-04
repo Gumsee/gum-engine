@@ -15,16 +15,15 @@ ShadowMapping::ShadowMapping()
     initShader();
 
     vShadowCascadeLevels = { 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 100.0f, 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 50.0f, 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 250.0f, 
         Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 5.0f,
-        (float)Settings::getSetting(Settings::RENDERDISTANCE)
+        Settings::getSetting(Settings::RENDERDISTANCE) / 10.0f, 
+        Settings::getSetting(Settings::RENDERDISTANCE) / 2.0f
     };
     vLightMatrices.resize(vShadowCascadeLevels.size() + 1);
 
     pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
-    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment(vShadowCascadeLevels.size());
+    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment(vShadowCascadeLevels.size()+1);
     depthtex->setBordercolor(rgba(255,255,255,255));
 }
 
@@ -77,15 +76,15 @@ std::vector<vec4> ShadowMapping::getFrustumCornersWorldSpace(mat4& proj, const m
 
 mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPlane, const float farPlane)
 {
-    mat4 proj = Gum::Maths::perspective(Camera::getActiveCamera()->getFOV() * 1.5f, pFramebuffer->getAspectRatioWidthToHeight(), nearPlane, farPlane);
+    mat4 proj = Gum::Maths::perspective(Camera::getActiveCamera()->getFOV() * 1.0f, Framebuffer::WindowFramebuffer->getAspectRatioWidthToHeight(), nearPlane, farPlane);
     std::vector<vec4> corners = getFrustumCornersWorldSpace(proj, Camera::getActiveCamera()->getViewMatrix());
 
     vec3 center = vec3(0, 0, 0);
-    for (const auto& v : corners)
+    for (const vec4& v : corners)
         center += vec3(v);
     center /= (float)corners.size();
 
-    mat4 lightView = Gum::Maths::view(center - lightdir, center, vec3(0.0f, 1.0f, 0.0f));
+    mat4 lightView = Gum::Maths::view(center - lightdir, center, Camera::getActiveCamera()->getUpDirection());
 
     float minX = std::numeric_limits<float>::max();
     float maxX = std::numeric_limits<float>::lowest();
@@ -93,9 +92,9 @@ mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPl
     float maxY = std::numeric_limits<float>::lowest();
     float minZ = std::numeric_limits<float>::max();
     float maxZ = std::numeric_limits<float>::lowest();
-    for (const auto& v : corners)
+    for (const vec4& v : corners)
     {
-        const auto trf = lightView * v;
+        const vec4 trf = lightView * v;
         minX = std::min(minX, trf.x);
         maxX = std::max(maxX, trf.x);
         minY = std::min(minY, trf.y);
@@ -105,7 +104,7 @@ mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPl
     }
 
     // Tune this parameter according to the scene
-    constexpr float zMult = 10.0f;
+    constexpr float zMult = 10.0f; // 10.0f;
     if (minZ < 0)
     {
         minZ *= zMult;

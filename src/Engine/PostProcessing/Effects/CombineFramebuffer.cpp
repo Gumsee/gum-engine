@@ -1,7 +1,7 @@
 #include "CombineFramebuffer.h"
 
 
-CombineFramebuffer::CombineFramebuffer(Box *canvas)
+CombineFramebuffer::CombineFramebuffer(Canvas *canvas)
 {
     init(canvas);
 	pShader = ShaderProgram::getShaderProgramByName("CombineFramebufferShader");
@@ -19,7 +19,7 @@ Texture* CombineFramebuffer::render(Texture* texture)
     framebuffer1->getDepthTextureAttachment()->bind(1);
     framebuffer2->getTextureAttachment(0)->bind(2);
     framebuffer2->getDepthTextureAttachment()->bind(3);
-	pRenderCanvas->renderCustom();
+	pRenderCanvas->render();
     framebuffer2->getDepthTextureAttachment()->unbind(3);
     framebuffer2->getTextureAttachment(0)->unbind(2);
     framebuffer1->getDepthTextureAttachment()->unbind(1);

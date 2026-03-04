@@ -1,6 +1,12 @@
 #include "RagdollObjectInstance.h"
 #include <Graphics/Object3DInstance.h>
 #include <System/Output.h>
+#include "../../World3D.h"
+#include "Essentials/Tools.h"
+#include "Maths/MatrixFunctions.h"
+#include "Skeleton.h"
+
+#ifdef GUM_USE_BULLET_PHYSICS
 #include <btBulletCollisionCommon.h>
 #include <BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
@@ -8,13 +14,11 @@
 #include <BulletDynamics/Dynamics/btRigidBody.h>
 #include <BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h>
 #include <LinearMath/btVector3.h>
-#include "../../World3D.h"
-#include "Essentials/Tools.h"
-#include "Maths/MatrixFunctions.h"
-#include "Skeleton.h"
+#endif
 
 #define SCALE 10
 
+#ifdef GUM_USE_BULLET_PHYSICS
 static btRigidBody* localCreateRigidBody (btScalar mass, const btTransform& startTransform, btCollisionShape* shape)
 {
 	bool isDynamic = (mass != 0.f);
@@ -30,6 +34,7 @@ static btRigidBody* localCreateRigidBody (btScalar mass, const btTransform& star
 
 	return body;
 }
+#endif
 
 RagdollObjectInstance::RagdollObjectInstance(AnimatedModel* obj, World3D* world) 
     : Object3DInstance(obj)
@@ -62,6 +67,7 @@ void RagdollObjectInstance::createBody(Bone* bone, mat4 transform)
     std::cout << "Bone distance to parent " << bone->getName() << ": " << height << std::endl;
     
 
+    #ifdef GUM_USE_BULLET_PHYSICS
     btCapsuleShape* shape = new btCapsuleShape(btScalar(0.1), btScalar(height));
 
 	btTransform bullettransform;
@@ -72,6 +78,7 @@ void RagdollObjectInstance::createBody(Bone* bone, mat4 transform)
     body->setSleepingThresholds(1.6f, 2.5f);
     ((btDiscreteDynamicsWorld*)pWorld->getPhysics()->getWorld())->addRigidBody(body);
     mRigidbodies[bone] = new CollisionObject(body);
+    #endif
 }
 
 void RagdollObjectInstance::createJoints(Bone* bone)
@@ -85,6 +92,7 @@ void RagdollObjectInstance::createJoints(Bone* bone)
     vec3 parentbonepos = Gum::Maths::positionFromMatrix(pParentObject->getSkeleton()->getBoneMatricesWithoutOffset()[bone->getParent()]);
     height = vec3::distance(bonepos, parentbonepos) * 0.2f;
 
+    #ifdef GUM_USE_BULLET_PHYSICS
     btTransform localA, localB;
     bool useLinearReferenceFrameA = true;
     localA.setIdentity(); 
@@ -104,10 +112,12 @@ void RagdollObjectInstance::createJoints(Bone* bone)
 
     //m_joints[JOINT_SPINE_HEAD] = joint6DOF;
     ((btDiscreteDynamicsWorld*)pWorld->getPhysics()->getWorld())->addConstraint(joint6DOF, true);
+    #endif
 }
 
 void RagdollObjectInstance::update()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
     if(!bIsTriggered)
     {
 
@@ -138,6 +148,7 @@ void RagdollObjectInstance::update()
 
         pParentObject->getSkeleton()->getBoneMatrices()[bone->getID()] = transform * bone->getOffsetMatrix();
     }
+    #endif
 }
 
 void RagdollObjectInstance::onTransformUpdate()
@@ -152,6 +163,7 @@ void RagdollObjectInstance::onTransformUpdate()
 
 void RagdollObjectInstance::triggerRagdoll()
 {
+    #ifdef GUM_USE_BULLET_PHYSICS
     for(auto it : mRigidbodies)
     {
         mat4 transform = pParentObject->getSkeleton()->getBoneMatricesWithoutOffset()[it.first];
@@ -163,6 +175,7 @@ void RagdollObjectInstance::triggerRagdoll()
         body->activate();
         body->forceActivationState(ACTIVE_TAG);
     }
+    #endif
 
     pParentObject->getSkeleton()->stopUpdating(true);
     bIsTriggered = true;

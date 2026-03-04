@@ -14,7 +14,7 @@ private:
     GaussianBlur *pGaussianBlur;
 
 public:
-	BloomEffect(Box* canvas);
+	BloomEffect(Canvas* canvas);
 	~BloomEffect();
 
 	Texture* render(Texture* texture);

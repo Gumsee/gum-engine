@@ -1,11 +1,11 @@
 #include "Camera2D.h"
 #include <Graphics/Framebuffer.h>
-#include <Desktop/Window.h>
 #include <Essentials/Settings.h>
 #include <Maths/MatrixFunctions.h>
 #include "System/MemoryManagement.h"
 #include "System/Output.h"
 #include "World2D.h"
+#include <Desktop/Window.h>
 
 Camera2D::Camera2D(const ivec2& resolution, World2D* world)
     : Camera(resolution, CAMERA2D)

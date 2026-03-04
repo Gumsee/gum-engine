@@ -98,7 +98,7 @@ void CurveRenderer::renderID()
 void CurveRenderer::updateData()
 {
     pPointsBuffer->setData(pCurve->getData(), Gum::Graphics::DataState::STATIC);
-    pVAO->setVertexCount(pCurve->getData().size());
+    pVAO->setVertexCount((unsigned int)pCurve->getData().size());
 }
 
 Curve* CurveRenderer::getCurve()

@@ -4,7 +4,6 @@
 #include "Codecs/XMLReader.h"
 #include "Graphics/ShaderProgram.h"
 #include <System/MemoryManagement.h>
-#include <Desktop/Window.h>
 #include "../2D/World2D.h"
 #include "../3D/World3D.h"
 

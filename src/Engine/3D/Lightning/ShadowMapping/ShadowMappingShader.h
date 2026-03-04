@@ -12,6 +12,7 @@ static const std::string ShadowMappingVertexShader = GLSL(
 );
 
 static const std::string ShadowMappingGeometryShader = GLSL(
+
     layout(triangles, invocations = 5) in;
     layout(triangle_strip, max_vertices = 3) out;
     

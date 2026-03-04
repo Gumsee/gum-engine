@@ -1,6 +1,6 @@
 #pragma once
-
 #include <functional>
+
 class CollisionObject
 {
 private:

@@ -5,7 +5,7 @@
 #include <Maths/mat.h>
 
 class World3D;
-struct Object3DInstance;
+class Object3DInstance;
 
 class Camera3D : public Camera
 {
@@ -28,17 +28,17 @@ public:
     inline static const float NEAR_PLANE = 0.1f;
 
 private:
-	SmoothFloat* pOffsetToPos;
-	float fMouseAngle;
-	float fAngleAroundPos;
-	Modes iCurrentMode;
+    SmoothFloat* pOffsetToPos;
+    float fMouseAngle;
+    float fAngleAroundPos;
+    Modes iCurrentMode;
     ProjectionModes iProjectionMode;
 
     void mouseUpdate();
 
 public:
     Camera3D(const ivec2& resolution, World3D* world);
-    ~Camera3D();
+    ~Camera3D() override;
 
     void lookAt(const vec3& lookat);
     void update() override;

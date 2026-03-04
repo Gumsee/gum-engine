@@ -9,7 +9,7 @@ private:
     Framebuffer* framebuffer2;
 
 public:
-	CombineFramebuffer(Box *canvas);
+	CombineFramebuffer(Canvas *canvas);
 	~CombineFramebuffer();
 	Texture* render(Texture* texture = nullptr);
 

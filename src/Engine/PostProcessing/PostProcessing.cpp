@@ -5,6 +5,7 @@ namespace Gum {
 namespace PostProcessing
 {
     Shader* VertexShader = nullptr;
+    Shader* FragmentShader = nullptr;
     ShaderProgram* PostProcessingShader = nullptr;
 
     void initShaders()
@@ -12,6 +13,7 @@ namespace PostProcessing
         if(PostProcessingShader == nullptr)
         {
             VertexShader = new Shader(PostProcessingVertexShader, Shader::TYPES::VERTEX_SHADER);
+            FragmentShader = new Shader(PostProcessingFragmentShader, Shader::TYPES::FRAGMENT_SHADER);
             Shader* PostProcessingShaderFrag = new Shader(PostProcessingFragmentShader, Shader::TYPES::FRAGMENT_SHADER);
 
             PostProcessingShader = new ShaderProgram("PostProcessingShader", true);

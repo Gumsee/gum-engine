@@ -8,7 +8,7 @@ private:
 	using PostProcessingEffect::render;
 
 public:
-	HighDynamicRange(Box *canvas);
+	HighDynamicRange(Canvas* canvas);
 	~HighDynamicRange();
 
 	Texture* render(Texture* texture, float exposure);

@@ -19,7 +19,7 @@ private:
     void initShader();
 
 public:
-    Renderer2D(Box* canvas);
+    Renderer2D(Canvas* canvas);
     ~Renderer2D();
 
     void update() override;

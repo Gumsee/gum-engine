@@ -12,11 +12,9 @@
     3 DiffuseMap;
     4 ObjectDataMap;
 */
-G_Buffer::G_Buffer(Box* canvas)
+G_Buffer::G_Buffer(const ivec2& canvassize)
 {
-    pRenderCanvas = canvas;
-
-    gBuffer = new Framebuffer(pRenderCanvas->getSize());
+    gBuffer = new Framebuffer(canvassize);
     gBuffer->addTextureAttachment<float>(0, "G_BufferPositionMap");
     gBuffer->addTextureAttachment<float>(1, "G_BufferNormalMap");
     gBuffer->addTextureAttachment<unsigned char>(2, "G_BufferDiffuseMap");

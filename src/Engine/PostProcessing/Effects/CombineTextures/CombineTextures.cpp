@@ -2,7 +2,7 @@
 #include "CombineTexturesShader.h"
 #include "../../PostProcessing.h"
 
-CombineTextures::CombineTextures(Box *canvas, const float& exposure)
+CombineTextures::CombineTextures(Canvas *canvas, const float& exposure)
 {
     init(canvas);
     this->fExposure = exposure;
@@ -36,7 +36,7 @@ Texture* CombineTextures::render(Texture* texture)
 
     texture->bind(0);
     pSecondTexture->bind(1);
-	pRenderCanvas->renderCustom();
+	pRenderCanvas->render();
     pSecondTexture->unbind(1);
     texture->unbind(0);
 

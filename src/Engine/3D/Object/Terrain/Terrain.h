@@ -12,12 +12,6 @@ private:
 
 	int OCTAVES = 3;
 	float ROUGHNESS = 0.3f;
-	int gridSpacing = 0;
-	float squareSize = 0;
-
-	bool finishedLoading = false;
-	bool loadCollisionWhenReady = false;
-	bool usesTexture = false;
 	int SmoothenFactor = 0;
 
 	std::vector<std::vector<float> > heights;

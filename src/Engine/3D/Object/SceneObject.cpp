@@ -7,17 +7,17 @@
 
 SceneObject::SceneObject(Mesh *mesh, std::string name) : Object3D(mesh, name)
 {
-    pMaterial = new Material(*Gum::MaterialManager::getDefaultMaterial());
+    pMaterial = Gum::MaterialManager::getDefaultMaterial();
 }
 
-SceneObject::SceneObject(std::string name) 
+SceneObject::SceneObject(std::string name) : Object3D(false)
 {
-    pMaterial = new Material(*Gum::MaterialManager::getDefaultMaterial());
+    pMaterial = Gum::MaterialManager::getDefaultMaterial();
 }
 
 SceneObject::SceneObject(const Gum::File& file, const std::string& name) : Object3D(file, name)
 {
-    pMaterial = new Material(*Gum::MaterialManager::getDefaultMaterial());
+    pMaterial = Gum::MaterialManager::getDefaultMaterial();
 }
 
 SceneObject::~SceneObject()
@@ -63,9 +63,7 @@ PhysicsObjectInstance* SceneObject::addPhysicsInstance(PhysicsObjectInstance::Sh
 //
 void SceneObject::setMaterial(Material* material) 
 { 
-    if(pMaterial->getName() == Gum::MaterialManager::getDefaultMaterial()->getName())
-        Gum::_delete(pMaterial);
-    this->pMaterial = new Material(*material);
+    this->pMaterial = material;
 }
 
 

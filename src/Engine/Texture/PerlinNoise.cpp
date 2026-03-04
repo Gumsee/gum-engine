@@ -4,12 +4,12 @@
 #include <cstdlib>
 #include <Graphics/WrapperFunctions.h>
 
-PerlinNoise::PerlinNoise(ivec2 size, float seed, std::string name)
+PerlinNoise::PerlinNoise(ivec2 size, int seed, std::string name)
+  : iSeed(seed)
 {
     //Set properties
     this->sName = name;
 	this->v2Size = size;
-    this->seed = seed;
 
     repeat();
     setFiltering(FilteringType::LINEAR);
@@ -78,7 +78,7 @@ void PerlinNoise::regenerate()
         std::vector<double> currentNoise;
         for(int y = 0; y < v2Size.y; y++)
         {
-            currentNoise.push_back(Noise(seed, x, y));
+            currentNoise.push_back(Noise(iSeed, x, y));
         }
         noise.push_back(currentNoise);
     }
@@ -87,7 +87,7 @@ void PerlinNoise::regenerate()
     {
         for(int y = 0; y < v2Size.y; y++)
         {
-            float val = turbulence(seed, x, y, 256);//16*Noise(seed, x,y) + 8*Noise(seed + 3, 2*x,2*y) + 4*Noise(seed + 23, 4*x,4*y) + 2*Noise(seed + 154, 8*x,8*y) + Noise(seed + 67, 16*x,16*y);
+            float val = turbulence(iSeed, x, y, 256);//16*Noise(seed, x,y) + 8*Noise(seed + 3, 2*x,2*y) + 4*Noise(seed + 23, 4*x,4*y) + 2*Noise(seed + 154, 8*x,8*y) + Noise(seed + 67, 16*x,16*y);
             //float val = noise[x][y] * 255;
             setPixel(x, y, color(val, val, val, 255));
         }

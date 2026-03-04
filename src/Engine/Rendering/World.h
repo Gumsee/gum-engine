@@ -46,7 +46,7 @@ public:
     void addBillboard(Billboard* billboard);
     void addParticles(ParticleSystem* particles);
 
-    virtual void saveToFile(const Gum::Filesystem::File& file) {};
+    virtual void saveToFile(const Gum::Filesystem::File& file) = 0;
     static World* readFromFile(const Gum::Filesystem::File& file);
 
     //Setter

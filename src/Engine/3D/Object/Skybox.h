@@ -5,13 +5,13 @@
 #include <Graphics/Framebuffer.h>
 #include <Graphics/TextureCube.h>
 #include <Graphics/Object3D.h>
-#include <GUI/Primitives/Box.h>
+#include "../../Rendering/Canvas.h"
 
 class SkyBox : public Object3D
 {
 private:
 	bool bRenderSky = true;
-	bool bRenderClouds = true;
+	bool bRenderClouds = false;
 
     Texture3Df* cloudNoise3D;
     Texture2Df* cloudNoise2D;
@@ -29,7 +29,7 @@ private:
 	static inline ShaderProgram *PreFilteredMapShader = nullptr;
 	static inline ShaderProgram *BRDFMapShader = nullptr;
 
-	Box *pBRDFCanvas;
+	Canvas *pBRDFCanvas;
 
 	void makeIrradianceMap();
 	void makeCubeMap(Texture* texture);

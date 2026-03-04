@@ -19,10 +19,11 @@ static const std::string LightningFragmentShader = GLSL(
 
 	uniform vec3 SunColor;
 	uniform vec3 SunDirection;
+	#ifndef GUM_ENGINE_NO_SHADOWMAP
     uniform int cascadeCount;
     uniform float cascadePlaneDistances[5];
 	uniform mat4 shadowMapMatrices[5];
-	uniform int ShadowMapSize;
+	#endif
 	uniform int farPlane;
 	uniform mat4 viewmat;
 	uniform vec3 viewPos;
@@ -31,7 +32,7 @@ static const std::string LightningFragmentShader = GLSL(
     uniform vec3 lightColor[128];
 	uniform int numLights;
 
-	const float PI = 3.14159265359;
+	//const float PI = 3.14159265359;
 	float shadowDistance = 150;
 	const float transitionDistance = 10;
 
@@ -86,6 +87,7 @@ static const std::string LightningFragmentShader = GLSL(
 	//
 	//ShadowMapping
 	//
+	#ifndef GUM_ENGINE_NO_SHADOWMAP
     float ShadowCalculation(vec3 fragPosWorldSpace, vec3 normal)
     {
         // select cascade layer
@@ -147,6 +149,7 @@ static const std::string LightningFragmentShader = GLSL(
             
         return shadow;
     }
+	#endif
 
 	const float MAX_REFLECTION_LOD = 4.0;
 
@@ -181,9 +184,9 @@ static const std::string LightningFragmentShader = GLSL(
         //
 	    //ShadowMapping
         //
-	    vec4 shadowspace = shadowMapMatrices[0] * vec4(Position, 1.0f);
-	    vec3 shadowmapcoords = shadowspace.xyz / shadowspace.w;
+		#ifndef GUM_ENGINE_NO_SHADOWMAP
 	    float shadow = 1.0 - ShadowCalculation(Position, Normal);
+		#endif
 
 	    vec3 F0 = vec3(0.04); 
 	    F0 = mix(F0, Albedo.rgb, metallic);
@@ -264,7 +267,11 @@ static const std::string LightningFragmentShader = GLSL(
 
 
         //ambient = vec3(0); // needs fix
+		#ifndef GUM_ENGINE_NO_SHADOWMAP
 	    vec3 color = (ambient + sunlight * shadow + light);
+		#else
+		vec3 color = (ambient + sunlight + light);
+		#endif
         //color = light + ambient * shadow;
         //color = irradiance;
         
@@ -275,6 +282,7 @@ static const std::string LightningFragmentShader = GLSL(
 	    //color = pow(color, vec3(1.0/2.2)); // gamma correct
 	    //color = vec3(1,0,0);
 	
+      //color = vec3(diffuse);
 
 	    float alpha = 1.0f;
 	    if(Normal == vec3(0.0f)) { alpha = 0.0; }
@@ -290,5 +298,6 @@ static const std::string LightningFragmentShader = GLSL(
         //FragColor = vec4(vec3(linearDepth), 1.0);
 
         //FragColor = vec4(texture(ShadowMap, Texcoord).xyz, 1);
+      //FragColor = vec4(1,0,1, 1.0f);
 	}
 );

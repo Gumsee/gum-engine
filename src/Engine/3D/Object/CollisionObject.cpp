@@ -1,5 +1,8 @@
 #include "CollisionObject.h"
+
+#ifdef GUM_USE_BULLET_PHYSICS
 #include <BulletDynamics/Dynamics/btRigidBody.h>
+#endif
 
 CollisionObject::CollisionObject(void* body)
     : userptr(nullptr)
@@ -30,7 +33,10 @@ void CollisionObject::setBody(void* body)
         return;
 
     this->internalBody = body;
+
+    #ifdef GUM_USE_BULLET_PHYSICS
     ((btRigidBody*)internalBody)->setUserPointer(this);
+    #endif
 }
 
 void* CollisionObject::getBody()
