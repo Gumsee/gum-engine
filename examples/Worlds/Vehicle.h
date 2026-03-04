@@ -3,7 +3,6 @@
 #include <Engine/3D/Object/SceneObject.h>
 #include <Engine/3D/Object/Vehicle/Vehicle.h>
 #include <Engine/3D/Object/Terrain/Terrain.h>
-#include <Engine/Texture/TextureManager.h>
 #include <Engine/3D/World3D.h>
 #include <Essentials/Time.h>
 #include <Graphics/Material.h>

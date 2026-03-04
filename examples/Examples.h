@@ -11,7 +11,7 @@ private:
     std::map<std::string, World*> mWorlds;
     Gum::Window* pMainWindow;
     Gum::GUI* pGUI;
-    Box* pRenderCanvas;
+    Canvas* pRenderCanvas;
     Camera* pMainCamera;
     Renderer3D* pMainRenderer;
 

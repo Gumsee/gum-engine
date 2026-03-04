@@ -1,6 +1,6 @@
 #pragma once
-#include "Engine/3D/Object/PhysicsObjectInstance.h"
-#include "Engine/3D/Object/SceneObject.h"
+#include <Engine/3D/Object/PhysicsObjectInstance.h>
+#include <Engine/3D/Object/SceneObject.h>
 #include <gum-engine.h>
 #include <Graphics/Object3D.h>
 
@@ -26,7 +26,7 @@ World3D* createPhysicsExample()
     float gap = 4.0f;
     int dim = 5;
 	//SceneObject* Cubes = new SceneObject(Mesh::generateCube(vec3(1, 1, 1)), "Cubes");
-	SceneObject* Cubes = new SceneObject(Mesh::generateUVSphere(15, 15), "Cubes");
+	SceneObject* Cubes = new SceneObject(Mesh::generateSphere(1.0f, 15, 15), "Cubes");
 
     Cubes->getMaterial()->setColor(rgba(255,0,100,255));
 	for(int i = 0; i < dim; i++)

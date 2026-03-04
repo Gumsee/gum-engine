@@ -22,15 +22,15 @@ static const std::string SkyboxVertexShader = GLSL(
 );
 
 static const std::string HDRFragmentShader = GLSL(
-	in vec3 Texcoord;
+    in vec3 Texcoord;
     out vec4 FragColor;
-	uniform samplerCube environmentMap;
-	
-	void main() 
-	{
+    uniform samplerCube environmentMap;
+    
+    void main() 
+    {
         vec3 envColor = texture(environmentMap, Texcoord).rgb;
         FragColor = vec4(envColor, 1.0f);
-	}
+    }
 );
 
 #ifdef GUM_PRIMITIVES_MESH_UP_Z
@@ -131,41 +131,41 @@ static const std::string SkyboxHDRToCubeFragmentShader = GLSL(
     uniform int gradiant;
     uniform vec3 SunDirection;
 	
-	const vec2 invAtan = vec2(0.1591, 0.3183);
-	vec2 SampleSphericalMap(vec3 v)
-	{
-		vec2 uv = vec2(atan(v.z, v.x), asin(-v.y));
-		uv *= invAtan;
-		uv += 0.5;
-		return uv;
-	}
+    const vec2 invAtan = vec2(0.1591, 0.3183);
+    vec2 SampleSphericalMap(vec3 v)
+    {
+        vec2 uv = vec2(atan(v.z, v.x), asin(-v.y));
+        uv *= invAtan;
+        uv += 0.5;
+        return uv;
+    }
 
-	void main(void) 
-	{
-		if(gradiant > 0) 
-		{ 
-			float sun = clamp(dot(normalize(SunDirection * vec3(1,-1,1)), normalize(Texcoord)), 0.0, 1.0);
-			vec3 col = mix(vec3(0.68,0.68,0.7), vec3(0.52941, 0.80784, 0.98039), -TEXTURE_UP * 0.5 + 0.5);
-			col += 0.5*vec3(1.0,0.5,0.1)*pow(sun, 20.0);
-			FragColor = vec4(col - 0.3, 1.0);
-		} 
-		else
-		{ 
-			vec2 uv = SampleSphericalMap(normalize(Texcoord * vec3(-1, 1, -1))); // make sure to normalize localPos
-			vec3 envColor = texture(hdrTexture, uv).rgb;            
-			FragColor = vec4(envColor, 1.0f);
-		} 
+    void main(void) 
+    {
+        if(gradiant > 0) 
+        { 
+            float sun = clamp(dot(normalize(SunDirection * vec3(1,-1,1)), normalize(Texcoord)), 0.0, 1.0);
+            vec3 col = mix(vec3(0.68,0.68,0.7), vec3(0.52941, 0.80784, 0.98039), -TEXTURE_UP * 0.5 + 0.5);
+            col += 0.5*vec3(1.0,0.5,0.1)*pow(sun, 20.0);
+            FragColor = vec4(col - 0.3, 1.0);
+        } 
+        else
+        { 
+            vec2 uv = SampleSphericalMap(normalize(Texcoord * vec3(-1, 1, -1))); // make sure to normalize localPos
+            vec3 envColor = texture(hdrTexture, uv).rgb;            
+            FragColor = vec4(envColor, 1.0f);
+        } 
 
-		//FragColor = vec4(1,0,0, 1.0f);
-	}
+        //FragColor = vec4(1,0,0, 1.0f);
+    }
 );
 
 #ifdef GUM_PRIMITIVES_MESH_UP_Z
     #define UP vec3(0.0, 0.0, 1.0)
-    #define TEXCOORD_UP vec3(Texcoord.x, Texcoord.y, -Texcoord.z)
+    #define TEXCOORD vec3(Texcoord.x, Texcoord.y, -Texcoord.z)
 #else
     #define UP vec3(0.0, 1.0, 0.0)
-    #define TEXCOORD_UP Texcoord
+    #define TEXCOORD Texcoord
 #endif
 static const std::string SkyboxIrradianceFragmentShader = GLSL(
   out vec4 FragColor;
@@ -173,14 +173,105 @@ static const std::string SkyboxIrradianceFragmentShader = GLSL(
 
   uniform samplerCube cubeMap;
 
-  void main()
+  // Mirror binary digits about the decimal point
+float radicalInverse_VdC(uint bits)
+{
+    bits = (bits << 16u) | (bits >> 16u);
+    bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
+    bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
+    bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
+    bits = ((bits & 0x00FF00FFu) << 8u) | ((bits & 0xFF00FF00u) >> 8u);
+    return float(bits) * 2.3283064365386963e-10; // / 0x100000000
+}
+
+// Randomish sequence that has pretty evenly spaced points
+// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
+vec2 hammersley(uint i, uint N)
+{
+    return vec2(float(i)/float(N), radicalInverse_VdC(i));
+}  
+
+vec3 importanceSampleGGX(vec2 Xi, vec3 N, float roughness)
+{
+    float a = roughness * roughness;
+
+    float phi = 2.0 * PI * Xi.x;
+    float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
+    float sinTheta = sqrt(1.0 - cosTheta * cosTheta);
+
+    // from spherical coordinates to cartesian coordinates
+    vec3 H;
+    H.x = cos(phi) * sinTheta;
+    H.y = sin(phi) * sinTheta;
+    H.z = cosTheta;
+
+    // from tangent-space vector to world-space sample vector
+    vec3 up = abs(N.z) < 0.999 ? vec3 (0.0, 0.0, 1.0) : vec3(1.0, 0.0, 0.0);
+    vec3 tangent = normalize(cross(up, N));
+    vec3 bitangent = cross(N, tangent);
+
+    vec3 sampleVec = tangent * H.x + bitangent * H.y + N * H.z;
+    return normalize(sampleVec);
+}
+
+void main()
+{
+    // Not the normal of the cube, but the normal that we're calculating the irradiance for
+    vec3 normal = normalize(TEXCOORD);
+    vec3 N = normal;
+
+    vec3 irradiance = vec3(0.0);
+
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 right = cross(up, normal);
+    up = cross(normal, right);
+
+    // ------------------------------------------------------------------------------
+
+    const uint SAMPLE_COUNT = 16384;
+    float totalWeight = 0.0;
+    for (uint i = 0u; i < SAMPLE_COUNT; ++i) {
+        vec2 Xi = hammersley(i, SAMPLE_COUNT);
+        vec3 H = importanceSampleGGX(Xi, N, 1.0);
+
+        // NdotH is equal to cos(theta)
+        float NdotH = max(dot(N, H), 0.0);
+        // With roughness == 1 in the distribution function we get 1/pi
+        float D = 1.0 / PI;
+        float pdf = (D * NdotH / (4.0)) + 0.0001; 
+
+        float resolution = 1024.0; // resolution of source cubemap (per face)
+        // with a higher resolution, we should sample coarser mipmap levels
+        float saTexel = 4.0 * PI / (6.0 * resolution * resolution);
+        // as we take more samples, we can sample from a finer mipmap.
+        // And places where H is more likely to be sampled (higher pdf) we
+        // can use a finer mipmap, otherwise use courser mipmap.
+        // The tutorial treats this portion as optional to reduce noise but I think it's
+        // actually necessary for importance sampling to get the correct result
+        float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+
+        float mipLevel = 0.5 * log2(saSample / saTexel); 
+
+        vec3 envColor = textureLod(cubeMap, H, mipLevel).rgb.rgb;
+        envColor = envColor / (envColor + vec3(1.0));
+        envColor = pow(envColor, vec3(1.0/2.2));
+
+        irradiance += envColor * NdotH;
+        // irradiance += texture(environmentMap, H).rgb * NdotH;
+        totalWeight += NdotH;
+    }
+    irradiance = (PI * irradiance) / totalWeight;
+    FragColor = vec4(irradiance, 1.0);
+  }
+
+  /*void main()
   {		
     // The world vector acts as the normal of a tangent surface
       // from the origin, aligned to WorldPos. Given this normal, calculate all
       // incoming radiance of the environment. The result of this radiance
       // is the radiance of light coming from -Normal direction, which is what
       // we use in the PBR shader to sample irradiance.
-      vec3 N = normalize(TEXCOORD_UP);
+      vec3 N = normalize(TEXCOORD);
 
       vec3 irradiance = vec3(0.0);   
       
@@ -207,7 +298,7 @@ static const std::string SkyboxIrradianceFragmentShader = GLSL(
       irradiance = PI * irradiance * (1.0 / float(nrSamples));
       
       FragColor = vec4(irradiance, 1.0);
-  }
+  }*/
 );
 /*GLSL(
 	in vec3 Texcoord;

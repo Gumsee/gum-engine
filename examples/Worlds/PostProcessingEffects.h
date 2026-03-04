@@ -16,10 +16,10 @@ World3D* createPostProcessingExample()
 
 	SceneObject *RoughBronzeObj = new SceneObject(shaderballfile, "RoughBronze");
     RoughBronzeObj->addInstance();
-	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RoughBronze/albedo.png"), 0);
-	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RoughBronze/normal.png"), 14);
-	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RoughBronze/roughness.png"), 8);
-	RoughBronzeObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("RoughBronze/metallic.png"), 9);
+	RoughBronzeObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("RoughBronze/albedo.png")), 0);
+	RoughBronzeObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("RoughBronze/normal.png")), 14);
+	RoughBronzeObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("RoughBronze/roughness.png")), 8);
+	RoughBronzeObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("RoughBronze/metallic.png")), 9);
 	RoughBronzeObj->getMaterial()->setReflectivity(0);
 	RoughBronzeObj->getInstance()->setPosition(vec3(0, 0, 0));
     pWorld3D->getObjectManager()->addObject(RoughBronzeObj);

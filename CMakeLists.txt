@@ -122,6 +122,9 @@ message(STATUS "${PROJECT_NAME}: CXXFLAGS: ${CMAKE_CXX_FLAGS}")
 
 #add_definitions(-DDEBUG)
 add_definitions(-DCHECK_GL_ERRORS)
+if(GUMDESKTOP_FOUND) 
+    add_definitions(-DGUMDESKTOP_FOUND)
+endif()
 
 set(BUILD_PYBULLET OFF CACHE INTERNAL "")
 set(BUILD_CPU_DEMOS OFF CACHE INTERNAL "")

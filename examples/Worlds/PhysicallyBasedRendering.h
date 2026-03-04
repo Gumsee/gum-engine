@@ -8,7 +8,7 @@ World3D* createPhysicallyBasedRenderingExample()
 {
     World3D* pWorld3D = new World3D();
 	pWorld3D->getObjectManager()->getSkybox()->renderSky(false);
-	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/forest.hdr", true));
+	pWorld3D->getObjectManager()->getSkybox()->setTexture(Texture::autoLoad(Gum::File("Sky/forest.hdr"), true));
 
 
 	pWorld3D->getLightManager()->addPointLight(new PointLight(vec3(-10, 10, -5),  vec3(600), "light1"));
@@ -58,10 +58,10 @@ World3D* createPhysicallyBasedRenderingExample()
 
 	SceneObject *GoldFoilObj = new SceneObject(shaderballfile, "GoldFoil");
     GoldFoilObj->addInstance();
-	GoldFoilObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("GoldFoil/albedo.png"), 0);
-	GoldFoilObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("GoldFoil/normal.png"), 14);
-	GoldFoilObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("GoldFoil/metallic.png"), 9);
-	GoldFoilObj->getMaterial()->setTexture(Gum::TextureManager::getTexture("GoldFoil/roughness.png"), 8);
+	GoldFoilObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("GoldFoil/albedo.png")), 0);
+	GoldFoilObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("GoldFoil/normal.png")), 14);
+	GoldFoilObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("GoldFoil/metallic.png")), 9);
+	GoldFoilObj->getMaterial()->setTexture(Texture::autoLoad(Gum::File("GoldFoil/roughness.png")), 8);
 	GoldFoilObj->getMaterial()->setReflectivity(0);
 	GoldFoilObj->getInstance()->setPosition(vec3(-gapSize * 2, gapSize, 0));
     pWorld3D->getObjectManager()->addObject(GoldFoilObj);

@@ -1,5 +1,4 @@
 #pragma once
-#include "Engine/Texture/TextureManager.h"
 #include "Engine/Particle/ParticleSystem.h"
 #include <Engine/Particle/ParticleProperties.h>
 #include <gum-engine.h>
@@ -18,7 +17,7 @@ World3D* createParticlesExample()
 	ParticleSystem *particles = new ParticleSystem(pWorld3D);
     // "1", GumEngine::Textures->getTexture("particleAtlas2.png"), "ParticleSystem"
 
-    particles->setTexture(Gum::TextureManager::getTexture("particleAtlas.png", true));
+    particles->setTexture(Texture::autoLoad(Gum::File("particleAtlas.png"), true));
 
 	ParticleProperties *properties = particles->getProperties();
 	properties->lifetime = 4;

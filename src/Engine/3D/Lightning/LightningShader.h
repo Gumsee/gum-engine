@@ -272,32 +272,15 @@ static const std::string LightningFragmentShader = GLSL(
 		#else
 		vec3 color = (ambient + sunlight + light);
 		#endif
-        //color = light + ambient * shadow;
-        //color = irradiance;
         
-	    color = mix(color, texture(ReflectionMap, reflect(viewDir, normalize(Normal))).rgb, reflectionFactor);
+	    color = mix(color, texture(ReflectionMap, -reflect(viewDir, normalize(Normal))).rgb, reflectionFactor);
 
-        //In HDR shader
-	    //color = color / (color + vec3(1.0)); // HDR tonemapping
-	    //color = pow(color, vec3(1.0/2.2)); // gamma correct
-	    //color = vec3(1,0,0);
 	
-      //color = vec3(diffuse);
+      //color = vec3(ambient);
 
 	    float alpha = 1.0f;
 	    if(Normal == vec3(0.0f)) { alpha = 0.0; }
 
 	    FragColor = vec4(color, alpha);
-	    //FragColor = mix(FragColor, texture(ReflectionMap, reflect(viewDir, normalize(Normal))), reflectionFactor);
-	    //FragColor = texture(ShadowMap, shadowmapcoords.xy);
-    	//FragColor = vec4(color, 1.0f);
-    	//FragColor = Albedo * vec4(vec3(dot(Normal, normalize(lights[0].Position - Position))), alpha);
-
-        //float shaderval = texture(ShadowMap, vec3(Texcoord, 0)).r;
-        //float linearDepth = linearize_depth(shaderval);
-        //FragColor = vec4(vec3(linearDepth), 1.0);
-
-        //FragColor = vec4(texture(ShadowMap, Texcoord).xyz, 1);
-      //FragColor = vec4(1,0,1, 1.0f);
 	}
 );

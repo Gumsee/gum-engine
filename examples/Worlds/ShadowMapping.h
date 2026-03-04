@@ -2,7 +2,6 @@
 #include <gum-engine.h>
 #include <Engine/3D/Object/SceneObject.h>
 #include <Engine/3D/Object/Terrain/Terrain.h>
-#include <Engine/Texture/TextureManager.h>
 #include <Engine/3D/World3D.h>
 #include <Engine/3D/Renderer3D.h>
 #include <Essentials/Time.h>
@@ -15,7 +14,7 @@ World3D* createShadowMappingExample()
 {
     World3D* pWorld3D = new World3D();
 	pWorld3D->getObjectManager()->getSkybox()->renderSky(false); //PREFILTER MAP RENDERN BEI GRADIANT
-	pWorld3D->getObjectManager()->getSkybox()->setTexture(Gum::TextureManager::getTexture("Sky/aerodynamics_workshop_8k.hdr", true));
+	pWorld3D->getObjectManager()->getSkybox()->setTexture(Texture::autoLoad(Gum::File("Sky/aerodynamics_workshop_8k.hdr"), true));
 
 
 

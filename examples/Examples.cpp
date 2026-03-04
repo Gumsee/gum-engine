@@ -45,18 +45,20 @@ TODO
 std::map<std::string, World*> mWorlds;
 Gum::Window* pMainWindow;
 Gum::GUI* pGUI;
-Box* pRenderCanvas;
+Canvas* pRenderCanvas;
+Box* canvasBox;
 Camera3D* pMainCamera;
 Renderer3D* pMainRenderer;
 
 
+Gum::Filesystem::File Examples::assetPath = Gum::Filesystem::File(std::string(EXAMPLES_PATH) + "/assets/", Gum::Filesystem::DIRECTORY);
 World* getExampleWorld(std::string name)
 {
     if(!Tools::mapHasKeyNotNull(mWorlds, name))
     {
         if(name == "AnimatesModels")            { mWorlds[name] = createAnimatedModelExample(); }
         if(name == "Billboards")                { mWorlds[name] = createBillboardsExample(); }
-        if(name == "GBuffer")                   { mWorlds[name] = createGBufferExample(); }
+        if(name == "GBuffer")                   { mWorlds[name] = createGBufferExample(Examples::assetPath); }
         if(name == "BasicCube")                 { mWorlds[name] = createBasicCubeExample(); }
         //if(name == "IrradiancePBR")             { mWorlds[name] = createIrradiancePBRExample(); }
         //if(name == "MazeLearning")              { mWorlds[name] = createMazeLearningExample(); }
@@ -72,8 +74,6 @@ World* getExampleWorld(std::string name)
     }
     return mWorlds[name];
 }
-
-Gum::Filesystem::File Examples::assetPath = Gum::Filesystem::File(std::string(EXAMPLES_PATH) + "/assets/", Gum::Filesystem::DIRECTORY);
 
 int main(int argc, char** argv)
 {
@@ -93,7 +93,8 @@ int main(int argc, char** argv)
 
     XMLLoader pXMLGUILoader(Examples::assetPath.toString() + "/guis/example_interface.xml");
     pGUI->addGUI(pXMLGUILoader.getRootGUI());
-    pRenderCanvas = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
+    canvasBox = (Box*)pXMLGUILoader.getRootGUI()->findChildByID("renderview");
+    pRenderCanvas = new Canvas(canvasBox->getSize());
 
     //Gum::Output::print(pXMLGUILoader.getRootGUI()->getHierarchy());
 
@@ -106,11 +107,14 @@ int main(int argc, char** argv)
     //pMainCamera->setRotationalSpeed(0.2f);
 
     pMainRenderer = new Renderer3D(pRenderCanvas);
-    pMainRenderer->setWorld((World3D*)getExampleWorld("BasicCube"));
+    pMainRenderer->setWorld((World3D*)getExampleWorld("GBuffer"));
     pMainRenderer->setExposure(1.0f);
+    canvasBox->setTexture(pMainRenderer->getHighDynamicRange()->getFramebuffer()->getTextureAttachment());
+    canvasBox->invertTexcoordY(true);
 
     pMainWindow->onResized([](ivec2 size) {
         pGUI->setSize(size);
+        pRenderCanvas->setSize(canvasBox->getSize());
         ((Camera3D*)Camera::getActiveCamera())->updateProjection(pRenderCanvas->getSize());
         pMainRenderer->updateFramebufferSize();
     });
@@ -188,11 +192,11 @@ int main(int argc, char** argv)
         //vec4 campos = Camera::getActiveCamera()->getViewMatrix() * vec4(0, 0, 0, 1);
         if((int)Time::getTime() != oldtime)
         {
-            Gum::Output::print(Time::getFPS());
+            //Gum::Output::print(Time::getFPS());
             oldtime = (int)Time::getTime();
         }
 
-        if(pRenderCanvas->hasClickedInside(GUM_MOUSE_BUTTON_RIGHT))
+        if(canvasBox->hasClickedInside(GUM_MOUSE_BUTTON_RIGHT))
         {
             pMainWindow->getMouse()->trap(true);
             ((Camera3D*)Camera::getActiveCamera())->setMode(Camera3D::FREECAM);
@@ -203,7 +207,7 @@ int main(int argc, char** argv)
         pMainWindow->getKeyboard()->reset();
 
         //pMainWindow.update();
-        Texture::loadTextures();
+        Texture::updateBackgroundLoading();
         Time::update();
     }
 

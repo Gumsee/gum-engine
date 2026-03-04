@@ -147,6 +147,9 @@ set(EXAMPLE_FILE_LIST Examples MaterialWriter ObjectWriter)
 
 foreach(EXAMPLE ${EXAMPLE_FILE_LIST})
     message(STATUS "Adding target ${EXAMPLE}")
-    add_executable(Example_${EXAMPLE} "./${EXAMPLE}.cpp")
+    file(GLOB_RECURSE SRC 
+    "./${EXAMPLE}/*.cpp"
+    )
+    add_executable(Example_${EXAMPLE} "./${EXAMPLE}.cpp" ${SRC})
     target_link_libraries(Example_${EXAMPLE} "${GUM_LIBRARIES}")
 endforeach()

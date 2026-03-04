@@ -204,15 +204,15 @@ void SkyBox::setTexture(Texture *tex)
 {
 	if(tex->getType() == Texture::TEXTUREHDR || tex->getType() == Texture::TEXTURE2D)
 	{
-		makeCubeMap(tex);
-        pTexture->createMipmaps();
-        updateTexture();
+		  makeCubeMap(tex);
+      pTexture->createMipmaps();
+      updateTexture();
 	}
 	else if(tex->getType() == Texture::TEXTURECUBE)
 	{
-		Gum::Output::warn("Skybox: Texturecube not implemented yet!");
-		//pTexture = (TextureCube*)tex;
-		updateTexture();
+      Gum::Output::warn("Skybox: Texturecube not implemented yet!");
+      //pTexture = (TextureCube*)tex;
+      updateTexture();
 	}
 	else
 	{
