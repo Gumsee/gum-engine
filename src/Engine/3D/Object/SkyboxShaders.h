@@ -228,7 +228,7 @@ void main()
 
     // ------------------------------------------------------------------------------
 
-    const uint SAMPLE_COUNT = 16384;
+    const uint SAMPLE_COUNT = 16384u;
     float totalWeight = 0.0;
     for (uint i = 0u; i < SAMPLE_COUNT; ++i) {
         vec2 Xi = hammersley(i, SAMPLE_COUNT);
