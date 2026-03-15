@@ -22,7 +22,7 @@ mat3 m3i = mat3(0.00f, -0.80f, -0.60f,
 
 float hash1( float n )
 {
-    return Gum::Maths::fract( n*17.0*Gum::Maths::fract( n*0.3183099 ) );
+    return Gum::Maths::fract( n*17.0f*Gum::Maths::fract( n*0.3183099f ) );
 }
 
 vec4 noised(vec3 x)
@@ -94,8 +94,8 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 {
     initShaders();
 	this->sunDir = SunDirection;
-  this->cloudNoise3D = nullptr;
-  this->cloudNoise2D = nullptr;
+    this->cloudNoise3D = nullptr;
+    this->cloudNoise2D = nullptr;
 
 	//Create and add Properties
     addInstance();
@@ -125,20 +125,11 @@ SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
 
 SkyBox::~SkyBox() 
 {
-	  Gum::_delete(pTexture);
+    Gum::_delete(pTexture);
     Gum::_delete(pIrradianceMap);
     Gum::_delete(pBRDFFramebuffer);
     Gum::_delete(pPreFilterMap);
     Gum::_delete(pBRDFCanvas);
-
-    
-    //HDRToCubeMapShader->removeShader(0);
-    //IrradianceMapShader->removeShader(0);
-    //PreFilteredMapShader->removeShader(0);
-    //Gum::_delete(HDRToCubeMapShader);
-    //Gum::_delete(IrradianceMapShader);
-    //Gum::_delete(PreFilteredMapShader);
-    //Gum::_delete(BRDFMapShader);
 }
 
 void SkyBox::render()
@@ -235,12 +226,12 @@ void SkyBox::makePrefilterMap()
     ivec2 res = pPreFilterMap->getSize();
     PreFilteredMapShader->use();
     pTexture->bind(0);
-    unsigned int maxMipLevels = 5;
-    for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+    unsigned short maxMipLevels = 5;
+    for (unsigned short mip = 0; mip < maxMipLevels; ++mip)
     {
         // resize framebuffer according to mip-level size.
         pPreFilterMap->setActiveMipmapLevel(mip);
-        pPreFilterMap->getFramebuffer()->setSize(vec2(res) * std::pow(0.5, mip));
+        pPreFilterMap->getFramebuffer()->setSize(vec2(res) * std::pow(0.5f, mip));
 
         float roughness = (float)mip / (float)(maxMipLevels - 1);
         pPreFilterMap->render([this, roughness]() {

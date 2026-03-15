@@ -19,7 +19,6 @@ private:
     EnvironmentMapf* pIrradianceMap;
 	Framebuffer* pBRDFFramebuffer;
 	EnvironmentMapf* pPreFilterMap;
-	unsigned int captureRBOPreFiltered;
 
 	static inline ShaderProgram *SkyShader = nullptr;
 	static inline ShaderProgram *HDRShader = nullptr;

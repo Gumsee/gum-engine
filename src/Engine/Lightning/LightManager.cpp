@@ -83,7 +83,7 @@ void LightManager::addCallback(std::function<void(Light*, int)> callback)
 
 unsigned int LightManager::numPointLights()
 {
-    return PointLights.size();
+    return (unsigned int)PointLights.size();
 }
 
 PointLight* LightManager::getPointLight(const unsigned int& index)

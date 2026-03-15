@@ -5,9 +5,15 @@ static const std::string ShadowMappingVertexShader = GLSL(
     layout (location = 0) in vec3 vertexPosition;
     layout (location = 3) in mat4 TransMatrix;
 
+    uniform mat4 lightSpaceMatrix;
+    uniform int isCascaded;
+
     void main()
     {
-        gl_Position = TransMatrix * vec4(vertexPosition, 1.0f);
+        if(isCascaded > 0)
+            gl_Position = TransMatrix * vec4(vertexPosition, 1.0f);
+        else
+            gl_Position = lightSpaceMatrix * TransMatrix * vec4(vertexPosition, 1.0f);
     }
 );
 

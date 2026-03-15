@@ -11,13 +11,8 @@ private:
     std::vector<SkeletalAnimation*> vAppliedAnimation;
     std::vector<mat4> vBoneMats;
     std::unordered_map<Bone*, mat4> mBoneMatsWithoutOffset;
-    
-    float fTime;
-    float fStartTime;
-    float fEndTime;
 
     bool bIsStopUpdating;
-    bool bShouldAnimationLoop;
 
     void recursiveUpdateBoneMatsVector(Bone *currentBone, mat4 parentTransform);
 

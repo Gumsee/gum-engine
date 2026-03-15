@@ -21,7 +21,9 @@ public:
     };
 
 private:
+    #ifdef GUM_USE_BULLET_PHYSICS
     CollisionObject* pRigidbody = nullptr;
+    #endif
 
 public:
     PhysicsObjectInstance(Object3D* obj, Shape shape, float mass, World3D* world, vec3 special = vec3(0,0,0));

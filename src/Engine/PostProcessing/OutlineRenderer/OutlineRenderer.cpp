@@ -22,7 +22,6 @@ OutlineRenderer::OutlineRenderer(Canvas* rendercanvas)
 
 OutlineRenderer::~OutlineRenderer()
 {
-    Gum::_delete(pShader);
 }
 
 

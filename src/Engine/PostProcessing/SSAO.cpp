@@ -46,11 +46,6 @@ SSAO::~SSAO()
 	Gum::_delete(pSSAOFramebuffer);
 	Gum::_delete(pSSAOBlurFramebuffer);
 	Gum::_delete(pNoiseTexture);
-
-	//pShader->removeShader(0);
-	//pBlurShader->removeShader(0);
-	//Gum::_delete(pShader);
-	//Gum::_delete(pBlurShader);
 }
 
 
@@ -120,7 +115,7 @@ void SSAO::generateKernel()
 			sample *= randomFloats(generator);
 
 			float scale = (float)i / (float)kernelSize;
-			scale   = Gum::Maths::lerp(scale * scale, 0.1f, 1.0f);
+			scale   = (float)Gum::Maths::lerp(scale * scale, 0.1f, 1.0f);
 			sample *= scale;
 			ssaoKernel.push_back(sample);
 		}
@@ -130,8 +125,8 @@ void SSAO::generateKernel()
     ssaoNoise.clear();
     for (unsigned int i = 0; i < NoiseSize * NoiseSize; i++)
     {
-        ssaoNoise.push_back(randomFloats(generator) * 2.0 - 1.0);
-        ssaoNoise.push_back(randomFloats(generator) * 2.0 - 1.0);
+        ssaoNoise.push_back(randomFloats(generator) * 2.0f - 1.0f);
+        ssaoNoise.push_back(randomFloats(generator) * 2.0f - 1.0f);
     }  
     pNoiseTexture->setSize(ivec2(NoiseSize, NoiseSize));
     pNoiseTexture->setNumChannels(2);

@@ -28,9 +28,6 @@ static vec2 worldToPos(const vec4& worldPos, mat4& mat, vec2 position = vec2(0,0
 
 float mGizmoSizeClipSpace = 0.1f;
 static const int halfCircleSegmentCount = 64;
-static const float ZPI = 3.14159265358979323846f;
-static const float RAD2DEG = (180.f / ZPI);
-static const float DEG2RAD = (ZPI / 180.f);
 const float screenRotateSize = 0.06f;
 const float rotationDisplayFactor = 1.2f;
 float mRadiusSquareCenter = 0.0f;
@@ -76,20 +73,21 @@ static float GetSegmentLengthClipSpace(const vec4& start, const vec4& end, mat4 
 //#error
 void Gizmo::drawTranslationGizmo(int type)
 {
+    (void)type; //TODO
     vec3 cameraToModelNormalized;
 
     mat4 viewInverse = mat4::inverse(Camera::getActiveCamera()->getViewMatrix());
     if(Camera::getActiveCamera()->getType() == Camera::CAMERA3D 
     && ((Camera3D*)Camera::getActiveCamera())->getProjectionMode() == Camera3D::PERSPECTIVE)
     {
-        cameraToModelNormalized = vec3::normalize(Transformable<3U>::getPosition() - Camera::getActiveCamera()->getPosition());
+        cameraToModelNormalized = vec3::normalize(Transformable<float, 3U>::getPosition() - Camera::getActiveCamera()->getPosition());
     }
     else
     {
         cameraToModelNormalized = vec3(-viewInverse[0][2], -viewInverse[1][2], -viewInverse[1][2]);
     }
 
-    cameraToModelNormalized = mat4::inverse(Transformable<3U>::mTransformation) * vec4(cameraToModelNormalized, 1);
+    cameraToModelNormalized = mat4::inverse(Transformable<float, 3U>::mTransformation) * vec4(cameraToModelNormalized, 1);
 
     mRadiusSquareCenter = screenRotateSize * Framebuffer::CurrentlyBoundFramebuffer->getSize().y;
 
@@ -116,13 +114,13 @@ void Gizmo::drawTranslationGizmo(int type)
 
         //vec2 circlePos = (vec2)alloca(sizeof(ImVec2) * (circleMul * halfCircleSegmentCount + 1));
 
-        float angleStart = atan2f(cameraToModelNormalized.at((4 - axis) % 3), cameraToModelNormalized.at((3 - axis) % 3)) + ZPI * 0.5f;
+        float angleStart = atan2f(cameraToModelNormalized.at((4 - axis) % 3), cameraToModelNormalized.at((3 - axis) % 3)) + (float)GUM_PI * 0.5f;
 
         vec2 firstpos;
         vec2 oldpos = vec2(0,0);
         for (int i = 0; i < circleMul * halfCircleSegmentCount + 1; i++)
         {
-            float ng = angleStart + (float)circleMul * ZPI * ((float)i / (float)(circleMul * halfCircleSegmentCount));
+            float ng = angleStart + (float)circleMul * (float)GUM_PI * ((float)i / (float)(circleMul * halfCircleSegmentCount));
             vec4 axisPos = vec4(cosf(ng), sinf(ng), 0.0f, 0.0f);
             vec4 pos = vec4(axisPos.at(axis), axisPos.at((axis + 1) % 3), axisPos.at((axis + 2) % 3), 0.0f) * mScreenFactor * rotationDisplayFactor;
             vec2 circlePos = worldToPos(pos, mvp);
@@ -167,7 +165,7 @@ void Gizmo::drawTranslationGizmo(int type)
 
         ImVec2 destinationPosOnScreen = circlePos[1];
         char tmps[512];
-        ImFormatString(tmps, sizeof(tmps), rotationInfoMask[type - MT_ROTATE_X], (gContext.mRotationAngle / ZPI) * 180.f, gContext.mRotationAngle);
+        ImFormatString(tmps, sizeof(tmps), rotationInfoMask[type - MT_ROTATE_X], (gContext.mRotationAngle / (float)GUM_PI) * 180.f, gContext.mRotationAngle);
         drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
         drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
     }*/
@@ -192,7 +190,7 @@ Gizmo::Gizmo()
     drawTranslationGizmo(0);
     
     pLineVBO->setData(vLineVBOData, Gum::Graphics::DataState::DYNAMIC);
-    pLineVAO->setVertexCount(vLineVBOData.size());
+    pLineVAO->setVertexCount((unsigned int)vLineVBOData.size());
 
 }
 
@@ -204,9 +202,9 @@ Gizmo::~Gizmo()
 void Gizmo::addCircle(vec2 at, float radius)
 {
     float angle = 360.0f;
-    float resolution = 300;
-    double stepsize = angle / (double)resolution;
-    for(double i = 0; i < angle; i += stepsize)
+    float resolution = 300.0f;
+    float stepsize = angle / resolution;
+    for(float i = 0; i < angle; i += stepsize)
     {
         vLineVBOData.push_back(at + vec2(cos(Gum::Maths::toRadians(i)) * radius, sin(Gum::Maths::toRadians(i)) * radius));
         vLineVBOData.push_back(at + vec2(cos(Gum::Maths::toRadians(i+stepsize)) * radius, sin(Gum::Maths::toRadians(i+stepsize)) * radius));

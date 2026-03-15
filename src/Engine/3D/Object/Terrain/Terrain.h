@@ -24,8 +24,8 @@ private:
 	float generateHeight(int x, int z);
 	float getInterpolatedNoise(float x, float z);
 	float getSmoothNoise(int x, int z);
-	double interpolate(double x, double y, double a) const;
-	double Noise(int x, int y) const;
+	float interpolate(float x, float y, float a) const;
+	float Noise(int x, int y) const;
 
 	float getHeightFromIndex(int x, int z);
 

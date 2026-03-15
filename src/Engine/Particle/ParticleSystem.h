@@ -64,7 +64,7 @@ public:
     //Getter
 	Texture* getTexture();
 	vec3 getPosition();
-	int getCount();
+	unsigned int getCount();
 	ParticleProperties *getProperties();
 	std::vector<Particle::ParticleStage*> *getParticleStages();
 };

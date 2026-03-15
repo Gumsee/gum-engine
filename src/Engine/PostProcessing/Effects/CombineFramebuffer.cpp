@@ -9,7 +9,7 @@ CombineFramebuffer::CombineFramebuffer(Canvas *canvas)
 
 CombineFramebuffer::~CombineFramebuffer() {}
 
-Texture* CombineFramebuffer::render(Texture* texture)
+Texture* CombineFramebuffer::render([[maybe_unused]] Texture* texture)
 {
 	pFramebuffer->bind();
 	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR);

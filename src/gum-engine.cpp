@@ -5,6 +5,7 @@
 #include "Engine/Lightning/LightManager.h"
 #include "Engine/Shaders/SimpleShader.h"
 #include "Engine/Shaders/ThicklinesShader.h"
+#include <Primitives/Mesh.h>
 
 namespace Gum { 
 namespace Engine
@@ -31,6 +32,7 @@ namespace Engine
         Texture::cleanupAllLoadedTextures();
         ShaderProgram::destroyAllShaders();
         LightManager::cleanup();
+        Mesh::destroyAllMeshes();
 
         ENGINE_INITIALIZED = false;
     }

@@ -27,6 +27,8 @@ Renderer::Renderer(Canvas* canvas, const Type& type)
 
 Renderer::~Renderer()
 {
+    if(pActiveRenderer == this)
+        pActiveRenderer = nullptr;
     Gum::_delete(pFramebuffer);
     Gum::_delete(pHighDynamicRange);
     Gum::_delete(pIDRenderer);

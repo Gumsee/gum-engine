@@ -24,7 +24,7 @@ private:
     bool bIsTriggered;
 
     void recursiveGenerateRagdoll(Bone *currentBone, mat4 parentTransform);
-    void createBody(Bone* bone, mat4 transform);
+    void createBody(Bone* bone, [[maybe_unused]] mat4 transform);
     void createJoints(Bone* bone);
 
 public:

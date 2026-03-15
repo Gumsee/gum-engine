@@ -37,7 +37,8 @@ Sprite2D* TileMap::addSprite(Sprite2D *spr)
 
 void TileMap::removeSprite(Sprite2D *sprToDelete)
 {
-	
+	//TODO
+    (void)sprToDelete;
 }
 
 
@@ -50,7 +51,7 @@ void TileMap::onAddSprite(AddSpriteCallback callback)   { this->pAddSpriteCallba
 //
 //Getter
 //
-unsigned int TileMap::numSprites() 					  { return this->vSprites.size(); }
+unsigned int TileMap::numSprites() 					  { return (unsigned int)this->vSprites.size(); }
 bool TileMap::hasSprite(const std::string& name)        { return getSprite(name) != nullptr; }
 Sprite2D* TileMap::getSprite(const std::string& name)
 {

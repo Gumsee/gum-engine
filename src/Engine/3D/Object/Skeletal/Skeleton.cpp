@@ -6,9 +6,7 @@
 
 Skeleton::Skeleton(Bone *rootbone, unsigned int numbones)
     : pRootBone(rootbone),
-      fTime(0), fStartTime(0), fEndTime(0),
-      bIsStopUpdating(false),
-      bShouldAnimationLoop(false)
+      bIsStopUpdating(false)
 {
     vBoneMats.resize(numbones);
 

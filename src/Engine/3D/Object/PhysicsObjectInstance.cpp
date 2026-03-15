@@ -167,7 +167,7 @@ PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float m
 		btTransform transform;
         btRigidBody* body = (btRigidBody*)pRigidbody->getBody();
 		body->getMotionState()->getWorldTransform(transform);
-        this->qRotation = quat(transform.getRotation().getX(), transform.getRotation().getY(), transform.getRotation().getZ(), transform.getRotation().getW());
+        this->qRotation = quat(transform.getRotation().getW(), transform.getRotation().getX(), transform.getRotation().getY(), transform.getRotation().getZ());
         this->vPosition = vec3(transform.getOrigin().x(), transform.getOrigin().y(), transform.getOrigin().z());
 		//transform.setOrigin(transform.getOrigin() - btVector3(rigidbodyOffset.x, rigidbodyOffset.y, rigidbodyOffset.z));		
 		transform.getOpenGLMatrix(&mTransformation[0][0]);

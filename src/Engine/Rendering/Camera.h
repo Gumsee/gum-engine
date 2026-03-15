@@ -6,7 +6,7 @@
 #include <functional>
 
 
-class Camera : public Transformable<3U>
+class Camera : public Transformable<float, 3U>
 {
 public: 
     enum Type
@@ -35,10 +35,10 @@ protected:
     Camera(const ivec2& resolution, const Type& type);
 
 public:
-    virtual ~Camera() {};
+    virtual ~Camera();
 
     virtual void update() = 0;
-    virtual void updateProjection(const ivec2& resolution) {};
+    virtual void updateProjection([[maybe_unused]] const ivec2& resolution) {};
     void makeActive();
     void invertPitch();
 		vec3 calcMouseRayDirection();		
@@ -61,7 +61,7 @@ public:
     mat4 getPerspective() const;
     vec3 getViewDirection() const;
     vec3 getStrafeDirection() const;
-    vec3 getPosition() const override;
+    vec3& getPosition() override;
     float getSpeed() const;
     float getFOV() const;
     Type getType() const;

@@ -33,5 +33,6 @@ Object3DInstance* Vehicle::addInstance(World3D* world)
 // Getter
 void Vehicle::addWheel(Object3D wheelobj, vec3 offset)
 {
-
+    (void)wheelobj;
+    (void)offset;
 }

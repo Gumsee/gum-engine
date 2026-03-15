@@ -63,7 +63,7 @@ void World3D::saveToFile(const Gum::Filesystem::File& file)
             Object3DInstance* inst = obj->getInstance(j);
             XMLNode* instanceNode = new XMLNode("instance");
             if(inst->getPosition() != vec3(0,0,0))  instanceNode->addAttribute("position", inst->getPosition().toString());
-            if((quat)inst->getRotation() != quat()) instanceNode->addAttribute("rotation", inst->getRotation().toString());
+            if((fquat)inst->getRotation() != fquat()) instanceNode->addAttribute("rotation", inst->getRotation().toString());
             if(inst->getScale() != vec3(1,1,1))     instanceNode->addAttribute("scale", inst->getScale().toString());
             if(inst->getType() == OBJECT3D_INSTANCE_TYPE_PHYSICS) instanceNode->addAttribute("physics",  "true");
             objNode->addChild(instanceNode);

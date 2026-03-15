@@ -25,7 +25,7 @@ public:
 
 
 
-	Particle(vec3 pos, float lifetime, int maxlifetime);
+	Particle(vec3 pos, float lifetime, float maxlifetime);
 	~Particle();
 
 	struct ParticleStage

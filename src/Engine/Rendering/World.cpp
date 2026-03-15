@@ -42,7 +42,7 @@ void World::renderRenderableIDs()
         vRenderables[i]->renderID();
 }
 
-void World::renderParticles(ShaderProgram* shader)
+void World::renderParticles()
 {
 	for (size_t i = 0; i < vParticles.size(); i++)
 	{

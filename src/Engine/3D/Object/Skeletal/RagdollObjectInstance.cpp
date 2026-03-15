@@ -59,15 +59,15 @@ void RagdollObjectInstance::createBody(Bone* bone, mat4 transform)
 {
     if(bone->getParent() == nullptr)
         return;
+    
 
+    #ifdef GUM_USE_BULLET_PHYSICS
     float height = 0.0f;
     vec3 bonepos = Gum::Maths::positionFromMatrix(transform);
     vec3 parentbonepos = Gum::Maths::positionFromMatrix(pParentObject->getSkeleton()->getBoneMatricesWithoutOffset()[bone->getParent()]);
     height = vec3::distance(bonepos, parentbonepos) * 0.2f;
     std::cout << "Bone distance to parent " << bone->getName() << ": " << height << std::endl;
     
-
-    #ifdef GUM_USE_BULLET_PHYSICS
     btCapsuleShape* shape = new btCapsuleShape(btScalar(0.1), btScalar(height));
 
 	btTransform bullettransform;

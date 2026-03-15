@@ -23,6 +23,12 @@ Camera::Camera(const ivec2& resolution, const Type& type)
     updateView();
 }
 
+Camera::~Camera()
+{
+    if(pActiveCamera == this)
+        pActiveCamera = nullptr;
+}
+
 void Camera::updateView()
 {
     mViewMatrix = Gum::Maths::view(v3ActualPosition, v3ActualPosition + v3ViewDirection, v3WorldUp);
@@ -87,7 +93,7 @@ mat4 Camera::getOrtho() const				     { return this->mOrthographicMatrix; }
 mat4 Camera::getPerspective() const      { return this->mPerspectiveMatrix; }
 vec3 Camera::getViewDirection() const		 { return this->v3ViewDirection; }
 vec3 Camera::getStrafeDirection() const  { return this->v3StrafeDirection; }
-vec3 Camera::getPosition() const			   { return this->v3ActualPosition; }
+vec3& Camera::getPosition()              { return this->v3ActualPosition; }
 float Camera::getFOV() const             { return this->fFOV; }
 float Camera::getZoom() const            { return this->fZoomfactor; }
 Camera::Type Camera::getType() const     { return this->iType; }

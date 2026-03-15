@@ -9,7 +9,6 @@ class G_Buffer
 private:
     Framebuffer* gBuffer;
 	long long microseconds;
-	int depthBuffer;
 	std::chrono::high_resolution_clock::time_point start;
 
     ShaderProgram *pShader;

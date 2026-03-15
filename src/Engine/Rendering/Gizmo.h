@@ -5,7 +5,7 @@
 #include <Graphics/Renderable.h>
 #include <Primitives/Transformable.h>
 
-class Gizmo : public Renderable, public Transformable<3U>
+class Gizmo : public Renderable, public Transformable<float, 3U>
 {
 private:
     static inline ShaderProgram* pShader = nullptr;

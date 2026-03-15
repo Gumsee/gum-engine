@@ -9,7 +9,7 @@ BoneRenderer::BoneRenderer(AnimatedModel* model)
 {
     this->pModel = model;
 
-    Mesh* boneMesh = new Mesh();
+    Mesh* boneMesh = new Mesh("BoneRenderer_BoneMesh");
     boneMesh->addVertices({
         vec3(-0.50, 0.00, -0.50),
         vec3(0.50, 0.00, 0.50),

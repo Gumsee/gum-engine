@@ -40,7 +40,7 @@ void Renderer2D::renderInternal()
     pWorld->renderRenderable();
 
     pParticleShader->use();
-    pWorld->renderParticles(pParticleShader);
+    pWorld->renderParticles();
 
 	pBillboardShader->use();
     pWorld->renderBillboards(pBillboardShader);

@@ -79,9 +79,9 @@ void Renderer3D::renderInternal()
 
 
     pParticleShader->use();
-    pWorld->renderParticles(pParticleShader);
+    pWorld->renderParticles();
 
-	  pBillboardShader->use();
+    pBillboardShader->use();
     pWorld->renderBillboards(pBillboardShader);
 
 

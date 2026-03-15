@@ -31,7 +31,6 @@ G_Buffer::G_Buffer(const ivec2& canvassize)
 G_Buffer::~G_Buffer()
 {
     Gum::_delete(gBuffer);
-    //Gum::_delete(pShader);
 }
 
 void G_Buffer::bind()

@@ -164,5 +164,5 @@ void ParticleSystem::setProperties(ParticleProperties *NewProperties)      { thi
 std::vector<Particle::ParticleStage*>* ParticleSystem::getParticleStages() { return ParticleStages; }
 Texture* ParticleSystem::getTexture()                                      { return texture; }
 vec3 ParticleSystem::getPosition()                                         { return v3Position; }
-int ParticleSystem::getCount()                                             { return vParticles.size(); }
+unsigned int ParticleSystem::getCount()                                    { return (unsigned int)vParticles.size(); }
 ParticleProperties* ParticleSystem::getProperties()                        { return properties; }

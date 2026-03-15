@@ -145,7 +145,7 @@ static const std::string LightningFragmentShader = GLSL(
                 shadow += (currentDepth - bias) > pcfDepth ? 1.0 : 0.0;        
             }    
         }
-        shadow /= 9.0;
+        //shadow /= 9.0;
             
         return shadow;
     }

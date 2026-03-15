@@ -15,6 +15,7 @@ private:
     Framebuffer* pFramebuffer;
     std::vector<float> vShadowCascadeLevels;
     std::vector<mat4> vLightMatrices;
+	bool bCascadedShadowSupport = true;
 
     std::vector<vec4> getFrustumCornersWorldSpace(mat4& proj, const mat4& view);
     mat4 getLightSpaceMatrix(const vec3& lightdir, const float nearPlane, const float farPlane);

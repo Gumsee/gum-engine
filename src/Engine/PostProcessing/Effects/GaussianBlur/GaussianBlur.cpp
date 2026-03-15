@@ -52,8 +52,6 @@ GaussianBlur::GaussianBlur(Canvas *canvas, int stage)
 
 GaussianBlur::~GaussianBlur() 
 {
-	//Gum::_delete(HblurShader);
-	//Gum::_delete(VblurShader);
 }
 
 

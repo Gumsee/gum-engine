@@ -29,7 +29,7 @@ CurveRenderer::CurveRenderer(Curve* curve, float thickness)
     pPointsBuffer->setData(pCurve->getData(), Gum::Graphics::DataState::STATIC);
     pVAO->addAttribute(pPointsBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
     pVAO->addAttributeMat4(pTransMatricesVBO, 3, Gum::Graphics::Datatypes::FLOAT, 1);
-    pVAO->setVertexCount(pCurve->getData().size());
+    pVAO->setVertexCount((unsigned int)pCurve->getData().size());
 
 
 

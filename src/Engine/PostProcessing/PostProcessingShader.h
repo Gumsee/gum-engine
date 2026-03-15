@@ -30,7 +30,6 @@ static const std::string PostProcessingFragmentShader = GLSL(
 
     void main(void)
     {
-        vec4 TextureColor = texture(textureSampler, Texcoord).rgba;
-        FragColor = TextureColor;
+        FragColor = texture(textureSampler, Texcoord);
     }
 );

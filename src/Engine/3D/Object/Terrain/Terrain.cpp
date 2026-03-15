@@ -4,6 +4,7 @@
 //#include <bullet/BulletCollision/CollisionShapes/btShapeHull.h>
 
 Terrain::Terrain(const vec2& dimensions, const ivec2& resolution, const float& amplitude, const int& seed) 
+  : Mesh("Terrain_" + std::to_string(seed))
 {  
     this->v2Resolution = resolution;
     this->v2Size = dimensions;
@@ -63,6 +64,7 @@ Terrain::Terrain(const vec2& dimensions, const ivec2& resolution, const float& a
 
 Terrain::~Terrain() 
 {
+	Mesh::~Mesh();
 }
 
 vec3 Terrain::calculateNormal(int x, int z)
@@ -134,15 +136,15 @@ float Terrain::getInterpolatedNoise(float x, float z)
 {
 	int intX = (int)x;
 	int intZ = (int)z;
-	double fracX = x - intX;
-	double fracZ = z - intZ;
+	float fracX = x - intX;
+	float fracZ = z - intZ;
 
-	double v1 = getSmoothNoise(intX, intZ);
-	double v2 = getSmoothNoise(intX + 1, intZ);
-	double v3 = getSmoothNoise(intX, intZ + 1);
-	double v4 = getSmoothNoise(intX + 1, intZ + 1);
-	double i1 = interpolate(v1, v2, fracX);
-	double i2 = interpolate(v3, v4, fracX);
+	float v1 = getSmoothNoise(intX, intZ);
+	float v2 = getSmoothNoise(intX + 1, intZ);
+	float v3 = getSmoothNoise(intX, intZ + 1);
+	float v4 = getSmoothNoise(intX + 1, intZ + 1);
+	float i1 = interpolate(v1, v2, fracX);
+	float i2 = interpolate(v3, v4, fracX);
 	return (float)interpolate(i1, i2, fracZ);
 }
 
@@ -154,23 +156,23 @@ float Terrain::getSmoothNoise(int x, int z)
 	return corners + sides + center;
 }
 
-double Terrain::interpolate(double x, double y, double a) const
+float Terrain::interpolate(float x, float y, float a) const
 {
-	double negA = 1.0 - a;
-	double negASqr = negA * negA;
-	double fac1 = 3.0 * (negASqr)-2.0 * (negASqr * negA);
-	double aSqr = a * a;
-	double fac2 = 3.0 * aSqr - 2.0 * (aSqr * a);
+	float negA = 1.0f - a;
+	float negASqr = negA * negA;
+	float fac1 = 3.0f * (negASqr)-2.0f * (negASqr * negA);
+	float aSqr = a * a;
+	float fac2 = 3.0f * aSqr - 2.0f * (aSqr * a);
 
 	return x * fac1 + y * fac2; //add the weighted factors
 }
 
-double Terrain::Noise(int x, int y) const
+float Terrain::Noise(int x, int y) const
 {
 	int n = x + y * (iRandomNumber + 7);
 	n = (n << iRandomNumber) ^ n;
 	int t = (n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff;
-	return 1.0 - double(t) * 0.931322574615478515625e-9;/// 1073741824.0);
+	return 1.0f - float(t) * 0.931322574615478515625e-9f;/// 1073741824.0);
 }
 
 void Terrain::smoothenHeights()

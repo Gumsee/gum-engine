@@ -22,8 +22,7 @@ AnimatedModel::AnimatedModel(const Gum::File& file, const std::string& name)
     }
     else
     {
-        pMesh = new Mesh();
-        pMesh->name = file.getName();
+        pMesh = new Mesh(file.getName());
         Scene3DLoader loader;
         loader.iterateMeshes([this](unsigned int currentMesh, unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
             pMesh->addMesh(mesh);
@@ -40,8 +39,11 @@ AnimatedModel::AnimatedModel(const Gum::File& file, const std::string& name)
 	load();
 
     pVertexArrayObject->bind();
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Winvalid-offsetof"
     pVertexArrayObject->addAttribute(pVertexVBO, 8, 4, Gum::Graphics::Datatypes::INTEGER, sizeof(Vertex), offsetof(Vertex, JointIDs));
     pVertexArrayObject->addAttribute(pVertexVBO, 9, 4, Gum::Graphics::Datatypes::FLOAT, sizeof(Vertex), offsetof(Vertex, Weights));
+    #pragma GCC diagnostic pop
     pVertexArrayObject->unbind();
 }
 

@@ -37,7 +37,7 @@ public:
     virtual void renderSky() {};
     void renderRenderable();
     void renderRenderableIDs();
-    void renderParticles(ShaderProgram* shader);
+    void renderParticles();
     void renderBillboards(ShaderProgram* shader);
     void updateProjection();
 

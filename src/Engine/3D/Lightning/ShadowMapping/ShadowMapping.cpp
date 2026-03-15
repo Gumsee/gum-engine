@@ -12,18 +12,22 @@
 
 ShadowMapping::ShadowMapping()
 {
+    if(Gum::Graphics::VARS::SHADING_LANGUAGE_MAJOR_VERSION * 100 + Gum::Graphics::VARS::SHADING_LANGUAGE_MINOR_VERSION < 400)
+        bCascadedShadowSupport = false;
+
     initShader();
 
-    vShadowCascadeLevels = { 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 250.0f, 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 10.0f, 
-        Settings::getSetting(Settings::RENDERDISTANCE) / 2.0f
-    };
+    if(bCascadedShadowSupport)
+        vShadowCascadeLevels = { 
+            Settings::getSetting(Settings::RENDERDISTANCE) / 250.0f, 
+            Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
+            Settings::getSetting(Settings::RENDERDISTANCE) / 10.0f, 
+            Settings::getSetting(Settings::RENDERDISTANCE) / 2.0f
+        };
     vLightMatrices.resize(vShadowCascadeLevels.size() + 1);
 
     pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
-    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment(vShadowCascadeLevels.size()+1);
+    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment((unsigned int)vShadowCascadeLevels.size() + 1U);
     depthtex->setBordercolor(rgba(255,255,255,255));
 }
 
@@ -41,7 +45,10 @@ void ShadowMapping::render(const vec3& lightdir, const std::function<void()>& re
     Gum::Graphics::cullBackside(false);
     pShader->use();
     getLightSpaceMatrices(lightdir);
-    pShader->loadUniform("lightSpaceMatrices", vLightMatrices);
+    if(bCascadedShadowSupport)
+        pShader->loadUniform("lightSpaceMatrices", vLightMatrices);
+    else
+        pShader->loadUniform("lightSpaceMatrix", vLightMatrices[0]);
 
     renderfunc();
     pShader->unuse();
@@ -105,22 +112,10 @@ mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPl
 
     // Tune this parameter according to the scene
     constexpr float zMult = 10.0f; // 10.0f;
-    if (minZ < 0)
-    {
-        minZ *= zMult;
-    }
-    else
-    {
-        minZ /= zMult;
-    }
-    if (maxZ < 0)
-    {
-        maxZ /= zMult;
-    }
-    else
-    {
-        maxZ *= zMult;
-    }
+    if (minZ < 0) { minZ *= zMult; }
+    else          { minZ /= zMult; }
+    if (maxZ < 0) { maxZ /= zMult; }
+    else          { maxZ *= zMult; }
 
     //minX = left
     //maxX = right
@@ -135,6 +130,12 @@ mat4 ShadowMapping::getLightSpaceMatrix(const vec3& lightdir, const float nearPl
 
 void ShadowMapping::getLightSpaceMatrices(const vec3& lightdir)
 {
+    if(!bCascadedShadowSupport)
+    {
+        vLightMatrices[0] = getLightSpaceMatrix(lightdir, 1.0f, 7.5f);
+        return;
+    }
+
     for (size_t i = 0; i < vShadowCascadeLevels.size() + 1; ++i)
     {
         if (i == 0)
@@ -167,8 +168,12 @@ void ShadowMapping::initShader()
     {
         pShader = new ShaderProgram("ShadowMapShader", true);
         pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
         pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+        if(bCascadedShadowSupport)
+            pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+        
         pShader->build();
+        pShader->loadUniform("isCascaded", bCascadedShadowSupport);
+        
     }
 }

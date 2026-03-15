@@ -13,6 +13,7 @@ SceneObject::SceneObject(Mesh *mesh, std::string name) : Object3D(mesh, name)
 SceneObject::SceneObject(std::string name) : Object3D(false)
 {
     pMaterial = Gum::MaterialManager::getDefaultMaterial();
+    this->sName = name;
 }
 
 SceneObject::SceneObject(const Gum::File& file, const std::string& name) : Object3D(file, name)

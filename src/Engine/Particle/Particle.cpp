@@ -4,7 +4,7 @@
 #include <Essentials/Time.h>
 #include <gum-maths.h>
 
-Particle::Particle(vec3 pos, float lifetime, int maxlifetime)
+Particle::Particle(vec3 pos, float lifetime, float maxlifetime)
 {
 	v3Position = pos;
 	this->killtime = lifetime;

@@ -29,7 +29,8 @@ ObjectManager::ObjectManager(vec3 *sunDirection, SkyBox* othersky)
 }
 ObjectManager::~ObjectManager() 
 {
-	Gum::_delete(pSkyBox);
+    if(!bSelfManagedSkybox)
+	    Gum::_delete(pSkyBox);
 
   if(!bSelfManagedObjects)
   {
@@ -293,4 +294,4 @@ void ObjectManager::selfManageObjects(bool selfmanaged)       { this->bSelfManag
 //Getter
 //
 SkyBox* ObjectManager::getSkybox() 			                  { return this->pSkyBox; }
-unsigned int ObjectManager::numObjects() 					  { return this->mObjectsDefered.size() + this->mObjectsForward.size(); }
+unsigned int ObjectManager::numObjects() 					  { return (unsigned int)this->mObjectsDefered.size() + (unsigned int)this->mObjectsForward.size(); }
