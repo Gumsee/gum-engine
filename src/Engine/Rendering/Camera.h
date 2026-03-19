@@ -29,8 +29,6 @@ protected:
     float& fYaw = qRotation.y;
     float& fRoll = qRotation.z;
     static std::function<void()> pOnViewUpdate;
-
-    void updateView();
     
     Camera(const ivec2& resolution, const Type& type);
 
@@ -39,6 +37,7 @@ public:
 
     virtual void update() = 0;
     virtual void updateProjection([[maybe_unused]] const ivec2& resolution) {};
+    void updateView();
     void makeActive();
     void invertPitch();
 		vec3 calcMouseRayDirection();		
