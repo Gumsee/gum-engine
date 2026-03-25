@@ -24,7 +24,7 @@ protected:
 	vec3 v3ActualPosition, v3ViewDirection, v3WorldUp, v3WorldFront, v3WorldUpFrontCross, v3StrafeDirection;
 	mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
 	mat3 mRotator;
-	float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 20.0f;
+	  float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 20.0f, fAspectRatio = 0.0f;
     float& fPitch = qRotation.x;
     float& fYaw = qRotation.y;
     float& fRoll = qRotation.z;
@@ -72,6 +72,7 @@ public:
     void setZoomFactor(const float& factor);
     void setZoomSpeed(const float& speed);
     void setFOV(const float& fov);
+    void setAspectRatio(const float& aspect);
     void overrideViewMatrix(mat4 matrix);
     void setMovementSpeed(const float& speed);
     void setWorldUpDirection(const vec3& up);

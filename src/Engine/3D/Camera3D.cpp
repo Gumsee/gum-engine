@@ -39,11 +39,14 @@ void Camera3D::updateProjection(const ivec2& resolution)
 {
     fZoomfactor = pOffsetToPos->get();
     v2CurrentResolution = resolution;
+    float aspect = fAspectRatio;
+    if(aspect == 0.0f)
+      aspect = (float)resolution.x / (float)resolution.y;
     
-    float halfheight = Framebuffer::CurrentlyBoundFramebuffer->getSize().y * (pOffsetToPos->get() / pOffsetToPos->getMax()) * 0.025f;
-    float halfwidth = Framebuffer::CurrentlyBoundFramebuffer->getAspectRatioWidthToHeight() * halfheight;
+    float halfheight = resolution.y * (pOffsetToPos->get() / pOffsetToPos->getMax()) * 0.025f;
+    float halfwidth = aspect * halfheight;
     mOrthographicMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
-    mPerspectiveMatrix = Gum::Maths::perspective(fFOV, (float)resolution.x / (float)resolution.y, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
+    mPerspectiveMatrix = Gum::Maths::perspective(fFOV, aspect, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
 
     if(iProjectionMode == ProjectionModes::PERSPECTIVE)
         mActiveProjectionMatrix = mPerspectiveMatrix;

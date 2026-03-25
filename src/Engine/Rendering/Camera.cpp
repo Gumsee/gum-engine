@@ -106,6 +106,7 @@ Camera* Camera::getActiveCamera()        { return pActiveCamera; }
 void Camera::setZoomFactor(const float& factor)        { fZoomfactor = factor; updateProjection(v2CurrentResolution); }
 void Camera::setZoomSpeed(const float& speed)          { fZoomSpeed = speed; updateProjection(v2CurrentResolution); }
 void Camera::setFOV(const float& fov)                  { fFOV = fov; updateProjection(v2CurrentResolution); }
+void Camera::setAspectRatio(const float& aspect)       { fAspectRatio = aspect; updateProjection(v2CurrentResolution); }
 void Camera::overrideViewMatrix(mat4 matrix)           { this->mViewMatrix = matrix; }
 void Camera::setMovementSpeed(const float& speed)      { this->fMovementSpeed = speed; }
 void Camera::setWorldUpDirection(const vec3& up)       { this->v3WorldUp = up; v3WorldUpFrontCross = vec3::cross(v3WorldFront, v3WorldUp); v3ViewDirection = v3WorldUpFrontCross; updateView(); }
