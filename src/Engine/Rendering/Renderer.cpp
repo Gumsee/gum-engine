@@ -37,7 +37,7 @@ Renderer::~Renderer()
 
 void Renderer::render()
 {
-	start = std::chrono::high_resolution_clock::now();
+	  start = std::chrono::high_resolution_clock::now();
 
     renderInternal();
     
@@ -50,8 +50,8 @@ void Renderer::render()
 
     pRenderCanvas->setTexture(lastTex);
 
-	auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+    auto elapsed = std::chrono::high_resolution_clock::now() - start;
+    microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 }
 
 void Renderer::renderIDs()

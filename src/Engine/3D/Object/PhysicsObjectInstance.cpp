@@ -27,7 +27,7 @@
   - PLANE: X used for the Size
   - CONVEX: None
  */
-PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, Shape shape, float mass, World3D* world, vec3 special) : Object3DInstance(obj)
+PhysicsObjectInstance::PhysicsObjectInstance(Object3D* obj, [[maybe_unused]] Shape shape, float mass, [[maybe_unused]] World3D* world, [[maybe_unused]] vec3 special) : Object3DInstance(obj)
 {
     this->iType = OBJECT3D_INSTANCE_TYPE_PHYSICS;
     
@@ -211,6 +211,7 @@ bool PhysicsObjectInstance::isCollidingWithRay(vec3 ray)
 
 void PhysicsObjectInstance::setActivation(bool state)
 {
+  (void)state;
 	/*if(inst->getBody() != nullptr)
 	{
 		if(state)	{ inst->getBody()->activate(); }
@@ -224,6 +225,7 @@ void PhysicsObjectInstance::setActivation(bool state)
 
 void PhysicsObjectInstance::forceActivation(bool state)
 {
+  (void)state;
 	/*if(vInstances[index]->getBody() != nullptr)
 	{
 		if (state) 	{ vInstances[index]->getBody()->forceActivationState(DISABLE_DEACTIVATION); }

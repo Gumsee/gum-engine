@@ -61,9 +61,9 @@ public:
     vec3 getViewDirection() const;
     vec3 getStrafeDirection() const;
     vec3& getPosition() override;
-    float getSpeed() const;
     float getFOV() const;
     Type getType() const;
+    float getZoomSpeed() const;
     virtual float getZoom() const;
     static Camera* getActiveCamera();
     

@@ -38,7 +38,7 @@ namespace MaterialManager
         }
     }
     
-    int getCount() { return Materials.size(); }
-    Material *getDefaultMaterial() { return pDefaultMaterial; }
+    unsigned int getCount()                    { return (unsigned int)Materials.size(); }
+    Material *getDefaultMaterial()             { return pDefaultMaterial; }
     Material *getMaterial(std::string matname) { return Materials[matname]; }
 }}

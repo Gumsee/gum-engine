@@ -269,18 +269,6 @@ Object3DInstance* ObjectManager::getInstanceByID(const unsigned int& id)
     return nullptr;
 }
 
-//
-// Super slow:
-//
-unsigned int ObjectManager::getObjectUnderMouse(Renderer3D* renderer, ivec2 mousepos) const
-{
-	mousepos.y = renderer->getRenderCanvas()->getSize().y - mousepos.y;
-    color col = renderer->getGBuffer()->getFramebuffer()->getPixel(mousepos);
-
-	unsigned int pickedID = (unsigned int)col.r + (unsigned int)col.g * 256 + (unsigned int)col.b * 256*256;
-	return pickedID;
-}
-
 
 //
 // Setter

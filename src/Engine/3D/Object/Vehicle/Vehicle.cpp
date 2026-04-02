@@ -21,7 +21,7 @@ void Vehicle::render()
     //Render wheels
 }
 
-Object3DInstance* Vehicle::addInstance(World3D* world)
+Object3DInstance* Vehicle::addInstance()
 {
     Object3DInstance* instance = new Object3DInstance(this);
     SceneObject::addInstance(instance);

@@ -20,9 +20,7 @@ bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Partic
 
 	int Stageindex0 = Stageindex1 - 1;
 	if(Stageindex0 < 0)
-	{
 		Stageindex0 = 0;
-	}
 
 	vec3 vel0 = stages->at(Stageindex0)->velocity;
 	vec3 vel1 = stages->at(Stageindex1)->velocity;
@@ -61,7 +59,7 @@ bool Particle::update(int NumberOfRows, int NumberofCollumns, std::vector<Partic
 
 
 	float lifeFactor = elapsedTime / lifeTime;
-	int stageCount = stages->size();
+	int stageCount = (int)stages->size();
 	float Progression = lifeFactor * 100;
 	//get the max value between two stages
 	float max = stages->at(Stageindex1)->timeInPercent - stages->at(Stageindex0)->timeInPercent;

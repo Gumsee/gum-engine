@@ -41,6 +41,7 @@ public:
     ~Camera3D() override;
 
     void lookAt(const vec3& lookat);
+    bool updateZoom();
     void update() override;
     void updateProjection(const ivec2& resolution) override;
 
@@ -49,6 +50,7 @@ public:
     void setProjectionMode(const ProjectionModes& mode);
     void setMode(const Modes& Mode);
     void setOffset(const float& offset);
+    void increaseZoom(const float& zoom);
 
 
     //Getter

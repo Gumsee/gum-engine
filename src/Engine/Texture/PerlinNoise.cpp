@@ -7,20 +7,20 @@
 PerlinNoise::PerlinNoise(ivec2 size, int seed, std::string name)
   : iSeed(seed)
 {
-    //Set properties
-    this->sName = name;
+  //Set properties
+  this->sName = name;
 	this->v2Size = size;
 
-    repeat();
-    setFiltering(FilteringType::LINEAR);
-    this->regenerate();
-    this->bLoaded = true;
+  repeat();
+  setFiltering(FilteringType::LINEAR);
+  this->regenerate();
+  this->bLoaded = true;
 }
 
 PerlinNoise::~PerlinNoise() {}
 
 
-double PerlinNoise::Noise(int seed, int x, int y) 
+double PerlinNoise::Noise([[maybe_unused]]int seed, [[maybe_unused]]int x, [[maybe_unused]]int y) 
 {
     // int n = x + y * 57;
     // n = (n << 13) ^ n;
@@ -33,7 +33,7 @@ double PerlinNoise::Noise(int seed, int x, int y)
     return (rand() % 32768) / 32768.0;
 }
 
-double PerlinNoise::SmoothedNoise(int seed, double x, double y)
+double PerlinNoise::SmoothedNoise([[maybe_unused]]int seed, double x, double y)
 {
     //get fractional part of x and y
     double fractX = x - int(x);
@@ -87,7 +87,7 @@ void PerlinNoise::regenerate()
     {
         for(int y = 0; y < v2Size.y; y++)
         {
-            float val = turbulence(iSeed, x, y, 256);//16*Noise(seed, x,y) + 8*Noise(seed + 3, 2*x,2*y) + 4*Noise(seed + 23, 4*x,4*y) + 2*Noise(seed + 154, 8*x,8*y) + Noise(seed + 67, 16*x,16*y);
+            float val = (float)turbulence(iSeed, x, y, 256);//16*Noise(seed, x,y) + 8*Noise(seed + 3, 2*x,2*y) + 4*Noise(seed + 23, 4*x,4*y) + 2*Noise(seed + 154, 8*x,8*y) + Noise(seed + 67, 16*x,16*y);
             //float val = noise[x][y] * 255;
             setPixel(x, y, color(val, val, val, 255));
         }

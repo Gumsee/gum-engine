@@ -1,9 +1,10 @@
 #include "DirectionalLight.h"
 
 
-DirectionalLight::DirectionalLight(vec3 Direction, vec3 color, std::string name)
+DirectionalLight::DirectionalLight(vec3 direction, vec3 color, std::string name)
+  : direction(direction)
 {
-	this->direction = Direction;
+  this->setName("DirectionalLight_" + name);
 	this->setColor(color);
 	#ifdef DEBUG
 		//this->setName("DirectionalLight" + name);

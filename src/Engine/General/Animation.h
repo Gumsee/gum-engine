@@ -28,7 +28,7 @@ private:
     bool repeat;
     float time;
 
-    int currentFrameIndex = 0;
+    unsigned int currentFrameIndex = 0;
     Frame *interpolatedFrame;
 
     float getFactorBetweenLastAndNextFrame(Frame *lastFrame, Frame *nextFrame);

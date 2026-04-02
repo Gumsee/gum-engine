@@ -135,7 +135,7 @@ SkyBox::~SkyBox()
 void SkyBox::render()
 {
     Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    Gum::Graphics::renderWireframe(false);
+    //Gum::Graphics::renderWireframe(false);
     if(bRenderSky)
     {
         Gum::Graphics::cullBackside(false);

@@ -24,8 +24,11 @@ ParticleSystem::ParticleSystem(World* world)
     
     partPositionsVBO = new VertexBufferObject<Particle>();
     partPositionsVBO->setData(vParticles, Gum::Graphics::DataState::DYNAMIC);
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Winvalid-offsetof"
     pVAO->addAttribute(partPositionsVBO, 1, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(Particle), offsetof(Particle, v3Position), 1);
     pVAO->addAttribute(partPositionsVBO, 2, 2, Gum::Graphics::Datatypes::FLOAT, sizeof(Particle), offsetof(Particle, v2Scale), 1);
+    #pragma GCC diagnostic pop
 	
     TexOffsets = new VertexBufferObject<vec4>();
     pVAO->addAttribute(TexOffsets, 3, 4, Gum::Graphics::Datatypes::FLOAT, sizeof(vec4), 0, 1);
@@ -44,18 +47,18 @@ void ParticleSystem::render()
 {
 	if (vParticles.size() > 0)
 	{
-        Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
-        //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 		//glDepthMask(GL_FALSE);
 
-        pVAO->bind();
+    pVAO->bind();
 		texture->bind();
-        pVAO->render(vParticles.size());
+    pVAO->render((unsigned int)vParticles.size());
 		texture->unbind();
-        pVAO->unbind();
+    pVAO->unbind();
 
 		//glDepthMask(GL_TRUE);
-        Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
 	}
 }
 
@@ -66,7 +69,7 @@ void ParticleSystem::update()
 		for(int i = 0; i < properties->amount; i++)
 		{
 			vec3 randomOffset = vec3(Gum::Maths::randf(-properties->RandomPositionOffset.x, properties->RandomPositionOffset.x), Gum::Maths::randf(-properties->RandomPositionOffset.y, properties->RandomPositionOffset.y), Gum::Maths::randf(-properties->RandomPositionOffset.z, properties->RandomPositionOffset.z));
-            addParticle(v3Position + randomOffset, properties->lifetime);
+      addParticle(v3Position + randomOffset, properties->lifetime);
 		}
 	}
 
@@ -102,21 +105,16 @@ void ParticleSystem::addParticle(vec3 position, float lifetime)
 		if(properties->RandomLifetime)
 		{
 			float randtime = Gum::Maths::randf(0, lifetime);
-			if(randtime > properties->killtime)
-			{
-				killtime = properties->killtime;
-			}
-			else
-			{
-                killtime = randtime;
-			}
+      killtime = randtime > properties->killtime 
+        ? properties->killtime 
+        : randtime;
 		}
 		else
 		{
-            killtime = lifetime;
+      killtime = lifetime;
 		}
 
-        Particle particle(position, killtime, lifetime);
+    Particle particle(position, killtime, lifetime);
 		vParticles.push_back(particle);
 
 		if (vParticles.size() > MAX_INSTANCES)

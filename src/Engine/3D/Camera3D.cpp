@@ -13,8 +13,8 @@
 Camera3D::Camera3D(const ivec2& resolution, World3D* world)
     : Camera(resolution, CAMERA3D)
 {
-	this->fMouseAngle = 0.0f;
-	this->fAngleAroundPos = 0.0f;
+    this->fMouseAngle = 0.0f;
+    this->fAngleAroundPos = 0.0f;
     pOffsetToPos = new SmoothFloat(10, 5);
     pOffsetToPos->setMin(1);
     pOffsetToPos->setMax(100);
@@ -37,13 +37,12 @@ Camera3D::~Camera3D()
 
 void Camera3D::updateProjection(const ivec2& resolution)
 {
-    fZoomfactor = pOffsetToPos->get();
     v2CurrentResolution = resolution;
     float aspect = fAspectRatio;
     if(aspect == 0.0f)
       aspect = (float)resolution.x / (float)resolution.y;
     
-    float halfheight = resolution.y * (pOffsetToPos->get() / pOffsetToPos->getMax()) * 0.025f;
+    float halfheight = resolution.y * (fZoomfactor / pOffsetToPos->getMax()) * 0.025f;
     float halfwidth = aspect * halfheight;
     mOrthographicMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
     mPerspectiveMatrix = Gum::Maths::perspective(fFOV, aspect, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
@@ -73,9 +72,8 @@ void Camera3D::update()
         }
         case THIRDPERSON:
         {
-            pOffsetToPos->increaseTarget(Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * -1 * fZoomSpeed);
-            if(pOffsetToPos->update())
-                updateProjection(v2CurrentResolution);
+            updateZoom();
+            //updateProjection(v2CurrentResolution);
 
             Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
             fPitch -= -(float)mouse->getDelta().y * ROTATIONAL_SPEED;
@@ -125,6 +123,14 @@ void Camera3D::update()
         }
 }
 
+bool Camera3D::updateZoom()
+{
+  pOffsetToPos->increaseTarget(Gum::Window::CurrentlyBoundWindow->getMouse()->getMouseWheelState() * -1 * fZoomSpeed);
+  bool ret = pOffsetToPos->update();
+  fZoomfactor = pOffsetToPos->get();
+  return ret;
+}
+
 void Camera3D::mouseUpdate()
 {
     v3StrafeDirection = vec3::cross(v3ViewDirection, v3WorldUp);
@@ -132,7 +138,7 @@ void Camera3D::mouseUpdate()
     if(mouse->getDelta() != ivec2(0,0))
     {
         mRotator = Gum::Maths::rotateMatrix(v3WorldUp * -(float)mouse->getDelta().x * ROTATIONAL_SPEED) *
-                  Gum::Maths::rotateMatrix(v3StrafeDirection * -(float)mouse->getDelta().y * ROTATIONAL_SPEED);
+                   Gum::Maths::rotateMatrix(v3StrafeDirection * -(float)mouse->getDelta().y * ROTATIONAL_SPEED);
 
         v3ViewDirection = mRotator * v3ViewDirection;
         //vec3::clamp(v3ViewDirection, 0.0f, 1.0f);
@@ -158,5 +164,6 @@ Camera3D::ProjectionModes Camera3D::getProjectionMode() const { return this->iPr
 // Setter
 //
 void Camera3D::setProjectionMode(const ProjectionModes& mode) { iProjectionMode = mode; updateProjection(v2CurrentResolution); }
-void Camera3D::setOffset(const float& offset) 		        { pOffsetToPos->setTarget(offset); pOffsetToPos->set(offset); update(); }
+void Camera3D::setOffset(const float& offset) 		            { pOffsetToPos->setTarget(offset); pOffsetToPos->set(offset); update(); }
+void Camera3D::increaseZoom(const float& zoom)                { pOffsetToPos->increaseTarget(zoom); }
 void Camera3D::setMode(const Camera3D::Modes& Mode) 	        { iCurrentMode = Mode; }

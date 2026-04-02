@@ -7,19 +7,18 @@ class Billboard
 {
 private:
 	inline static const std::vector<float> vertices {
-		-0.5,  0.5, 0,
-		-0.5, -0.5, 0,
-		 0.5,  0.5, 0,
-		 0.5,  0.5, 0,
-		-0.5, -0.5, 0,
-		 0.5, -0.5, 0
+		-0.5f,  0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		 0.5f,  0.5f, 0.0f,
+		 0.5f,  0.5f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
+		 0.5f, -0.5f, 0.0f
 	};
 
 	vec3 Position;
 	vec3 Rotation;
 	vec2 Scale;
-	bool Transparency = false;
-    bool bFixedSize = true;
+  bool bFixedSize = true;
 
 	VertexArrayObject* pVAO;
 
@@ -34,16 +33,16 @@ public:
 	bool operator<(Billboard& that);
 
 
-    //Getter
+  //Getter
 	mat4 *getTransformationMatrix();
 	float getcameradistance();
 	Texture *getTexture();
 
-    //Setter
+  //Setter
 	vec3 getPosition();
 	void setPosition(vec3 pos);
 	void setScale(vec2 scale);
 	void setPixelSize(vec2 size); //Only makes sense in fixed mode
 	void setTexture(Texture *tex);
-    void useFixedSize(bool fixedsize);
+  void useFixedSize(bool fixedsize);
 };

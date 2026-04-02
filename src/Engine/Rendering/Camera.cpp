@@ -60,25 +60,22 @@ void Camera::invertPitch()
 
 vec3 Camera::calcMouseRayDirection()
 {
-    //screen space to normalized device space
-    vec4 screen_space(
-      (2 * (Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().x / v2CurrentResolution.x)) - 1,
-      -((2 * (Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().y / v2CurrentResolution.y)) - 1),
+    vec4 ray_clip = vec4(
+      (2.0f * Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().x) / v2CurrentResolution.x - 1.0f,
+      1.0f - (2.0f * Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().y) / v2CurrentResolution.y,
       -1.0f,
       1.0f
     );
 
-    mat4 invertedProjection = mat4::inverse(mActiveProjectionMatrix);
-    vec4 eye_space = mat4::transpose(invertedProjection) * screen_space;
-    eye_space.z = -1.0f;
-    eye_space.w = 0.0f;
+    std::cout << ray_clip.toString() << std::endl;
 
-    //eye space to world space
-    vec4 worldspace = mViewMatrix * eye_space;
+    vec4 ray_eye = mat4::inverse(mActiveProjectionMatrix) * ray_clip;
+    ray_eye.z = -1.0f;
+    ray_eye.w = 0.0f;
 
-    vec3 rayDir = worldspace;
-    rayDir = vec3::normalize(rayDir);
-    return rayDir;
+    vec3 ray_wor = mat4::inverse(mViewMatrix) * ray_eye;
+
+    return vec3::normalize(ray_wor);
 }
 
 
@@ -96,6 +93,7 @@ vec3 Camera::getStrafeDirection() const  { return this->v3StrafeDirection; }
 vec3& Camera::getPosition()              { return this->v3ActualPosition; }
 float Camera::getFOV() const             { return this->fFOV; }
 float Camera::getZoom() const            { return this->fZoomfactor; }
+float Camera::getZoomSpeed() const       { return this->fZoomSpeed; }
 Camera::Type Camera::getType() const     { return this->iType; }
 Camera* Camera::getActiveCamera()        { return pActiveCamera; }
 

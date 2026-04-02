@@ -6,6 +6,7 @@
 #include "Lightning/Lightning.h"
 #include "Lightning/ShadowMapping/ShadowMapping.h"
 #include "../Rendering/IDRenderer.h"
+#include <Desktop/Window.h>
 
 #include <System/MemoryManagement.h>
 
@@ -92,8 +93,6 @@ void Renderer3D::renderInternal()
     pWorld->getPhysics()->drawDebug();
     pFramebuffer->unbind();
 
-    Gum::Graphics::renderWireframe(false);
-
 
     //Renders scene with all objects inside
     //Update the enviorment map
@@ -152,4 +151,14 @@ void Renderer3D::setWorld(World3D* world)
     world->getLightManager()->addCallback([this](Light* light, int index) {
         pLightning->loadLight(light, index);
     });
+}
+
+//
+// Super slow:
+//
+unsigned int Renderer3D::getIDUnderMouse() const
+{
+	return UniqueID::colorToID(
+    pIDRenderer->getPixel(Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition())
+  );
 }

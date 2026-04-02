@@ -12,7 +12,7 @@ public:
 	~Vehicle();
 
 	void render();
-    Object3DInstance* addInstance(World3D* world);
+    Object3DInstance* addInstance();
 
 
     // Getter

@@ -12,18 +12,18 @@
 
 Billboard::Billboard(vec3 Position)
 {
-	//this->terrain = terrain;
-	this->Position = Position;
-    this->Rotation = vec3(0,0,0);
+	  //this->terrain = terrain;
+	  this->Position = Position;
+    this->Rotation = vec3(0.0f);
     //this->Scale = vec2(30) / Gum::Window->getRenderQuadSize(); // 30x30 pixels
     this->Scale = vec2(0.1f, 0.1f * Renderer::getActiveRenderer()->getFramebuffer()->getAspectRatio()); //10% of the screen
-	this->tex = nullptr;
+	  this->tex = nullptr;
 
     pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::TRIANGLE_STRIP);
     VertexBufferObject<float> vbo;
     vbo.setData(vertices, Gum::Graphics::DataState::STATIC);
     pVAO->addAttribute(&vbo, 0, 3, Gum::Graphics::Datatypes::FLOAT, 0);
-    pVAO->setVertexCount(vertices.size());
+    pVAO->setVertexCount((unsigned int)vertices.size());
 }
 
 Billboard::~Billboard() 
@@ -35,25 +35,27 @@ void Billboard::render(ShaderProgram *shader)
 {
 	if(vec3::distance(Camera::getActiveCamera()->getPosition(), getPosition()) < 4000)
 	{
-        shader->loadUniform("billboardCenter", Position);
-        shader->loadUniform("billboardSize", Scale);
-        shader->loadUniform("fixedSize", bFixedSize);
+    shader->loadUniform("billboardCenter", Position);
+    shader->loadUniform("billboardSize", Scale);
+    shader->loadUniform("fixedSize", bFixedSize);
 
-        Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
-        
-        //if (Transparency) { glBlendFunc(GL_SRC_ALPHA, GL_ONE); }
-        //else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
-        //glDepthMask(false);
+    Gum::Graphics::disableFeature(Gum::Graphics::Features::CULL_FACE);
+    
+    //if (Transparency) { glBlendFunc(GL_SRC_ALPHA, GL_ONE); }
+    //else              { glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); }
+    //glDepthMask(false);
 
-		if(tex != nullptr) tex->bind(0);
-        pVAO->bind();
-        pVAO->render(1);
-        pVAO->unbind();
-		if(tex != nullptr) tex->unbind(0);
+		if(tex != nullptr) 
+      tex->bind(0);
+    pVAO->bind();
+    pVAO->render(1);
+    pVAO->unbind();
+		if(tex != nullptr) 
+      tex->unbind(0);
 
-        //glDepthMask(true);
-        //glDisable(GL_BLEND);
-        Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
+    //glDepthMask(true);
+    //glDisable(GL_BLEND);
+    Gum::Graphics::enableFeature(Gum::Graphics::Features::CULL_FACE);
 	}
 }
 

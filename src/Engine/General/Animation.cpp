@@ -22,12 +22,10 @@ void Animation::setRepeatAnimation(bool isRepeating)
 
 void Animation::updateAnimation()
 {
-    int nextFrameIndex = currentFrameIndex + 1;
+    unsigned int nextFrameIndex = currentFrameIndex + 1;
 
     if(nextFrameIndex > Frames.size() - 1)
-    {
-        nextFrameIndex = Frames.size() - 1;
-    }
+      nextFrameIndex = (unsigned int)Frames.size() - 1;
 
     Frame *lastFrame = Frames[currentFrameIndex];
     Frame *nextFrame = Frames[nextFrameIndex];

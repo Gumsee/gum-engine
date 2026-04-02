@@ -41,5 +41,5 @@ namespace MaterialManager
 	/**
 	 * Returns the Count of Materials in the Manager
 	 */
-	extern int getCount();
+	extern unsigned int getCount();
 }};

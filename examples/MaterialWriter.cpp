@@ -39,8 +39,8 @@ int main(int argc, char** argv)
     pArgumentParser->addArgument(Gum::Argument("--ambient=",   "-a", "Ambient Occlusion Texture", [&ambientocclusionfile](std::string param) { ambientocclusionfile = param; }));
     pArgumentParser->addArgument(Gum::Argument("--height=",    "-h", "Heightmap Texture",   [&heightfile](std::string param) { heightfile = param; }));
     pArgumentParser->addArgument(Gum::Argument("--specular=",  "-s", "Specular Texture",    [&specularfile](std::string param) { specularfile = param; }));
-    pArgumentParser->addArgument(Gum::Argument("--color=",     "-c", "Color",               [&col](std::string param) { vec4 vec = Tools::StringToVec4(param); col = rgba(vec.x, vec.y, vec.z, vec.w); }));
-    pArgumentParser->addArgument(Gum::Argument("--quality=",   "-q", "Compression Quality", [](std::string param) { Texture2D::setSerializeQuality(Tools::StringToInt(param)); }));
+    pArgumentParser->addArgument(Gum::Argument("--color=",     "-c", "Color",               [&col](std::string param) { vec4 vec = Tools::StringToVec<float, 4>(param); col = rgba(vec.x, vec.y, vec.z, vec.w); }));
+    pArgumentParser->addArgument(Gum::Argument("--quality=",   "-q", "Compression Quality", [](std::string param) { Texture2D::setSerializeQuality(Tools::StringToNum<int>(param)); }));
 
 
     if(!pArgumentParser->passArguments(argc, argv, [&filename](std::string arg) { filename = arg; }))

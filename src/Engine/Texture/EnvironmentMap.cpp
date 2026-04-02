@@ -35,14 +35,14 @@ tEnvironmentMap<T>::~tEnvironmentMap()
 template<typename T>
 void tEnvironmentMap<T>::render(std::function<void()> renderfunc)
 {
-	Camera* oldcam = Camera::getActiveCamera();
+	  Camera* oldcam = Camera::getActiveCamera();
     Framebuffer* oldFramebuffer = Framebuffer::CurrentlyBoundFramebuffer;
     pFramebuffer->bind();
     pCaptureCamera->makeActive();
 
-    for (unsigned int i = 0; i < vCaptureViews.size(); ++i)
+    for (uint16_t i = 0; i < 6; ++i)
     {
-		pCaptureCamera->overrideViewMatrix(vCaptureViews[i]);
+		    pCaptureCamera->overrideViewMatrix(vCaptureViews[i]);
         pFramebuffer->attachTexture(0, this, Framebuffer::TextureTargets::CUBEMAP_POSITIVE_X + i, this->iCurrentMipmapLevel);
         pFramebuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 

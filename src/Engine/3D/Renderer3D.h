@@ -51,4 +51,6 @@ public:
     EnvironmentMap* getEnvironmentMap();
     ShadowMapping* getShadowMapping();
     World3D* getWorld();
+
+	  unsigned int getIDUnderMouse() const;
 };

@@ -39,12 +39,8 @@ void Skeleton::update()
     //for(int i = 0; i < 100; i++)
     //    vBoneMats[i] = mat4();
 
-    bool replace = true;
     for(SkeletalAnimation* animation : vAppliedAnimation)
-    {
-        animation->applyToBones(replace);
-        replace = false;
-    }
+        animation->applyToBones();
 
     recursiveUpdateBoneMatsVector(pRootBone, mat4());
 }

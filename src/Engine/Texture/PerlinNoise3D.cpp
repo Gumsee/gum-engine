@@ -9,8 +9,8 @@ PerlinNoise3D::PerlinNoise3D(ivec3 size, int seed, std::string name)
 {
     //Set properties
     this->sName = name;
-	this->iType = TEXTURE3D;
-	this->v3Size = size;
+    this->iType = TEXTURE3D;
+    this->v3Size = size;
 
 
     //(generate texel code omitted)
@@ -26,7 +26,7 @@ PerlinNoise3D::~PerlinNoise3D()
 }
 
 
-double PerlinNoise3D::Noise(int seed, int x, int y, int z) 
+double PerlinNoise3D::Noise([[maybe_unused]]int seed, [[maybe_unused]]int x, [[maybe_unused]]int y, [[maybe_unused]]int z) 
 {
     // int n = x + y * 57;
     // n = (n << 13) ^ n;
@@ -39,12 +39,12 @@ double PerlinNoise3D::Noise(int seed, int x, int y, int z)
     return (rand() % 32768) / 32768.0;
 }
 
-double PerlinNoise3D::SmoothedNoise(int seed, double x, double y, double z)
+double PerlinNoise3D::SmoothedNoise([[maybe_unused]]int seed, double x, double y, double z)
 {
     //get fractional part of x and y
     double fractX = x - int(x);
     double fractY = y - int(y);
-    double fractZ = z - int(z);
+    //double fractZ = z - int(z);
 
     //wrap around
     int x1 = (int(x) + (int)this->v3Size.x) % (int)this->v3Size.x;
@@ -108,7 +108,7 @@ void PerlinNoise3D::regenerate()
         {
             for(int z = 0; z < v3Size.z; z++)
             {
-                float val = turbulence(iSeed, x, y, z, 256);
+                float val = (float)turbulence(iSeed, x, y, z, 256);
                 val = rand() % 256;
                 val /= 256;
                 pixels.push_back(val);

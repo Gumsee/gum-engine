@@ -123,7 +123,7 @@ World3D* World3D::readFromFile(XMLReader& reader)
             if(meshstrs.size() == 3 && meshstrs[0] == "int")
             {
                 if(meshstrs[1] == "plane")
-                    obj = new SceneObject(Mesh::generatePlane(Tools::StringToVec2(meshstrs[2])), objname.toString());
+                    obj = new SceneObject(Mesh::generatePlane(Tools::StringToVec<float, 2>(meshstrs[2])), objname.toString());
             }
             else
             {

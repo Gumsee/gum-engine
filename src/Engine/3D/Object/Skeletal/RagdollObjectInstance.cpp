@@ -55,7 +55,7 @@ RagdollObjectInstance::RagdollObjectInstance(AnimatedModel* obj, World3D* world)
 RagdollObjectInstance::~RagdollObjectInstance()
 {}
 
-void RagdollObjectInstance::createBody(Bone* bone, mat4 transform)
+void RagdollObjectInstance::createBody(Bone* bone, [[maybe_unused]]mat4 transform)
 {
     if(bone->getParent() == nullptr)
         return;
@@ -86,13 +86,11 @@ void RagdollObjectInstance::createJoints(Bone* bone)
     if(bone->getParent() == nullptr || !Tools::mapHasKeyNotNull(mRigidbodies, bone->getParent()))
         return;
 
-
+    #ifdef GUM_USE_BULLET_PHYSICS
     float height = 0.0f;
     vec3 bonepos = Gum::Maths::positionFromMatrix(pParentObject->getSkeleton()->getBoneMatricesWithoutOffset()[bone]);
     vec3 parentbonepos = Gum::Maths::positionFromMatrix(pParentObject->getSkeleton()->getBoneMatricesWithoutOffset()[bone->getParent()]);
     height = vec3::distance(bonepos, parentbonepos) * 0.2f;
-
-    #ifdef GUM_USE_BULLET_PHYSICS
     btTransform localA, localB;
     bool useLinearReferenceFrameA = true;
     localA.setIdentity(); 

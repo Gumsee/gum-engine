@@ -78,6 +78,4 @@ public:
 	bool hasObject(std::string name);
 	SkyBox *getSkybox();
 	unsigned int numObjects();
-
-	unsigned int getObjectUnderMouse(Renderer3D* renderer, ivec2 mousepos) const;
 };

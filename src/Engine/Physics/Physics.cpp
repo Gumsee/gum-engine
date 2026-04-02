@@ -125,7 +125,7 @@ void Physics::update()
 
 
 
-void Physics::addContraint(btRigidBody *objA, btRigidBody *objB, ConstraintType type)
+void Physics::addContraint([[maybe_unused]]btRigidBody *objA, [[maybe_unused]]btRigidBody *objB, [[maybe_unused]]ConstraintType type)
 {
 }
 
@@ -168,7 +168,7 @@ void Physics::drawDebug()
 
 
 
-void Physics::addWall(vec3 pos, vec3 size)
+void Physics::addWall([[maybe_unused]]vec3 pos, [[maybe_unused]]vec3 size)
 {
     #ifdef GUM_USE_BULLET_PHYSICS
 	btBoxShape *ColShape;
@@ -190,10 +190,10 @@ void Physics::addWall(vec3 pos, vec3 size)
 //
 // Getter
 //
-void* Physics::getWorld()                       { return this->pDynamicWorld; }
+void* Physics::getWorld()                     { return this->pDynamicWorld; }
 //DebugDrawer* Physics::getDebugDrawer()		 	{ return this->pDebugDrawer; }
-Instance* Physics::getMouseOnObjectInstance() 	{ return this->pOnHoverObjectInstance; }
-vec3 Physics::getWindDir() 					    { return this->vWindDir; }
+Instance* Physics::getMouseOnObjectInstance() { return this->pOnHoverObjectInstance; }
+vec3 Physics::getWindDir() 					          { return this->vWindDir; }
 
 //
 // Setter

@@ -3,12 +3,12 @@
 
 ReflectiveTexture2D::ReflectiveTexture2D(Renderer3D* renderer, ivec2 resolution)
 {
-    this->pRenderer = renderer;
-    v2Resolution = resolution;
-    pFrameBuffer = new Framebuffer(resolution);
-    pFrameBuffer->addTextureAttachment<unsigned char>(0, "ReflectionTexture2D");
-    pFrameBuffer->addDepthTextureAttachment("ReflectionDepthTexture2D");
-    pFrameBuffer->addDepthAttachment();
+  this->pRenderer = renderer;
+  v2Resolution = resolution;
+  pFrameBuffer = new Framebuffer(resolution);
+  pFrameBuffer->addTextureAttachment<unsigned char>(0, "ReflectionTexture2D");
+  pFrameBuffer->addDepthTextureAttachment("ReflectionDepthTexture2D");
+  pFrameBuffer->addDepthAttachment();
 }
 
 ReflectiveTexture2D::~ReflectiveTexture2D()
@@ -19,7 +19,7 @@ void ReflectiveTexture2D::render(Camera* camera)
 {
 	//glEnable(GL_CLIP_DISTANCE0);
 	pFrameBuffer->bind();
-    pFrameBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
+  pFrameBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
 	float distance = 2 * (camera->getPosition().y - this->fHeight);
 	//vec3 oldpos = camera->getPosition();
 	//mat4 oldmat = camera->getViewMatrix();
@@ -47,23 +47,9 @@ void ReflectiveTexture2D::render(Camera* camera)
 }
 
 Texture2D* ReflectiveTexture2D::getTexture()      { return (Texture2D*)pFrameBuffer->getTextureAttachment(); }
-Texture* ReflectiveTexture2D::getDepthTexture() { return pFrameBuffer->getDepthTextureAttachment(); }
+Texture* ReflectiveTexture2D::getDepthTexture()   { return pFrameBuffer->getDepthTextureAttachment(); }
 float ReflectiveTexture2D::getHeight()            { return fHeight; }
 vec4* ReflectiveTexture2D::getClippingPlane()     { return &v4Plane; }
 
 
 void ReflectiveTexture2D::setHeight(float height) { this->fHeight = height; }
-
-namespace Extra
-{
-	ReflectiveTexture2D *planeReflectionTexture(float height)
-	{
-		ReflectiveTexture2D *tex;
-		//tex = new ReflectiveTexture2D(GumEngine::DefaultRenderer);
-		tex->setHeight(height);
-
-		//GumEngine::Textures->addRenderable(tex);
-
-		return tex;
-	}
-}

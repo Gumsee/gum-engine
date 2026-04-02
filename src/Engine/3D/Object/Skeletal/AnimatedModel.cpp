@@ -24,10 +24,10 @@ AnimatedModel::AnimatedModel(const Gum::File& file, const std::string& name)
     {
         pMesh = new Mesh(file.getName());
         Scene3DLoader loader;
-        loader.iterateMeshes([this](unsigned int currentMesh, unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
+        loader.iterateMeshes([this]([[maybe_unused]] unsigned int currentMesh, [[maybe_unused]] unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
             pMesh->addMesh(mesh);
             Gum::_delete(mesh);            
-            pSkeleton = new Skeleton(rootbone, bones.size());
+            pSkeleton = new Skeleton(rootbone, (unsigned int)bones.size());
         });
         loader.iterateAnimations([this](SkeletalAnimation* anim) {
             pSkeleton->addAnimation(anim);

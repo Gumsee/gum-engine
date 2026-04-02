@@ -45,18 +45,3 @@ vec4* ClipPlaneTexture2D::getClippingPlane()     { return &v4Pplane; }
 
 //Setter
 void ClipPlaneTexture2D::setHeight(float height) { this->fHeight = height; }
-
-
-namespace Extra
-{
-	ClipPlaneTexture2D *ClipPlaneTexture(float height)
-	{
-		ClipPlaneTexture2D *tex;
-		//tex = new ClipPlaneTexture2D(GumEngine::DefaultRenderer);
-		tex->setHeight(height);
-
-		//GumEngine::Textures->addRenderable(tex);
-
-		return tex;
-	}
-}
