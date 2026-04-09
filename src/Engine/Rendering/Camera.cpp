@@ -58,16 +58,14 @@ void Camera::invertPitch()
 
 
 
-vec3 Camera::calcMouseRayDirection()
+vec3 Camera::calcScreenRayDirection(const ivec2& pos)
 {
     vec4 ray_clip = vec4(
-      (2.0f * Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().x) / v2CurrentResolution.x - 1.0f,
-      1.0f - (2.0f * Gum::Window::CurrentlyBoundWindow->getMouse()->getPosition().y) / v2CurrentResolution.y,
+      (2.0f * pos.x) / v2CurrentResolution.x - 1.0f,
+      1.0f - (2.0f * pos.y) / v2CurrentResolution.y,
       -1.0f,
       1.0f
     );
-
-    std::cout << ray_clip.toString() << std::endl;
 
     vec4 ray_eye = mat4::inverse(mActiveProjectionMatrix) * ray_clip;
     ray_eye.z = -1.0f;

@@ -72,7 +72,7 @@ void OutlineRenderer::setColor(const color& col)
     this->cColor = col;
     ShaderProgram* currentShader = ShaderProgram::getCurrentlyBoundShader();
     pProcessingShader->use();
-    pProcessingShader->loadUniform("color", cColor.getGLColor());
+    pProcessingShader->loadUniform("color", cColor);
     
     if(currentShader != nullptr)
         currentShader->use();

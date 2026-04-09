@@ -32,6 +32,7 @@ public:
 	void addDebugDrawer();
 	void drawDebug();
 	void addWall(vec3 pos, vec3 size);
+  static bool calcRayPlaneIntersection(const vec3& start, const vec3& dir, const vec3& planepos, const vec3& planenormal, vec3& intersectionPoint);
 
 	//Getter
 	//DebugDrawer *getDebugDrawer();

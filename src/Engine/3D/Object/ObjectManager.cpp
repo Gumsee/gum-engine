@@ -22,8 +22,6 @@ ObjectManager::ObjectManager(vec3 *sunDirection, SkyBox* othersky)
     if(othersky == nullptr)
     {
       pSkyBox = new SkyBox(Mesh::generateSphere(1.0f, 5, 15), sunDirection, "Skybox");
-      //pSkyBox = new SkyBox(Mesh::generateCube(vec3(1.0f)), sunDirection, "Skybox");
-      pSkyBox->renderSky(true);
       bSelfManagedSkybox = false;
     }
 }

@@ -12,6 +12,7 @@
 #include "../Renderer3D.h"
 #include "System/Output.h"
 #include <Graphics/WrapperFunctions.h>
+#include <Essentials/Clock.h>
 
 mat3 m3  = mat3( 0.00f,  0.80f,  0.60f,
                 -0.80f,  0.36f, -0.48f,
@@ -68,142 +69,142 @@ vec4 noised(vec3 x)
 
 vec4 fbmd_8(vec3 x)
 {
-    float f = 2.0f;
-    float s = 0.65f;
-    float a = 0.0f;
-    float b = 0.5f;
-    vec3  d = vec3(0.0f);
-    mat3  m = mat3(1.0f,0.0f,0.0f,
-                   0.0f,1.0f,0.0f,
-                   0.0f,0.0f,1.0f);
-    for( int i=0; i<8; i++ )
-    {
-        vec4 n = noised(x);
-        a += b*n.x;          // accumulate values		
-        if(i < 4)
-            d += m * b * vec3(n.y, n.z, n.w);      // accumulate derivatives
-        b *= s;
-        x = m3 * x * f;
-        m = m3i * f * m;
-    }
-    return vec4(a, d.x, d.y, d.z);
+  float f = 2.0f;
+  float s = 0.65f;
+  float a = 0.0f;
+  float b = 0.5f;
+  vec3  d = vec3(0.0f);
+  mat3  m = mat3(1.0f,0.0f,0.0f,
+                  0.0f,1.0f,0.0f,
+                  0.0f,0.0f,1.0f);
+  for( int i=0; i<8; i++ )
+  {
+      vec4 n = noised(x);
+      a += b*n.x;          // accumulate values		
+      if(i < 4)
+          d += m * b * vec3(n.y, n.z, n.w);      // accumulate derivatives
+      b *= s;
+      x = m3 * x * f;
+      m = m3i * f * m;
+  }
+  return vec4(a, d.x, d.y, d.z);
 }
 
 SkyBox::SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name)
   : Object3D(mesh, name)
 {
-    initShaders();
+  initShaders();
 	this->sunDir = SunDirection;
-    this->cloudNoise3D = nullptr;
-    this->cloudNoise2D = nullptr;
+  this->cloudNoise3D = nullptr;
+  this->cloudNoise2D = nullptr;
 
 	//Create and add Properties
-    addInstance();
+  addInstance();
 
-    //TODO
-    /*cloudNoise2D = new Texture2Df("cloudNoise2D", ivec2(32,32), [](const ivec2& uv) {
-        vec4 col = vec4(1,0,1,1);
-        return rgba(col.x, col.y, col.z, col.w);
-    });*/
+  //TODO
+  /*cloudNoise2D = new Texture2Df("cloudNoise2D", ivec2(32,32), [](const ivec2& uv) {
+      vec4 col = vec4(1,0,1,1);
+      return rgba(col.x, col.y, col.z, col.w);
+  });*/
 
-    pTexture = new EnvironmentMapf(ivec2(1024, 1024), "Skybox");
-    pIrradianceMap = new EnvironmentMapf(ivec2(32, 32), "IrradianceMap");
-    pPreFilterMap = new EnvironmentMapf(ivec2(128, 128), "PreFilterMap");
-    pPreFilterMap->createMipmaps();
-    pPreFilterMap->clampToEdge();
-    pPreFilterMap->setFiltering(Texture::FilteringType::LINEAR_MIPMAP_LINEAR);
+  pTexture = new EnvironmentMapf(ivec2(1024, 1024), "Skybox");
+  pIrradianceMap = new EnvironmentMapf(ivec2(32, 32), "IrradianceMap");
+  pPreFilterMap = new EnvironmentMapf(ivec2(128, 128), "PreFilterMap");
+  pPreFilterMap->createMipmaps();
+  pPreFilterMap->clampToEdge();
+  pPreFilterMap->setFiltering(Texture::FilteringType::LINEAR_MIPMAP_LINEAR);
 
-    pBRDFFramebuffer = new Framebuffer(ivec2(512, 512));
-    pBRDFFramebuffer->addTextureAttachment<float>(0, "SkyboxBRDFLUTMap", 2U);
-    pBRDFFramebuffer->getTextureAttachment(0)->clampToEdge();
-    pBRDFFramebuffer->getTextureAttachment(0)->setFiltering(Texture::FilteringType::LINEAR);
-    pBRDFCanvas = new Canvas(pBRDFFramebuffer->getSize());
+  pBRDFFramebuffer = new Framebuffer(ivec2(512, 512));
+  pBRDFFramebuffer->addTextureAttachment<float>(0, "SkyboxBRDFLUTMap", 2U);
+  pBRDFFramebuffer->getTextureAttachment(0)->clampToEdge();
+  pBRDFFramebuffer->getTextureAttachment(0)->setFiltering(Texture::FilteringType::LINEAR);
+  pBRDFCanvas = new Canvas(pBRDFFramebuffer->getSize());
 
-    makeCubeMap(nullptr);
-    updateTexture();
+  makeCubeMap(nullptr);
+  updateTexture();
 }
 
 SkyBox::~SkyBox() 
 {
-    Gum::_delete(pTexture);
-    Gum::_delete(pIrradianceMap);
-    Gum::_delete(pBRDFFramebuffer);
-    Gum::_delete(pPreFilterMap);
-    Gum::_delete(pBRDFCanvas);
+  Gum::_delete(pTexture);
+  Gum::_delete(pIrradianceMap);
+  Gum::_delete(pBRDFFramebuffer);
+  Gum::_delete(pPreFilterMap);
+  Gum::_delete(pBRDFCanvas);
 }
 
 void SkyBox::render()
 {
-    Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    //Gum::Graphics::renderWireframe(false);
-    if(bRenderSky)
-    {
-        Gum::Graphics::cullBackside(false);
-        //cloudNoise2D->bind(0);
-        getShaderProgram()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-        getShaderProgram()->loadUniform("sunDir", *this->sunDir);
-        //getShaderProgram()->loadUniform("time", Time::getTime());
-        renderMesh();
-        //cloudNoise2D->unbind(0);
-        Gum::Graphics::cullBackside(true);
+  Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  //Gum::Graphics::renderWireframe(false);
+  if(bRenderSky)
+  {
+    Gum::Graphics::cullBackside(false);
+    //cloudNoise2D->bind(0);
+    getShaderProgram()->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+    getShaderProgram()->loadUniform("sunDir", *this->sunDir);
+    //getShaderProgram()->loadUniform("time", Time::getTime());
+    renderMesh();
+    //cloudNoise2D->unbind(0);
+    Gum::Graphics::cullBackside(true);
 
-        //Load time only if clouds are enabled
-        if(bRenderClouds)
-        {
-            ShaderProgram* current = ShaderProgram::getCurrentlyBoundShader();
-            CloudShader->use();
-            CloudShader->loadUniform("camPos", Camera::getActiveCamera()->getPosition());
-            CloudShader->loadUniform("camDir", Camera::getActiveCamera()->getViewDirection());
-            CloudShader->loadUniform("sunDir", *this->sunDir);
-            CloudShader->loadUniform("time", Time::getTime() * 0.5f);
-            
-            cloudNoise3D->bind(0);
-            Renderer::getActiveRenderer()->getRenderCanvas()->render();
-            cloudNoise3D->unbind(0);
-            current->use();
-        }
-    }
-    else
+    //Load time only if clouds are enabled
+    if(bRenderClouds)
     {
-        ShaderProgram* current = ShaderProgram::getCurrentlyBoundShader();
-        HDRShader->use();
-        Gum::Graphics::cullBackside(false);
-        pTexture->bind(0);
-        HDRShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-        renderMesh();
-        pTexture->unbind(0);
-        Gum::Graphics::cullBackside(true);
-        if(current != nullptr)
-          current->use();
+      ShaderProgram* current = ShaderProgram::getCurrentlyBoundShader();
+      CloudShader->use();
+      CloudShader->loadUniform("camPos", Camera::getActiveCamera()->getPosition());
+      CloudShader->loadUniform("camDir", Camera::getActiveCamera()->getViewDirection());
+      CloudShader->loadUniform("sunDir", *this->sunDir);
+      CloudShader->loadUniform("time", Time::getTime() * 0.5f);
+      
+      cloudNoise3D->bind(0);
+      Renderer::getActiveRenderer()->getRenderCanvas()->render();
+      cloudNoise3D->unbind(0);
+      current->use();
     }
-    Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  }
+  else
+  {
+    ShaderProgram* current = ShaderProgram::getCurrentlyBoundShader();
+    HDRShader->use();
+    Gum::Graphics::cullBackside(false);
+    pTexture->bind(0);
+    HDRShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+    renderMesh();
+    pTexture->unbind(0);
+    Gum::Graphics::cullBackside(true);
+    if(current != nullptr)
+      current->use();
+  }
+  Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
 }
 
 void SkyBox::updateTexture()
 {
-    Gum::Graphics::cullBackside(false);
-    Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    Gum::Graphics::renderWireframe(false);
-    makeIrradianceMap();
-    makePrefilterMap();
-    makeBRDFMap();
-    Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    Gum::Graphics::cullBackside(true);
+  Gum::Graphics::cullBackside(false);
+  Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  Gum::Graphics::renderWireframe(false);
+  makeIrradianceMap();
+  makePrefilterMap();
+  makeBRDFMap();
+  Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  Gum::Graphics::cullBackside(true);
 }
 
 void SkyBox::setTexture(Texture *tex)
 {
 	if(tex->getType() == Texture::TEXTUREHDR || tex->getType() == Texture::TEXTURE2D)
 	{
-		  makeCubeMap(tex);
-      pTexture->createMipmaps();
-      updateTexture();
+    makeCubeMap(tex);
+    pTexture->createMipmaps();
+    updateTexture();
 	}
 	else if(tex->getType() == Texture::TEXTURECUBE)
 	{
-      Gum::Output::warn("Skybox: Texturecube not implemented yet!");
-      //pTexture = (TextureCube*)tex;
-      updateTexture();
+    Gum::Output::warn("Skybox: Texturecube not implemented yet!");
+    //pTexture = (TextureCube*)tex;
+    updateTexture();
 	}
 	else
 	{
@@ -213,78 +214,86 @@ void SkyBox::setTexture(Texture *tex)
 
 void SkyBox::makeBRDFMap()
 {
+  Clock<> benchmarkClock;
 	pBRDFFramebuffer->bind();
-    pBRDFFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
+  pBRDFFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
 	BRDFMapShader->use();
 	pBRDFCanvas->render();
 	BRDFMapShader->unuse();
-    pBRDFFramebuffer->unbind();
+  pBRDFFramebuffer->unbind();
+  Gum::Output::debug("Skybox: Creating BRDF map took " + std::to_string(benchmarkClock.getPassedTimeInMicros()) + "us");
 }
 
 void SkyBox::makePrefilterMap()
 {
-    ivec2 res = pPreFilterMap->getSize();
-    PreFilteredMapShader->use();
-    pTexture->bind(0);
-    unsigned short maxMipLevels = 5;
-    for (unsigned short mip = 0; mip < maxMipLevels; ++mip)
-    {
-        // resize framebuffer according to mip-level size.
-        pPreFilterMap->setActiveMipmapLevel(mip);
-        pPreFilterMap->getFramebuffer()->setSize(vec2(res) * std::pow(0.5f, mip));
+  Clock<> benchmarkClock;
+  ivec2 res = pPreFilterMap->getSize();
+  PreFilteredMapShader->use();
+  pTexture->bind(0);
+  unsigned short maxMipLevels = 5;
+  for(unsigned short mip = 0; mip < maxMipLevels; ++mip)
+  {
+    // resize framebuffer according to mip-level size.
+    pPreFilterMap->setActiveMipmapLevel(mip);
+    pPreFilterMap->getFramebuffer()->setSize(vec2(res) * std::pow(0.5f, mip));
 
-        float roughness = (float)mip / (float)(maxMipLevels - 1);
-        pPreFilterMap->render([this, roughness]() {
-        	PreFilteredMapShader->loadUniform("roughness", roughness);
-            PreFilteredMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-            PreFilteredMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-            PreFilteredMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    float roughness = (float)mip / (float)(maxMipLevels - 1);
+    pPreFilterMap->render([this, roughness]() {
+      PreFilteredMapShader->loadUniform("roughness", roughness);
+      PreFilteredMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+      PreFilteredMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+      PreFilteredMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
 
-			renderMesh();
-        });
-    }
-    pTexture->unbind(0);
-	PreFilteredMapShader->unuse();
+      renderMesh();
+    });
+  }
+  pTexture->unbind(0);
+  PreFilteredMapShader->unuse();
 
-    pPreFilterMap->setActiveMipmapLevel(0);
-    pPreFilterMap->getFramebuffer()->setSize(res);
+  pPreFilterMap->setActiveMipmapLevel(0);
+  pPreFilterMap->getFramebuffer()->setSize(res);
+
+  Gum::Output::debug("Skybox: Creating prefilter map took " + std::to_string(benchmarkClock.getPassedTimeInMicros()) + "us");
 }
 
 void SkyBox::makeIrradianceMap()
 {
-    pTexture->bind(0);
-    IrradianceMapShader->use();
-    IrradianceMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-    pIrradianceMap->render([this]() {
-        IrradianceMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-        IrradianceMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-        renderMesh();
-    });
-    IrradianceMapShader->unuse();
-    pTexture->unbind(0);
+  Clock<> benchmarkClock;
+
+  pTexture->bind(0);
+  IrradianceMapShader->use();
+  IrradianceMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+  pIrradianceMap->render([this]() {
+    IrradianceMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    IrradianceMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    renderMesh();
+  });
+  IrradianceMapShader->unuse();
+  pTexture->unbind(0);
+  Gum::Output::debug("Skybox: Creating irradiance map took " + std::to_string(benchmarkClock.getPassedTimeInMicros()) + "us");
 }
 
 void SkyBox::makeCubeMap(Texture* texture)
 {
-    Gum::Graphics::cullBackside(false);
-    Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    Gum::Graphics::renderWireframe(false);
-    if(texture != nullptr)
-        texture->bind(0);
+  Gum::Graphics::cullBackside(false);
+  Gum::Graphics::disableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  Gum::Graphics::renderWireframe(false);
+  if(texture != nullptr)
+    texture->bind(0);
 
-    HDRToCubeMapShader->use();
-    HDRToCubeMapShader->loadUniform("gradiant", (int)(texture == nullptr));
-    HDRToCubeMapShader->loadUniform("SunDirection", *this->sunDir);
-    pTexture->render([this]() {
-        HDRToCubeMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
-        HDRToCubeMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
-        HDRToCubeMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
-        renderMesh();
-    });
-	HDRToCubeMapShader->unuse();
-    TextureCube::unbindGlobal(0);
-    Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
-    Gum::Graphics::cullBackside(true);
+  HDRToCubeMapShader->use();
+  HDRToCubeMapShader->loadUniform("gradiant", (int)(texture == nullptr));
+  HDRToCubeMapShader->loadUniform("SunDirection", *this->sunDir);
+  pTexture->render([this]() {
+    HDRToCubeMapShader->loadUniform("transformationMatrix", getInstance(0)->getMatrix());
+    HDRToCubeMapShader->loadUniform("projectionMatrix", Camera::getActiveCamera()->getProjectionMatrix());
+    HDRToCubeMapShader->loadUniform("viewMatrix", Camera::getActiveCamera()->getViewMatrix());
+    renderMesh();
+  });
+  HDRToCubeMapShader->unuse();
+  TextureCube::unbindGlobal(0);
+  Gum::Graphics::enableFeature(Gum::Graphics::Features::DEPTH_TESTING);
+  Gum::Graphics::cullBackside(true);
 }
 
 
@@ -306,9 +315,9 @@ void SkyBox::renderClouds(bool renderclouds)
   if(renderclouds && cloudNoise3D == nullptr)
   {
     cloudNoise3D = new Texture3Df("cloudNoise3D", ivec3(128,128,128), [](const ivec3& uv) {
-        vec4 col = fbmd_8(uv) * 255.0f;
-        //Gum::Output::print(col);
-        return rgba(col.x, col.y, col.z, col.w);
+      vec4 col = fbmd_8(uv) * 255.0f;
+      //Gum::Output::print(col);
+      return rgba(col.x, col.y, col.z, col.w);
     });
   }
   this->bRenderClouds = renderclouds;
@@ -316,53 +325,53 @@ void SkyBox::renderClouds(bool renderclouds)
 
 void SkyBox::initShaders()
 {
-    if(SkyShader == nullptr)
-    {
-        Shader* skyVertexShader = new Shader(SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
+  if(SkyShader == nullptr)
+  {
+    Shader* skyVertexShader = new Shader(SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
 
-        SkyShader = new ShaderProgram("SkyShader", true);
-        SkyShader->addShader(skyVertexShader);
-        SkyShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        SkyShader->build();
-        
-        HDRShader = new ShaderProgram("HDRShader", true);
-        HDRShader->addShader(skyVertexShader);
-        HDRShader->addShader(new Shader(HDRFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        HDRShader->build();
+    SkyShader = new ShaderProgram("SkyShader", true);
+    SkyShader->addShader(skyVertexShader);
+    SkyShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    SkyShader->build();
+    
+    HDRShader = new ShaderProgram("HDRShader", true);
+    HDRShader->addShader(skyVertexShader);
+    HDRShader->addShader(new Shader(HDRFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    HDRShader->build();
 
-        CloudShader = new ShaderProgram("CloudShader", true);
-        CloudShader->addShader(new Shader(PostProcessingVertexShader, Shader::TYPES::VERTEX_SHADER));
-        CloudShader->addShader(new Shader(CloudFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        CloudShader->build();
+    CloudShader = new ShaderProgram("CloudShader", true);
+    CloudShader->addShader(new Shader(PostProcessingVertexShader, Shader::TYPES::VERTEX_SHADER));
+    CloudShader->addShader(new Shader(CloudFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    CloudShader->build();
 
 
-        HDRToCubeMapShader = new ShaderProgram("HDRToCubeMapShader", true);
-        HDRToCubeMapShader->addShader(skyVertexShader);
-        HDRToCubeMapShader->addShader(new Shader(SkyboxHDRToCubeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        HDRToCubeMapShader->build();
-        HDRToCubeMapShader->addTexture("hdrTexture", 0);
+    HDRToCubeMapShader = new ShaderProgram("HDRToCubeMapShader", true);
+    HDRToCubeMapShader->addShader(skyVertexShader);
+    HDRToCubeMapShader->addShader(new Shader(SkyboxHDRToCubeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    HDRToCubeMapShader->build();
+    HDRToCubeMapShader->addTexture("hdrTexture", 0);
 
-        
-        IrradianceMapShader = new ShaderProgram("IrradianceMapShader", true);
-        IrradianceMapShader->addShader(skyVertexShader);
-        IrradianceMapShader->addShader(new Shader(SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        IrradianceMapShader->build();
-        IrradianceMapShader->addTexture("cubeMap", 0);
+    
+    IrradianceMapShader = new ShaderProgram("IrradianceMapShader", true);
+    IrradianceMapShader->addShader(skyVertexShader);
+    IrradianceMapShader->addShader(new Shader(SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    IrradianceMapShader->build();
+    IrradianceMapShader->addTexture("cubeMap", 0);
 
-        
-        PreFilteredMapShader = new ShaderProgram("PreFilteredMapShader", true);
-        PreFilteredMapShader->addShader(skyVertexShader);
-        PreFilteredMapShader->addShader(new Shader(SkyboxPrefilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        PreFilteredMapShader->build();
-        PreFilteredMapShader->addTexture("cubeMap", 0);
+    
+    PreFilteredMapShader = new ShaderProgram("PreFilteredMapShader", true);
+    PreFilteredMapShader->addShader(skyVertexShader);
+    PreFilteredMapShader->addShader(new Shader(SkyboxPrefilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    PreFilteredMapShader->build();
+    PreFilteredMapShader->addTexture("cubeMap", 0);
 
-        
-        BRDFMapShader = new ShaderProgram("BRDFMapShader", true);
-        BRDFMapShader->addShader(new Shader(SkyboxBRDFVertexShader, Shader::TYPES::VERTEX_SHADER));
-        BRDFMapShader->addShader(new Shader(SkyboxBRDFFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        BRDFMapShader->build();
-        BRDFMapShader->addTexture("cubeMap", 0);
-    }
+    
+    BRDFMapShader = new ShaderProgram("BRDFMapShader", true);
+    BRDFMapShader->addShader(new Shader(SkyboxBRDFVertexShader, Shader::TYPES::VERTEX_SHADER));
+    BRDFMapShader->addShader(new Shader(SkyboxBRDFFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    BRDFMapShader->build();
+    BRDFMapShader->addTexture("cubeMap", 0);
+  }
 
-    pShader = SkyShader;
+  pShader = SkyShader;
 }

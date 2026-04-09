@@ -28,7 +28,7 @@ SceneObject::~SceneObject()
 
 void SceneObject::render()
 {
-    ShaderProgram::getCurrentlyBoundShader()->loadUniform("color", pMaterial->getColor().getGLColor());
+    ShaderProgram::getCurrentlyBoundShader()->loadUniform("color", pMaterial->getColor());
     ShaderProgram::getCurrentlyBoundShader()->loadUniform("reflectivity", pMaterial->getReflectivity());
     ShaderProgram::getCurrentlyBoundShader()->loadUniform("refractivity", pMaterial->getRefractivity());
     ShaderProgram::getCurrentlyBoundShader()->loadUniform("specularity", pMaterial->getSpecularity());

@@ -13,10 +13,10 @@ private:
 	bool bRenderSky = true;
 	bool bRenderClouds = false;
 
-    Texture3Df* cloudNoise3D;
-    Texture2Df* cloudNoise2D;
+  Texture3Df* cloudNoise3D;
+  Texture2Df* cloudNoise2D;
 	EnvironmentMapf* pTexture;
-    EnvironmentMapf* pIrradianceMap;
+  EnvironmentMapf* pIrradianceMap;
 	Framebuffer* pBRDFFramebuffer;
 	EnvironmentMapf* pPreFilterMap;
 
@@ -38,7 +38,7 @@ private:
 
 	vec3 *sunDir;
 
-    void initShaders();
+  void initShaders();
 
 public:
 	SkyBox(Mesh *mesh, vec3 *SunDirection, std::string name);

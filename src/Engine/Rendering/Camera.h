@@ -21,9 +21,9 @@ private:
 
 protected:
     vec2 v2CurrentResolution;
-	vec3 v3ActualPosition, v3ViewDirection, v3WorldUp, v3WorldFront, v3WorldUpFrontCross, v3StrafeDirection;
-	mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
-	mat3 mRotator;
+    vec3 v3ActualPosition, v3ViewDirection, v3WorldUp, v3WorldFront, v3WorldUpFrontCross, v3StrafeDirection;
+    mat4 mActiveProjectionMatrix, mOrthographicMatrix, mPerspectiveMatrix, mViewMatrix;
+    mat3 mRotator;
 	  float fFOV = 80.0f, fZoomfactor = 1.0f, fZoomSpeed = 1.0f, fMovementSpeed = 20.0f, fAspectRatio = 0.0f;
     float& fPitch = qRotation.x;
     float& fYaw = qRotation.y;
@@ -40,7 +40,7 @@ public:
     void updateView();
     void makeActive();
     void invertPitch();
-		vec3 calcMouseRayDirection();		
+		vec3 calcScreenRayDirection(const ivec2& pos);		
 
     //Moving/Strafing
     void moveForward(const float& f);

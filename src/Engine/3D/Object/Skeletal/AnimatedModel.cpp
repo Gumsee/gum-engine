@@ -22,7 +22,7 @@ AnimatedModel::AnimatedModel(const Gum::File& file, const std::string& name)
     }
     else
     {
-        pMesh = new Mesh(file.getName());
+        pMesh = Mesh::getMesh(file.getName());
         Scene3DLoader loader;
         loader.iterateMeshes([this]([[maybe_unused]] unsigned int currentMesh, [[maybe_unused]] unsigned int numMeshes, Mesh* mesh, Bone* rootbone, std::vector<Bone*> bones) {
             pMesh->addMesh(mesh);

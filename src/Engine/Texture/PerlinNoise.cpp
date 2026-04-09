@@ -89,7 +89,7 @@ void PerlinNoise::regenerate()
         {
             float val = (float)turbulence(iSeed, x, y, 256);//16*Noise(seed, x,y) + 8*Noise(seed + 3, 2*x,2*y) + 4*Noise(seed + 23, 4*x,4*y) + 2*Noise(seed + 154, 8*x,8*y) + Noise(seed + 67, 16*x,16*y);
             //float val = noise[x][y] * 255;
-            setPixel(x, y, color(val, val, val, 255));
+            setPixel(x, y, rgba(val, val, val, 255));
         }
     }
 

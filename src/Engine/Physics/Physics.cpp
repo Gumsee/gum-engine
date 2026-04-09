@@ -30,7 +30,6 @@ Physics::Physics()
 	this->vWindDir = vec3(0,0,0);
     
 	Gum::Output::log("Initializing Physics! \t\t\t!!!IN WORK!!!");
-	Gum::Output::debug("Physics: Creating collisionConfiguarion");
     
     #ifdef GUM_USE_BULLET_PHYSICS
 	btDefaultCollisionConfiguration* collisionConfiguration = new btDefaultCollisionConfiguration();
@@ -182,6 +181,22 @@ void Physics::addWall([[maybe_unused]]vec3 pos, [[maybe_unused]]vec3 size)
     btDiscreteDynamicsWorld* world = (btDiscreteDynamicsWorld*)pDynamicWorld;
 	world->addRigidBody(new btRigidBody(0, myMotionState, ColShape, localInertia));
     #endif
+}
+
+
+bool Physics::calcRayPlaneIntersection(const vec3& start, const vec3& dir, const vec3& planepos, const vec3& planenormal, vec3& intersectionPoint)
+{
+  float denom = vec3::dot(planenormal, dir);
+  if (static_cast<float>(fabs(denom)) > 0.0f)
+  {
+      float t = vec3::dot(planepos - start, planenormal) / denom;
+      if(t >= 0)
+      {
+        intersectionPoint = start + dir * t;
+        return true;
+      }
+  }
+  return false;
 }
 
 

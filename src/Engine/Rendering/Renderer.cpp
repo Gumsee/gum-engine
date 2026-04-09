@@ -13,7 +13,7 @@ Renderer::Renderer(Canvas* canvas, const Type& type)
     pIDRenderer = new IDRenderer(pRenderCanvas);
 
     pFramebuffer = new Framebuffer(canvas->getSize());
-    pFramebuffer->setClearColor(color(5, 79, 135, 255));
+    pFramebuffer->setClearColor(rgba(5, 79, 135, 255));
     pFramebuffer->addTextureAttachment<float>(0, "Renderer3DFB");
     pFramebuffer->addDepthTextureAttachment();
     //pFramebuffer->addDepthStencilTextureAttachment();

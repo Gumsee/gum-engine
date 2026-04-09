@@ -5,9 +5,9 @@
 class Terrain : public Mesh
 {
 private:
-    ivec2 v2Resolution;
-    ivec2 v2Size;
-    float fAmplitude;
+  ivec2 v2Resolution;
+  ivec2 v2Size;
+  float fAmplitude;
 	int iRandomNumber;
 
 	int OCTAVES = 3;

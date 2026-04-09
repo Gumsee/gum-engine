@@ -88,7 +88,7 @@ void CurveRenderer::render()
 void CurveRenderer::renderID()
 {
     pIDShader->use();
-    pIDShader->loadUniform("color", pCurve->getIndividualColor().getGLColor());
+    pIDShader->loadUniform("color", pCurve->getIndividualColor());
     pVAO->bind();
     pVAO->render(1);
     pVAO->unbind();

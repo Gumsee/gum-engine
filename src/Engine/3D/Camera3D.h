@@ -13,6 +13,7 @@ public:
     enum Modes
     {
         THIRDPERSON,
+        THIRDPERSON_WITH_DRAGGING,
         FREECAM,
         FIRSTPERSON,
         STATIC,
@@ -29,7 +30,6 @@ public:
 
 private:
     SmoothFloat* pOffsetToPos;
-    float fMouseAngle;
     float fAngleAroundPos;
     Modes iCurrentMode;
     ProjectionModes iProjectionMode;
@@ -44,6 +44,7 @@ public:
     bool updateZoom();
     void update() override;
     void updateProjection(const ivec2& resolution) override;
+    void thirdPersonMotionUpdate();
 
 
     //Setter
