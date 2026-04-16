@@ -164,16 +164,12 @@ std::vector<float>& ShadowMapping::getCascadeLevels() { return vShadowCascadeLev
 
 void ShadowMapping::initShader()
 {
-    if(pShader == nullptr)
-    {
-        pShader = new ShaderProgram("ShadowMapShader", true);
-        pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        if(bCascadedShadowSupport)
-            pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
-        
-        pShader->build();
-        pShader->loadUniform("isCascaded", bCascadedShadowSupport);
-        
-    }
+  pShader = ShaderProgram::requestShaderProgram("ShadowMapShader", true);
+  pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  if(bCascadedShadowSupport)
+    pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+  
+  pShader->build();
+  pShader->loadUniform("isCascaded", bCascadedShadowSupport);
 }

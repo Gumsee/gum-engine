@@ -62,13 +62,13 @@ static const std::string ThicklinesFragmentShader = GLSL(
 
 static void initThicklinesShader()
 {
-    ShaderProgram* shader;
-    shader = new ShaderProgram("ThicklinesShader", true);
-    shader->addShader(new Shader(ThicklinesVertexShader, Shader::TYPES::VERTEX_SHADER));
-    shader->addShader(new Shader(ThicklinesGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
-    shader->addShader(new Shader(ThicklinesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  ShaderProgram* shader;
+  shader = ShaderProgram::requestShaderProgram("ThicklinesShader", true);
+  shader->addShader(new Shader(ThicklinesVertexShader, Shader::TYPES::VERTEX_SHADER));
+  shader->addShader(new Shader(ThicklinesGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+  shader->addShader(new Shader(ThicklinesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-    shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
+  shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
 }
 
 

@@ -24,9 +24,8 @@ World3D::World3D(SkyBox* othersky)
 
 World3D::~World3D()
 {
-    Gum::_delete(pLightManager);
-    Gum::_delete(pObjectManager);
-    Gum::_delete(pPhysics);
+  Gum::_delete(pLightManager);
+  Gum::_delete(pObjectManager);
 }
 
 void World3D::update()

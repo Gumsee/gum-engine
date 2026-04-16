@@ -10,11 +10,9 @@ private:
 	int m_debugMode;
 	std::vector<vec3> vertices;
 
-    VertexArrayObject* pVAO;
-    VertexBufferObject<vec3> *pVBO;
+  VertexArrayObject* pVAO;
+  VertexBufferObject<vec3> *pVBO;
 	int pointer = 0;
-
-    static void initShader();
     
 public:
 	DebugDrawer();

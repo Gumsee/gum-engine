@@ -14,42 +14,40 @@
 */
 G_Buffer::G_Buffer(const ivec2& canvassize)
 {
-    gBuffer = new Framebuffer(canvassize);
-    gBuffer->addTextureAttachment<float>(0, "G_BufferPositionMap");
-    gBuffer->addTextureAttachment<float>(1, "G_BufferNormalMap");
-    gBuffer->addTextureAttachment<unsigned char>(2, "G_BufferDiffuseMap");
-    gBuffer->addTextureAttachment<unsigned char>(3, "G_BufferObjectDataMap");
+  gBuffer = new Framebuffer(canvassize);
+  gBuffer->addTextureAttachment<float>(0, "G_BufferPositionMap");
+  gBuffer->addTextureAttachment<float>(1, "G_BufferNormalMap");
+  gBuffer->addTextureAttachment<unsigned char>(2, "G_BufferDiffuseMap");
+  gBuffer->addTextureAttachment<unsigned char>(3, "G_BufferObjectDataMap");
 
-    //gBuffer->addDepthAttachment();
-    gBuffer->addDepthTextureAttachment();
-    //gBuffer->addDepthStencilTextureAttachment("GBufferDepthTextureAttachment");
+  //gBuffer->addDepthAttachment();
+  gBuffer->addDepthTextureAttachment();
+  //gBuffer->addDepthStencilTextureAttachment("GBufferDepthTextureAttachment");
 
-    pShader = nullptr;
-    initShader();
+  pShader = nullptr;
+  initShader();
 }
 
 G_Buffer::~G_Buffer()
 {
-    Gum::_delete(gBuffer);
+  Gum::_delete(gBuffer);
 }
 
 void G_Buffer::bind()
 {
-    start = std::chrono::high_resolution_clock::now();
-    gBuffer->bind();
-    gBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
-    //glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
-    //glDepthFunc(GL_LESS);
-    Gum::Graphics::disableFeature(Gum::Graphics::Features::STENCIL_TESTING);
-    //glDepthMask(GL_FALSE);
+  clock.reset();
+  gBuffer->bind();
+  gBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
+  //glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
+  //glDepthFunc(GL_LESS);
+  Gum::Graphics::disableFeature(Gum::Graphics::Features::STENCIL_TESTING);
+  //glDepthMask(GL_FALSE);
 }
 
 void G_Buffer::unbind()
 {
-    //glDisable(GL_BLEND);
-    gBuffer->unbind();
-    auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	microseconds = std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+  //glDisable(GL_BLEND);
+  gBuffer->unbind();
 }
 
 
@@ -63,30 +61,25 @@ Texture* G_Buffer::getNormalMap()           { return this->gBuffer->getTextureAt
 Texture* G_Buffer::getDiffuseMap()          { return this->gBuffer->getTextureAttachment(2); }
 Texture* G_Buffer::getObjectDataMap()       { return this->gBuffer->getTextureAttachment(3); }
 Texture* G_Buffer::getDepthMap()            { return this->gBuffer->getDepthTextureAttachment(); }
-long long G_Buffer::getExecutionTime()      { return this->microseconds; }
+long long G_Buffer::getExecutionTime()      { return this->clock.getPassedTimeInMillis(); }
 Framebuffer* G_Buffer::getFramebuffer()     { return this->gBuffer; }
 
 
 void G_Buffer::initShader()
 {
-    if(ShaderProgram::getShaderProgramByName("GBufferShader") == nullptr)
-    {
-        pShader = new ShaderProgram("GBufferShader", true);
-        pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader = ShaderProgram::requestShaderProgram("GBufferShader", true);
+  pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build();
 
-        pShader->build();
-        pShader->addTexture("texture0", GUM_MATERIAL_TEXTURE0);
-        pShader->addTexture("ambientOcclusionmap", GUM_MATERIAL_AMBIENT_OCCLUSION_MAP);
-        pShader->addTexture("roughnessmap", GUM_MATERIAL_ROUGHNESS_MAP);
-        pShader->addTexture("specularmap", GUM_MATERIAL_SPECULAR_MAP);
-        pShader->addTexture("refractionmap", GUM_MATERIAL_REFRACTION_MAP);
-        pShader->addTexture("reflectionmap", GUM_MATERIAL_REFLECTION_MAP);
-        pShader->addTexture("Displacement", GUM_MATERIAL_DISPLACEMENT_MAP);
-        pShader->addTexture("normalmap", GUM_MATERIAL_NORMAL_MAP);
-        pShader->addTexture("Enviorment", 15);
-        pShader->addTexture("ShadowMap", 16);
-    }
-    
-    pShader = ShaderProgram::getShaderProgramByName("GBufferShader");
+  pShader->addTexture("texture0", GUM_MATERIAL_TEXTURE0);
+  pShader->addTexture("ambientOcclusionmap", GUM_MATERIAL_AMBIENT_OCCLUSION_MAP);
+  pShader->addTexture("roughnessmap", GUM_MATERIAL_ROUGHNESS_MAP);
+  pShader->addTexture("specularmap", GUM_MATERIAL_SPECULAR_MAP);
+  pShader->addTexture("refractionmap", GUM_MATERIAL_REFRACTION_MAP);
+  pShader->addTexture("reflectionmap", GUM_MATERIAL_REFLECTION_MAP);
+  pShader->addTexture("Displacement", GUM_MATERIAL_DISPLACEMENT_MAP);
+  pShader->addTexture("normalmap", GUM_MATERIAL_NORMAL_MAP);
+  pShader->addTexture("Enviorment", 15);
+  pShader->addTexture("ShadowMap", 16);
 }

@@ -90,7 +90,7 @@ World3D* createGBufferExample(Gum::File assetPath)
     pFragShaderBuilder->set(fragColorAttr, pFragShaderBuilder->texture2D(textureSampler, texCoordVary));
 
 
-    ShaderProgram* pPostProcessingShader = new ShaderProgram(true);
+    ShaderProgram* pPostProcessingShader = ShaderProgram::requestShaderProgram(true);
     pPostProcessingShader->addShader(pShaderBuilder->build());
     pPostProcessingShader->addShader(pFragShaderBuilder->build());
     pPostProcessingShader->build("PostProcessingShader");*/

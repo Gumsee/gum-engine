@@ -61,25 +61,22 @@ long long Lightning::getExecutionTime()  { return microseconds; }
 
 void Lightning::initShader()
 {
-    if(pShader == nullptr)
-    {
-        pShader = new ShaderProgram("LightningShader", true);
-        pShader->addShader(Gum::PostProcessing::VertexShader);
-        pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build();
+  pShader = ShaderProgram::requestShaderProgram("LightningShader", true);
+  pShader->addShader(Gum::PostProcessing::VertexShader);
+  pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build();
 
-        //Textures
-        pShader->addTexture("gPosition", 0);
-        pShader->addTexture("gNormal", 1);
-        pShader->addTexture("gAlbedo", 2);
-        pShader->addTexture("ssao", 3);
-        pShader->addTexture("gObjectData", 4);
-        pShader->addTexture("ReflectionMap", 5);
-        pShader->addTexture("IrradianceMap", 6);
-        pShader->addTexture("prefilterMap", 7);
-        pShader->addTexture("brdfLUT", 8);
-        pShader->addTexture("ShadowMap", 9);
-    }
+  //Textures
+  pShader->addTexture("gPosition", 0);
+  pShader->addTexture("gNormal", 1);
+  pShader->addTexture("gAlbedo", 2);
+  pShader->addTexture("ssao", 3);
+  pShader->addTexture("gObjectData", 4);
+  pShader->addTexture("ReflectionMap", 5);
+  pShader->addTexture("IrradianceMap", 6);
+  pShader->addTexture("prefilterMap", 7);
+  pShader->addTexture("brdfLUT", 8);
+  pShader->addTexture("ShadowMap", 9);
 }
 
 void Lightning::loadLight(Light* light, int index)

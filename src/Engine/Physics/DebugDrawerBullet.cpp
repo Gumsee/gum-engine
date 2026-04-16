@@ -11,19 +11,21 @@
 
 DebugDrawer::DebugDrawer()
 {
-    
-    pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);
-    pVBO = new VertexBufferObject<vec3>();
-    pVAO->addAttribute(pVBO, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
+  pVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);
+  pVBO = new VertexBufferObject<vec3>();
+  pVAO->addAttribute(pVBO, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
 
-    initShader();
+  pShaderProgram = ShaderProgram::requestShaderProgram("PhysicsDebuggingpShaderProgram", true);
+  pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShaderProgram->build();
 }
 
 
 DebugDrawer::~DebugDrawer()
 {
-    Gum::_delete(pVAO);
-    Gum::_delete(pVBO);
+  Gum::_delete(pVAO);
+  Gum::_delete(pVBO);
 }
 
 void DebugDrawer::drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor)
@@ -83,15 +85,4 @@ void DebugDrawer::draw3dText(const btVector3 & location, const char * textString
 void DebugDrawer::setDebugMode(int debugMode)
 {
 	this->m_debugMode = debugMode;
-}
-
-void DebugDrawer::initShader()
-{
-    if(pShaderProgram == nullptr)
-	{
-		pShaderProgram = new ShaderProgram("PhysicsDebuggingpShaderProgram", true);
-        pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShaderProgram->build();
-    }
 }

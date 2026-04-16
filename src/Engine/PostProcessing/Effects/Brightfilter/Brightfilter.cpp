@@ -5,16 +5,13 @@
 Brightfilter::Brightfilter(Canvas* canvas)
 {
 	init(canvas);
-    
-    if(this->pShader == nullptr)
-    {
-        this->pShader = new ShaderProgram("BrightnessFilterShader", true);
-        this->pShader->addShader(Gum::PostProcessing::VertexShader);
-        this->pShader->addShader(new Shader(BrightfilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        this->pShader->build();
 
-        this->pShader->addTexture("texture0", 0);
-    }
+  this->pShader = ShaderProgram::requestShaderProgram("BrightnessFilterShader", true);
+  this->pShader->addShader(Gum::PostProcessing::VertexShader);
+  this->pShader->addShader(new Shader(BrightfilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  this->pShader->build();
+
+  this->pShader->addTexture("texture0", 0);
 }
 
 

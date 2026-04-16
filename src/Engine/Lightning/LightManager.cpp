@@ -10,28 +10,29 @@ Texture2D* LightManager::pLightbulb = nullptr;
 
 LightManager::LightManager(World* world)
 {
-    //Gum::Output::log("Adding Lights!");
-    this->pSun = new DirectionalLight(vec3(-1,-1,-1), vec3(1), "Sun");
-    this->pWorld = world;
-    //Gum::Output::print("Successfully initialized Light Manager!");
+  //Gum::Output::log("Adding Lights!");
+  this->pSun = new DirectionalLight(vec3(-1,-1,-1), vec3(1), "Sun");
+  this->pWorld = world;
+  //Gum::Output::print("Successfully initialized Light Manager!");
 
-    if(pLightbulb == nullptr)
-    {
-        pLightbulb = new Texture2D("lightbulb");
-        pLightbulb->loadFromMemory(lightbulb, sizeof(lightbulb));
-    }
+  if(pLightbulb == nullptr)
+  {
+    pLightbulb = new Texture2D("lightbulb");
+    pLightbulb->loadFromMemory(lightbulb, sizeof(lightbulb));
+  }
 }
 
 LightManager::~LightManager() 
 {
-    Gum::_delete(pSun);
-    for(size_t i = 0; i < PointLights.size(); i++)
-        Gum::_delete(PointLights[i]);
+  Gum::_delete(pSun);
+  for(size_t i = 0; i < PointLights.size(); i++)
+    Gum::_delete(PointLights[i]);
 }
 
 void LightManager::cleanup()
 {
-    Gum::_delete(pLightbulb);
+  Gum::_delete(pLightbulb);
+  pLightbulb = nullptr;
 }
 
 void LightManager::update()

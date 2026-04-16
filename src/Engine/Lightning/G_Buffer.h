@@ -2,17 +2,16 @@
 #include <Graphics/Framebuffer.h>
 #include <Graphics/Texture.h>
 #include <Graphics/ShaderProgram.h>
-#include <chrono>
+#include <Essentials/Clock.h>
 
 class G_Buffer
 {
 private:
-    Framebuffer* gBuffer;
-	long long microseconds;
-	std::chrono::high_resolution_clock::time_point start;
+  Framebuffer* gBuffer;
+	Clock<> clock;
 
-    ShaderProgram *pShader;
-    void initShader();
+  ShaderProgram *pShader;
+  void initShader();
 
 public:
     G_Buffer(const ivec2& canvassize);

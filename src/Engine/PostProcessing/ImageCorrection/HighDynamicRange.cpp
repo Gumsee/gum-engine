@@ -5,17 +5,15 @@
 
 HighDynamicRange::HighDynamicRange(Canvas *canvas)
 {
-    init(canvas);
-    if(pShader == nullptr)
-    {
-        pShader = new ShaderProgram("HighDynamicRangeShader", true);
-        pShader->addShader(Gum::PostProcessing::VertexShader);
-        pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build();
+  init(canvas);
+  
+  pShader = ShaderProgram::requestShaderProgram("HighDynamicRangeShader", true);
+  pShader->addShader(Gum::PostProcessing::VertexShader);
+  pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build();
 
-        //Textures
-        pShader->addTexture("textureSampler", 0);
-    }
+  //Textures
+  pShader->addTexture("textureSampler", 0);
 }
 
 
@@ -25,16 +23,16 @@ HighDynamicRange::~HighDynamicRange()
 
 Texture* HighDynamicRange::render(Texture* texture, float exposure)
 {
-    pFramebuffer->bind();
-    pShader->use();
-    pShader->loadUniform("exposure", exposure);
+  pFramebuffer->bind();
+  pShader->use();
+  pShader->loadUniform("exposure", exposure);
 
-    texture->bind();
-    pRenderCanvas->render();
-    texture->unbind();
+  texture->bind();
+  pRenderCanvas->render();
+  texture->unbind();
 
-    pShader->unuse();
-    pFramebuffer->unbind();
+  pShader->unuse();
+  pFramebuffer->unbind();
 
-    return pFramebuffer->getTextureAttachment(0);
+  return pFramebuffer->getTextureAttachment(0);
 }

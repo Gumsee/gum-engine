@@ -20,7 +20,6 @@ private:
 	Framebuffer* pBRDFFramebuffer;
 	EnvironmentMapf* pPreFilterMap;
 
-	static inline ShaderProgram *SkyShader = nullptr;
 	static inline ShaderProgram *HDRShader = nullptr;
 	static inline ShaderProgram *CloudShader = nullptr;
 	static inline ShaderProgram *HDRToCubeMapShader = nullptr;

@@ -3,7 +3,7 @@
 Difference::Difference(Canvas *canvas)
 {
     init(canvas);
-	this->pShader = ShaderProgram::getShaderProgramByName("DifferenceShader");
+	this->pShader = ShaderProgram::requestShaderProgram("DifferenceShader");
 }
 
 

@@ -22,11 +22,10 @@ private:
     std::string sName;
 
 protected:
-	std::vector<std::function<void()>> vUpdatables;
-	std::vector<Renderable*> vRenderables;
+    std::vector<std::function<void()>> vUpdatables;
+    std::vector<Renderable*> vRenderables;
     std::vector<ParticleSystem*> vParticles;
     std::vector<Billboard*> vBillboards;
-    std::vector<Camera*> vCamera;
     Physics* pPhysics;
 
 public:
@@ -41,8 +40,8 @@ public:
     void renderBillboards(ShaderProgram* shader);
     void updateProjection();
 
-	void addUpdatable(std::function<void()> updatable);
-	void addRenderable(Renderable* renderable);
+    void addUpdatable(std::function<void()> updatable);
+    void addRenderable(Renderable* renderable);
     void addBillboard(Billboard* billboard);
     void addParticles(ParticleSystem* particles);
 
@@ -53,7 +52,6 @@ public:
     void setName(std::string name);
 
     //Getter
-    Camera* getCamera(const unsigned int& index = 0);
     Physics* getPhysics();
     Type getType() const;
     std::string getName();

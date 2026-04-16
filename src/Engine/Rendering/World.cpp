@@ -16,9 +16,7 @@ World::World(const Type& type)
 
 World::~World()
 {
-    Gum::_delete(pPhysics);
-    for(size_t i = 0; i < vCamera.size(); i++)
-        Gum::_delete(vCamera[i]);
+  Gum::_delete(pPhysics);
 }
 
 void World::update()
@@ -29,17 +27,17 @@ void World::update()
 
 void World::renderRenderable()
 {
-    for (size_t i = 0; i < vRenderables.size(); i++) 
-    {
-        vRenderables[i]->prerender();
-        vRenderables[i]->render();
-    }
+  for (size_t i = 0; i < vRenderables.size(); i++) 
+  {
+    vRenderables[i]->prerender();
+    vRenderables[i]->render();
+  }
 }
 
 void World::renderRenderableIDs()
 {
-    for (size_t i = 0; i < vRenderables.size(); i++) 
-        vRenderables[i]->renderID();
+  for (size_t i = 0; i < vRenderables.size(); i++) 
+    vRenderables[i]->renderID();
 }
 
 void World::renderParticles()
@@ -88,7 +86,6 @@ void World::setName(std::string name)                       { sName = name; }
 //
 // Getter
 //
-Camera* World::getCamera(const unsigned int& index)         { return this->vCamera[index]; }
 Physics* World::getPhysics()                                { return this->pPhysics; }
 World::Type World::getType() const                          { return this->iType; }
 std::string World::getName()                                { return this->sName; }

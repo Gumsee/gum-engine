@@ -5,18 +5,15 @@
 
 ContrastChanger::ContrastChanger(Canvas *canvas, const float& contrast)
 {
-    init(canvas);
-    this->fContrast = contrast;
+  init(canvas);
+  this->fContrast = contrast;
 
-    if(this->pShader == nullptr)
-    {
-        this->pShader = new ShaderProgram("ContrastChangerShader", true);
-        this->pShader->addShader(Gum::PostProcessing::VertexShader);
-        this->pShader->addShader(new Shader(ContrastChangerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        this->pShader->build();
+  this->pShader = ShaderProgram::requestShaderProgram("ContrastChangerShader", true);
+  this->pShader->addShader(Gum::PostProcessing::VertexShader);
+  this->pShader->addShader(new Shader(ContrastChangerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  this->pShader->build();
 
-        this->pShader->addTexture("texture0", 0);
-    }
+  this->pShader->addTexture("texture0", 0);
 }
 
 
@@ -38,5 +35,5 @@ Texture* ContrastChanger::render(Texture* texture)
 	pShader->unuse();
 	pFramebuffer->unbind();
     
-    return pFramebuffer->getTextureAttachment(0);
+  return pFramebuffer->getTextureAttachment(0);
 }

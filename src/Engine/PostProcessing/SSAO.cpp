@@ -203,23 +203,17 @@ vbuilder->set(randomVec, vbuilder->normalize(vbuilder->elementOf(vbuilder->textu
 
 void SSAO::initShader()
 {
-    if(pShader == nullptr)
-	{
-		pShader = new ShaderProgram("SSAOShader", true);
-        pShader->addShader(Gum::PostProcessing::VertexShader);
-        pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build();
-        pShader->addTexture("texPosition", 0);
-        pShader->addTexture("texNormal", 1);
-        pShader->addTexture("texNoise", 2);
-    }
+  pShader = ShaderProgram::requestShaderProgram("SSAOShader", true);
+  pShader->addShader(Gum::PostProcessing::VertexShader);
+  pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build();
+  pShader->addTexture("texPosition", 0);
+  pShader->addTexture("texNormal", 1);
+  pShader->addTexture("texNoise", 2);
 
-    if(pBlurShader == nullptr)
-    {
-        pBlurShader = new ShaderProgram("SSAOBlurShader", true);
-        pBlurShader->addShader(Gum::PostProcessing::VertexShader);
-        pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pBlurShader->build();
-        pBlurShader->addTexture("ssaoInput", 0);
-    }
+  pBlurShader = ShaderProgram::requestShaderProgram("SSAOBlurShader", true);
+  pBlurShader->addShader(Gum::PostProcessing::VertexShader);
+  pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pBlurShader->build();
+  pBlurShader->addTexture("ssaoInput", 0);
 }

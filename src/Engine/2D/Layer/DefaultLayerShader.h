@@ -23,17 +23,11 @@ static const std::string DefaultLayerFragmentShader = GLSL(
 
 static ShaderProgram* initDefaultLayerShader()
 {
-    if(ShaderProgram::getShaderProgramByName("DefaultLayerShader") == nullptr)
-    {
-        ShaderProgram* shader;
-        shader = new ShaderProgram("DefaultLayerShader", true);
-        shader->addShader(new Shader(DefaultLayerVertexShader, Shader::TYPES::VERTEX_SHADER));
-        shader->addShader(new Shader(DefaultLayerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  ShaderProgram* shader;
+  shader = ShaderProgram::requestShaderProgram("DefaultLayerShader", true);
+  shader->addShader(new Shader(DefaultLayerVertexShader, Shader::TYPES::VERTEX_SHADER));
+  shader->addShader(new Shader(DefaultLayerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        shader->build({ {"vertices", 0} });
-        return shader;
-    }
-    
-    
-    return ShaderProgram::getShaderProgramByName("DefaultLayerShader");
+  shader->build({ {"vertices", 0} });
+  return shader;
 }

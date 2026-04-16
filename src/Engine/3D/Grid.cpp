@@ -14,13 +14,10 @@ Grid::Grid()
     pVAO->addAttribute(&vbo, 0, 2, Gum::Graphics::Datatypes::FLOAT);
     pVAO->setVertexCount(6);
     
-    if(pShader == nullptr)
-    {
-        pShader = new ShaderProgram("GridShader", true);
-        pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build();
-    }
+    pShader = ShaderProgram::requestShaderProgram("GridShader", true);
+    pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
+    pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    pShader->build();
 }
 
 Grid::~Grid()

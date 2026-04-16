@@ -25,20 +25,18 @@ Renderer3D::Renderer3D(Canvas* canvas)
     pGrid         = new Grid();
     //#endif
 
-    pParticleShader = ShaderProgram::getShaderProgramByName("ParticleShader");
-    pBillboardShader = ShaderProgram::getShaderProgramByName("BillboardShader");
+    pParticleShader = ShaderProgram::requestShaderProgram("ParticleShader");
+    pBillboardShader = ShaderProgram::requestShaderProgram("BillboardShader");
 
     updateFramebufferSize();
 }
 
 Renderer3D::~Renderer3D()
 {
-    Gum::_delete(pFramebuffer);
-    Gum::_delete(pGBuffer);
-    Gum::_delete(pSSAO);
-    Gum::_delete(pLightning);
-    Gum::_delete(pShadowMaps);
-    Gum::_delete(pHighDynamicRange);
+  Gum::_delete(pGBuffer);
+  Gum::_delete(pSSAO);
+  Gum::_delete(pLightning);
+  Gum::_delete(pShadowMaps);
 }
 
 

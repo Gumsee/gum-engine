@@ -173,25 +173,21 @@ void Gizmo::drawTranslationGizmo(int type)
 
 Gizmo::Gizmo()
 {
-    if(pShader == nullptr)
-    {
-        pShader = new ShaderProgram("GizmoShader", true);
-        pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build({ { "vertices", 0 }, { "colors", 1 } });
-    }
+  pShader = ShaderProgram::requestShaderProgram("GizmoShader", true);
+  pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build({ { "vertices", 0 }, { "colors", 1 } });
 
-    pLineVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);
+  pLineVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);
 
-    pLineVBO = new VertexBufferObject<vec2>();
-    pLineVBO->setData(vLineVBOData, Gum::Graphics::DataState::DYNAMIC);
-    pLineVAO->addAttribute(pLineVBO, 0, 2, Gum::Graphics::Datatypes::FLOAT, 0, 0);
+  pLineVBO = new VertexBufferObject<vec2>();
+  pLineVBO->setData(vLineVBOData, Gum::Graphics::DataState::DYNAMIC);
+  pLineVAO->addAttribute(pLineVBO, 0, 2, Gum::Graphics::Datatypes::FLOAT, 0, 0);
 
-    drawTranslationGizmo(0);
-    
-    pLineVBO->setData(vLineVBOData, Gum::Graphics::DataState::DYNAMIC);
-    pLineVAO->setVertexCount((unsigned int)vLineVBOData.size());
-
+  drawTranslationGizmo(0);
+  
+  pLineVBO->setData(vLineVBOData, Gum::Graphics::DataState::DYNAMIC);
+  pLineVAO->setVertexCount((unsigned int)vLineVBOData.size());
 }
 
 Gizmo::~Gizmo()

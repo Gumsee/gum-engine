@@ -14,8 +14,8 @@ Renderer2D::Renderer2D(Canvas* canvas)
 
     initShader();
 
-    pParticleShader = ShaderProgram::getShaderProgramByName("ParticleShader");
-    pBillboardShader = ShaderProgram::getShaderProgramByName("BillboardShader");
+    pParticleShader = ShaderProgram::requestShaderProgram("ParticleShader");
+    pBillboardShader = ShaderProgram::requestShaderProgram("BillboardShader");
 }
 
 Renderer2D::~Renderer2D()
@@ -96,13 +96,10 @@ void Renderer2D::setWorld(World2D* world)
 
 void Renderer2D::initShader()
 {
-    if(pParallaxSkyShader == nullptr)
-    {
-        pParallaxSkyShader = new ShaderProgram("ParallaxSkyShader", true);
-        pParallaxSkyShader->addShader(new Shader(ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
-        pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pParallaxSkyShader = ShaderProgram::requestShaderProgram("ParallaxSkyShader", true);
+  pParallaxSkyShader->addShader(new Shader(ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
-        pParallaxSkyShader->build({{"vertices", 0}});
-        pParallaxSkyShader->addTexture("textureSampler", 0);
-    }
+  pParallaxSkyShader->build({{"vertices", 0}});
+  pParallaxSkyShader->addTexture("textureSampler", 0);
 }

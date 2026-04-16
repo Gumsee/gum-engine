@@ -23,7 +23,7 @@ void ReflectiveTextureCube::render()
 	/// IN WORK 
 	// Render in all 6 directions
 
-	//ShaderProgram *shader = ShaderProgram::getShaderProgramByName("lowquality");
+	//ShaderProgram *shader = ShaderProgram::requestShaderProgram("lowquality");
 	#ifdef DEBUG
 		Gum::Output::debug("Rendering ReflectiveTexture Cube!");
 	#endif

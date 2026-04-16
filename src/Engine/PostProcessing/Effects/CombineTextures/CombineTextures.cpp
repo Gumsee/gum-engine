@@ -4,19 +4,16 @@
 
 CombineTextures::CombineTextures(Canvas *canvas, const float& exposure)
 {
-    init(canvas);
-    this->fExposure = exposure;
-    pSecondTexture = nullptr;
+  init(canvas);
+  this->fExposure = exposure;
+  pSecondTexture = nullptr;
 
-	if(pShader == nullptr)
-	{
-        pShader = new ShaderProgram("CombineTexturesShader", true);
-        pShader->addShader(Gum::PostProcessing::VertexShader);
-        pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
-        pShader->build();
-        pShader->addTexture("texture0", 0);
-        pShader->addTexture("texture1", 1);
-	}
+  pShader = ShaderProgram::requestShaderProgram("CombineTexturesShader", true);
+  pShader->addShader(Gum::PostProcessing::VertexShader);
+  pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->build();
+  pShader->addTexture("texture0", 0);
+  pShader->addTexture("texture1", 1);
 }
 
 CombineTextures::~CombineTextures() 
@@ -25,23 +22,23 @@ CombineTextures::~CombineTextures()
 
 Texture* CombineTextures::render(Texture* texture)
 {
-    if(pSecondTexture == nullptr)
-        return texture;
+  if(pSecondTexture == nullptr)
+    return texture;
 
-    pFramebuffer->bind();
+  pFramebuffer->bind();
 	pFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
 
 	pShader->use();
 	pShader->loadUniform("exposure", fExposure);
 
-    texture->bind(0);
-    pSecondTexture->bind(1);
+  texture->bind(0);
+  pSecondTexture->bind(1);
 	pRenderCanvas->render();
-    pSecondTexture->unbind(1);
-    texture->unbind(0);
+  pSecondTexture->unbind(1);
+  texture->unbind(0);
 
 	pShader->unuse();
 	pFramebuffer->unbind();
     
-    return pFramebuffer->getTextureAttachment(0);
+  return pFramebuffer->getTextureAttachment(0);
 }

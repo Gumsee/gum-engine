@@ -15,11 +15,11 @@ CurveRenderer::CurveRenderer(Curve* curve, float thickness)
     this->fThickness = thickness;
 
     if(thickness > 1.0f)
-        pShader = ShaderProgram::getShaderProgramByName("ThicklinesShader");
+        pShader = ShaderProgram::requestShaderProgram("ThicklinesShader");
     else
-        pShader = ShaderProgram::getShaderProgramByName("SimpleShader");
+        pShader = ShaderProgram::requestShaderProgram("SimpleShader");
     
-    pIDShader = ShaderProgram::getShaderProgramByName("ThicklinesShader");
+    pIDShader = ShaderProgram::requestShaderProgram("ThicklinesShader");
 
     pTransMatricesVBO = new VertexBufferObject<mat4>();
     pTransMatricesVBO->setData({mTransformation}, Gum::Graphics::DataState::STATIC);

@@ -72,7 +72,7 @@ World2D* World2D::readFromFile(XMLReader& reader)
             if     (type == "background") layer = new Background(name);
             else if(type == "tilemap")    layer = new TileMap(name);
 
-            ShaderProgram* shader = ShaderProgram::getShaderProgramByName(layernode->getAttribute("shader").toString());
+            ShaderProgram* shader = ShaderProgram::requestShaderProgram(layernode->getAttribute("shader").toString());
 
             if(layer != nullptr)
             {
