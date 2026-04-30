@@ -8,7 +8,7 @@ class G_Buffer
 {
 private:
   Framebuffer* gBuffer;
-	Clock<> clock;
+	Clock clock;
 
   ShaderProgram *pShader;
   void initShader();

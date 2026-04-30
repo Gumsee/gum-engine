@@ -13,44 +13,44 @@
 Camera3D::Camera3D(const ivec2& resolution, World3D* world)
     : Camera(resolution, CAMERA3D)
 {
-    this->fPitch = 30.0f;
-    this->fAngleAroundPos = -30.0f;
-    pOffsetToPos = new SmoothFloat(10, 5);
-    pOffsetToPos->setMin(1);
-    pOffsetToPos->setMax(100);
+  this->fPitch = 30.0f;
+  this->fAngleAroundPos = -30.0f;
+  pOffsetToPos = new SmoothFloat(10, 5);
+  pOffsetToPos->setMin(1);
+  pOffsetToPos->setMax(100);
 
-    iProjectionMode = ProjectionModes::PERSPECTIVE;
-    iCurrentMode = Modes::THIRDPERSON;
-    updateProjection(resolution);
-    updateView();
+  iProjectionMode = ProjectionModes::PERSPECTIVE;
+  iCurrentMode = Modes::THIRDPERSON;
+  updateProjection(resolution);
+  updateView();
 
-    if(world != nullptr)
-    {
-        //Add billboard
-    }
+  if(world != nullptr)
+  {
+    //Add billboard
+  }
 }
 
 Camera3D::~Camera3D()
 {
-    Gum::_delete(pOffsetToPos);
+  Gum::_delete(pOffsetToPos);
 }
 
 void Camera3D::updateProjection(const ivec2& resolution)
 {
-    v2CurrentResolution = resolution;
-    float aspect = fAspectRatio;
-    if(aspect == 0.0f)
-      aspect = (float)resolution.x / (float)resolution.y;
-    
-    float halfheight = resolution.y * (fZoomfactor / pOffsetToPos->getMax()) * 0.025f;
-    float halfwidth = aspect * halfheight;
-    mOrthographicMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
-    mPerspectiveMatrix = Gum::Maths::perspective(fFOV, aspect, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
+  v2CurrentResolution = resolution;
+  float aspect = fAspectRatio;
+  if(aspect == 0.0f)
+    aspect = (float)resolution.x / (float)resolution.y;
+  
+  float halfheight = resolution.y * (fZoomfactor / pOffsetToPos->getMax()) * 0.025f;
+  float halfwidth = aspect * halfheight;
+  mOrthographicMatrix = Gum::Maths::ortho(halfheight, halfwidth, -halfheight, -halfwidth, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
+  mPerspectiveMatrix = Gum::Maths::perspective(fFOV, aspect, NEAR_PLANE, (float)Settings::getSetting(Settings::Names::RENDERDISTANCE));
 
-    if(iProjectionMode == ProjectionModes::PERSPECTIVE)
-        mActiveProjectionMatrix = mPerspectiveMatrix;
-    else
-        mActiveProjectionMatrix = mOrthographicMatrix;
+  if(iProjectionMode == ProjectionModes::PERSPECTIVE)
+    mActiveProjectionMatrix = mPerspectiveMatrix;
+  else
+    mActiveProjectionMatrix = mOrthographicMatrix;
 }
 
 void Camera3D::update()
@@ -81,12 +81,11 @@ void Camera3D::update()
       else if(Gum::IO::Controls::checkControl("CameraDraggingMotionToggle", Gum::Window::CurrentlyBoundWindow->getKeyboard()))
       {
         Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
-        vec3 start;
-        vec3 end;
+        vec3 start, end;
         if(Physics::calcRayPlaneIntersection(v3ActualPosition, calcScreenRayDirection(mouse->getLastPosition()), vec3(0,0,0), vec3(0,0,1), start)
         && Physics::calcRayPlaneIntersection(v3ActualPosition, calcScreenRayDirection(mouse->getPosition()),     vec3(0,0,0), vec3(0,0,1), end))
           {
-            increasePosition(start - end); 
+            setPosition(vec3::clamp(vPosition + (start - end), bPositionBoundaries.getPos(), bPositionBoundaries.getSize()));
             v3ActualPosition = vPosition 
             + v3WorldFront * pOffsetToPos->get() * Gum::Maths::cosdeg(fPitch) * Gum::Maths::sindeg(fAngleAroundPos)
             + v3WorldUp * pOffsetToPos->get() * Gum::Maths::sindeg(fPitch)
@@ -126,16 +125,16 @@ bool Camera3D::updateZoom()
 
 void Camera3D::mouseUpdate()
 {
-    v3StrafeDirection = vec3::cross(v3ViewDirection, v3WorldUp);
-    Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
-    if(mouse->getDelta() != ivec2(0,0))
-    {
-        mRotator = Gum::Maths::rotateMatrix(v3WorldUp * -(float)mouse->getDelta().x * ROTATIONAL_SPEED) *
-                   Gum::Maths::rotateMatrix(v3StrafeDirection * -(float)mouse->getDelta().y * ROTATIONAL_SPEED);
+  v3StrafeDirection = vec3::cross(v3ViewDirection, v3WorldUp);
+  Gum::IO::Mouse* mouse = Gum::Window::CurrentlyBoundWindow->getMouse();
+  if(mouse->getDelta() != ivec2(0,0))
+  {
+    mRotator = Gum::Maths::rotateMatrix(v3WorldUp * -(float)mouse->getDelta().x * ROTATIONAL_SPEED) *
+               Gum::Maths::rotateMatrix(v3StrafeDirection * -(float)mouse->getDelta().y * ROTATIONAL_SPEED);
 
-        v3ViewDirection = mRotator * v3ViewDirection;
-        //vec3::clamp(v3ViewDirection, 0.0f, 1.0f);
-    }
+    v3ViewDirection = mRotator * v3ViewDirection;
+    //vec3::clamp(v3ViewDirection, 0.0f, 1.0f);
+  }
 }
 
 void Camera3D::thirdPersonMotionUpdate()
@@ -160,22 +159,23 @@ void Camera3D::thirdPersonMotionUpdate()
 
 void Camera3D::lookAt(const vec3& lookat)
 { 
-    mViewMatrix = Gum::Maths::view(v3ActualPosition, lookat, v3WorldUp); 
-    v3ViewDirection = vec3(-mViewMatrix[0][2], -mViewMatrix[1][2], -mViewMatrix[1][2]);
-    pOnViewUpdate();
+  mViewMatrix = Gum::Maths::view(v3ActualPosition, lookat, v3WorldUp); 
+  v3ViewDirection = vec3(-mViewMatrix[0][2], -mViewMatrix[1][2], -mViewMatrix[1][2]);
+  pOnViewUpdate();
 }
 
 
 //
 // Getter
 //
-Camera3D::Modes Camera3D::getMode() const					  { return this->iCurrentMode; }
+Camera3D::Modes Camera3D::getMode() const					            { return this->iCurrentMode; }
 Camera3D::ProjectionModes Camera3D::getProjectionMode() const { return this->iProjectionMode; }
-
+bbox3& Camera3D::getPositionBoundaries()                      { return this->bPositionBoundaries; }
 
 //
 // Setter
 //
+void Camera3D::setPositionBoundaries(const bbox3& boundaries) { this->bPositionBoundaries = boundaries; }
 void Camera3D::setProjectionMode(const ProjectionModes& mode) { iProjectionMode = mode; updateProjection(v2CurrentResolution); }
 void Camera3D::setOffset(const float& offset) 		            { pOffsetToPos->setTarget(offset); pOffsetToPos->set(offset); update(); }
 void Camera3D::increaseZoom(const float& zoom)                { pOffsetToPos->increaseTarget(zoom); }

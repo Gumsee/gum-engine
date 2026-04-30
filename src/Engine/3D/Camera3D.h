@@ -33,6 +33,7 @@ private:
     float fAngleAroundPos;
     Modes iCurrentMode;
     ProjectionModes iProjectionMode;
+    bbox3 bPositionBoundaries;
 
     void mouseUpdate();
 
@@ -52,9 +53,11 @@ public:
     void setMode(const Modes& Mode);
     void setOffset(const float& offset);
     void increaseZoom(const float& zoom);
+    void setPositionBoundaries(const bbox3& boundaries);
 
 
     //Getter
     Modes getMode() const;
     ProjectionModes getProjectionMode() const;
+    bbox3& getPositionBoundaries();
 };

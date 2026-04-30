@@ -27,7 +27,7 @@ World3D* createVehicleExample()
     
 
     Vehicle* car = new Vehicle(ObjectManager::MODEL_ASSETS_PATH + "/deluxecar.obj", "Car");
-    car->addInstance(pWorld3D);
+    car->addInstance();
     pWorld3D->getObjectManager()->addObject(car);
 
 

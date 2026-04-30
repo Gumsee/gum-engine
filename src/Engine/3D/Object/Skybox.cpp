@@ -214,7 +214,7 @@ void SkyBox::setTexture(Texture *tex)
 
 void SkyBox::makeBRDFMap()
 {
-  Clock<> benchmarkClock;
+  Clock benchmarkClock;
 	pBRDFFramebuffer->bind();
   pBRDFFramebuffer->clear(Framebuffer::ClearFlags::COLOR);
 	BRDFMapShader->use();
@@ -226,7 +226,7 @@ void SkyBox::makeBRDFMap()
 
 void SkyBox::makePrefilterMap()
 {
-  Clock<> benchmarkClock;
+  Clock benchmarkClock;
   ivec2 res = pPreFilterMap->getSize();
   PreFilteredMapShader->use();
   pTexture->bind(0);
@@ -258,7 +258,7 @@ void SkyBox::makePrefilterMap()
 
 void SkyBox::makeIrradianceMap()
 {
-  Clock<> benchmarkClock;
+  Clock benchmarkClock;
 
   pTexture->bind(0);
   IrradianceMapShader->use();
