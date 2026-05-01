@@ -146,7 +146,9 @@ void ParticleSystem::addStage(float timeInPercent, float speed, vec3 velocity, v
 void ParticleSystem::Play()          { play = true; }
 void ParticleSystem::Stop()          { play = false; }
 void ParticleSystem::switchOnOff()   { play = !play; }
-void ParticleSystem::SortParticles() { std::sort(&vParticles[0], &vParticles[0] + vParticles.size()); }
+void ParticleSystem::SortParticles() { std::sort(vParticles.begin(), vParticles.end(), [](Particle a, Particle b) -> bool { 
+    return a.getcameradistance() > b.getcameradistance();
+}); }
 
 
 //
