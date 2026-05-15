@@ -15,8 +15,8 @@ Grid::Grid()
     pVAO->setVertexCount(6);
     
     pShader = ShaderProgram::requestShaderProgram("GridShader", true);
-    pShader->addShader(new Shader(GridVertexShader, Shader::TYPES::VERTEX_SHADER));
-    pShader->addShader(new Shader(GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+    pShader->addShader(Shader::requestShader("GridShader", GridVertexShader, Shader::TYPES::VERTEX_SHADER));
+    pShader->addShader(Shader::requestShader("GridShader", GridFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
     pShader->build();
 }
 

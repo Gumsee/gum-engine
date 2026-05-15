@@ -325,48 +325,48 @@ void SkyBox::renderClouds(bool renderclouds)
 
 void SkyBox::initShaders()
 {
-  Shader* skyVertexShader = new Shader(SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
+  Shader* skyVertexShader = Shader::requestShader("SkyShader", SkyboxVertexShader, Shader::TYPES::VERTEX_SHADER);
 
   pShader = ShaderProgram::requestShaderProgram("SkyShader", true);
   pShader->addShader(skyVertexShader);
-  pShader->addShader(new Shader(SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("SkyShader", SkyboxFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
   
-  HDRShader = ShaderProgram::requestShaderProgram("HDRShader", true);
+  HDRShader = ShaderProgram::requestShaderProgram("HDRSkyShader", true);
   HDRShader->addShader(skyVertexShader);
-  HDRShader->addShader(new Shader(HDRFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  HDRShader->addShader(Shader::requestShader("HDRSkyShader", HDRFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   HDRShader->build();
 
   CloudShader = ShaderProgram::requestShaderProgram("CloudShader", true);
-  CloudShader->addShader(new Shader(PostProcessingVertexShader, Shader::TYPES::VERTEX_SHADER));
-  CloudShader->addShader(new Shader(CloudFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  CloudShader->addShader(Shader::requestShader("CloudShader", PostProcessingVertexShader, Shader::TYPES::VERTEX_SHADER));
+  CloudShader->addShader(Shader::requestShader("CloudShader", CloudFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   CloudShader->build();
 
 
   HDRToCubeMapShader = ShaderProgram::requestShaderProgram("HDRToCubeMapShader", true);
   HDRToCubeMapShader->addShader(skyVertexShader);
-  HDRToCubeMapShader->addShader(new Shader(SkyboxHDRToCubeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  HDRToCubeMapShader->addShader(Shader::requestShader("HDRToCubeMapShader", SkyboxHDRToCubeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   HDRToCubeMapShader->build();
   HDRToCubeMapShader->addTexture("hdrTexture", 0);
 
   
   IrradianceMapShader = ShaderProgram::requestShaderProgram("IrradianceMapShader", true);
   IrradianceMapShader->addShader(skyVertexShader);
-  IrradianceMapShader->addShader(new Shader(SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  IrradianceMapShader->addShader(Shader::requestShader("IrradianceMapShader", SkyboxIrradianceFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   IrradianceMapShader->build();
   IrradianceMapShader->addTexture("cubeMap", 0);
 
   
   PreFilteredMapShader = ShaderProgram::requestShaderProgram("PreFilteredMapShader", true);
   PreFilteredMapShader->addShader(skyVertexShader);
-  PreFilteredMapShader->addShader(new Shader(SkyboxPrefilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  PreFilteredMapShader->addShader(Shader::requestShader("PreFilteredMapShader", SkyboxPrefilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   PreFilteredMapShader->build();
   PreFilteredMapShader->addTexture("cubeMap", 0);
 
   
   BRDFMapShader = ShaderProgram::requestShaderProgram("BRDFMapShader", true);
-  BRDFMapShader->addShader(new Shader(SkyboxBRDFVertexShader, Shader::TYPES::VERTEX_SHADER));
-  BRDFMapShader->addShader(new Shader(SkyboxBRDFFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  BRDFMapShader->addShader(Shader::requestShader("BRDFMapShader", SkyboxBRDFVertexShader, Shader::TYPES::VERTEX_SHADER));
+  BRDFMapShader->addShader(Shader::requestShader("BRDFMapShader", SkyboxBRDFFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   BRDFMapShader->build();
   BRDFMapShader->addTexture("cubeMap", 0);
 }

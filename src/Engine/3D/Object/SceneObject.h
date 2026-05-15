@@ -16,6 +16,7 @@ public:
     ~SceneObject();
 
     void render() override;
+    void renderForShadowmap() override;
 
     void setMaterial(Material* material);
     PhysicsObjectInstance* addPhysicsInstance(PhysicsObjectInstance::Shape shape, float mass, World3D* world, vec3 special = vec3(0));

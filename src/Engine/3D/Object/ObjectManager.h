@@ -50,7 +50,8 @@ public:
 	void renderForward();
 	void renderEverything();
 	void renderEverythingMeshesOnly();
-    void renderIDs();
+  void renderEverythingForShadowMap();
+  void renderIDs();
 
 	/**
      * Adds a Object to the Object map

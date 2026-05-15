@@ -84,8 +84,8 @@ Sprite2DInstance* TileMap::getInstanceByID(const unsigned int& id)
 void TileMap::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("SpriteShader", true);
-  pShader->addShader(new Shader(SpriteVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("SpriteShader", SpriteVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("SpriteShader", SpriteFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
   pShader->build({{"vertices", 0}, {"TransMatrix", 1}});
   pShader->addTexture("textureSampler", 0);

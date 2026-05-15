@@ -9,7 +9,7 @@ HighDynamicRange::HighDynamicRange(Canvas *canvas)
   
   pShader = ShaderProgram::requestShaderProgram("HighDynamicRangeShader", true);
   pShader->addShader(Gum::PostProcessing::VertexShader);
-  pShader->addShader(new Shader(HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("HighDynamicRangeShader", HighDynamicRangeFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
 
   //Textures

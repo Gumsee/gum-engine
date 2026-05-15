@@ -174,8 +174,8 @@ void Gizmo::drawTranslationGizmo(int type)
 Gizmo::Gizmo()
 {
   pShader = ShaderProgram::requestShaderProgram("GizmoShader", true);
-  pShader->addShader(new Shader(GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("GizmoShader", GizmoVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("GizmoShader", GizmoFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build({ { "vertices", 0 }, { "colors", 1 } });
 
   pLineVAO = new VertexArrayObject(VertexArrayObject::PrimitiveTypes::LINES);

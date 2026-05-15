@@ -12,23 +12,24 @@
 
 ShadowMapping::ShadowMapping()
 {
-    if(Gum::Graphics::VARS::SHADING_LANGUAGE_MAJOR_VERSION * 100 + Gum::Graphics::VARS::SHADING_LANGUAGE_MINOR_VERSION < 400)
-        bCascadedShadowSupport = false;
+  if(Gum::Graphics::VARS::SHADING_LANGUAGE_MAJOR_VERSION * 100 + Gum::Graphics::VARS::SHADING_LANGUAGE_MINOR_VERSION < 400 || FORCE_SIMPLE_SHADOWMAP)
+    bCascadedShadowSupport = false;
 
-    initShader();
+  initShader();
 
-    if(bCascadedShadowSupport)
-        vShadowCascadeLevels = { 
-            Settings::getSetting(Settings::RENDERDISTANCE) / 250.0f, 
-            Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
-            Settings::getSetting(Settings::RENDERDISTANCE) / 10.0f, 
-            Settings::getSetting(Settings::RENDERDISTANCE) / 2.0f
-        };
-    vLightMatrices.resize(vShadowCascadeLevels.size() + 1);
+  if(bCascadedShadowSupport)
+    vShadowCascadeLevels = { 
+      Settings::getSetting(Settings::RENDERDISTANCE) / 250.0f, 
+      Settings::getSetting(Settings::RENDERDISTANCE) / 25.0f, 
+      Settings::getSetting(Settings::RENDERDISTANCE) / 10.0f, 
+      Settings::getSetting(Settings::RENDERDISTANCE) / 2.0f
+    };
+  vLightMatrices.resize(vShadowCascadeLevels.size() + 1);
 
-    pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
-    TextureDepth3D* depthtex = (TextureDepth3D*)pFramebuffer->addDepthTextureArrayAttachment((unsigned int)vShadowCascadeLevels.size() + 1U);
-    depthtex->setBordercolor(rgba(255,255,255,255));
+  pFramebuffer = new Framebuffer(ivec2(Settings::getSetting(Settings::SHADOW_SIZE)));
+  TextureDepth3D* depthtex = pFramebuffer->addDepthTextureArrayAttachment((unsigned int)vShadowCascadeLevels.size() + 1U);
+  depthtex->setFiltering(Texture::FilteringType::NEAREST_NEIGHBOR);
+  depthtex->setBordercolor(rgba(255,255,255,255));
 }
 
 
@@ -40,20 +41,20 @@ ShadowMapping::~ShadowMapping()
 
 void ShadowMapping::render(const vec3& lightdir, const std::function<void()>& renderfunc)
 {
-    pFramebuffer->bind();
-    pFramebuffer->clear(Framebuffer::ClearFlags::DEPTH);
-    Gum::Graphics::cullBackside(false);
-    pShader->use();
-    getLightSpaceMatrices(lightdir);
-    if(bCascadedShadowSupport)
-        pShader->loadUniform("lightSpaceMatrices", vLightMatrices);
-    else
-        pShader->loadUniform("lightSpaceMatrix", vLightMatrices[0]);
+  pFramebuffer->bind();
+  pFramebuffer->clear(Framebuffer::ClearFlags::DEPTH);
+  Gum::Graphics::cullBackside(false);
+  pShader->use();
+  getLightSpaceMatrices(lightdir);
+  if(bCascadedShadowSupport)
+    pShader->loadUniform("lightSpaceMatrices", vLightMatrices);
+  else
+    pShader->loadUniform("lightSpaceMatrix", vLightMatrices[0]);
 
-    renderfunc();
-    pShader->unuse();
-    Gum::Graphics::cullBackside(true);
-    pFramebuffer->unbind();
+  renderfunc();
+  pShader->unuse();
+  Gum::Graphics::cullBackside(true);
+  pFramebuffer->unbind();
 }
 
 std::vector<vec4> ShadowMapping::getFrustumCornersWorldSpace(mat4& proj, const mat4& view)
@@ -132,7 +133,7 @@ void ShadowMapping::getLightSpaceMatrices(const vec3& lightdir)
 {
     if(!bCascadedShadowSupport)
     {
-        vLightMatrices[0] = getLightSpaceMatrix(lightdir, 1.0f, 7.5f);
+        vLightMatrices[0] = getLightSpaceMatrix(lightdir, 1.0f, 30.0f);
         return;
     }
 
@@ -165,10 +166,10 @@ std::vector<float>& ShadowMapping::getCascadeLevels() { return vShadowCascadeLev
 void ShadowMapping::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("ShadowMapShader", true);
-  pShader->addShader(new Shader(ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("ShadowMapShader", ShadowMappingVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("ShadowMapShader", ShadowMappingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   if(bCascadedShadowSupport)
-    pShader->addShader(new Shader(ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
+    pShader->addShader(Shader::requestShader("ShadowMapShader", ShadowMappingGeometryShader, Shader::TYPES::GEOMETRY_SHADER));
   
   pShader->build();
   pShader->loadUniform("isCascaded", bCascadedShadowSupport);

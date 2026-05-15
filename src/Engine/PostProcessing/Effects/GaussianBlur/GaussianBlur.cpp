@@ -29,15 +29,15 @@ GaussianBlur::GaussianBlur(Canvas *canvas, int stage)
 
 
   VblurShader = ShaderProgram::requestShaderProgram("GaussianBlurVShader", true);
-  VblurShader->addShader(new Shader(GussianBlurVShaderVert, Shader::TYPES::VERTEX_SHADER));
-  VblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
+  VblurShader->addShader(Shader::requestShader("GaussianBlurVShader", GussianBlurVShaderVert, Shader::TYPES::VERTEX_SHADER));
+  VblurShader->addShader(Shader::requestShader("GaussianBlurVShader", GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
   VblurShader->build();
 
   VblurShader->addTexture("textureSampler", 0);
 
   HblurShader = ShaderProgram::requestShaderProgram("GaussianBlurHShader", true);
-  HblurShader->addShader(new Shader(GussianBlurHShaderVert, Shader::TYPES::VERTEX_SHADER));
-  HblurShader->addShader(new Shader(GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
+  HblurShader->addShader(Shader::requestShader("GaussianBlurHShader", GussianBlurHShaderVert, Shader::TYPES::VERTEX_SHADER));
+  HblurShader->addShader(Shader::requestShader("GaussianBlurHShader", GussianBlurShaderFrag, Shader::TYPES::FRAGMENT_SHADER));
   HblurShader->build();
 
   HblurShader->addTexture("textureSampler", 0);

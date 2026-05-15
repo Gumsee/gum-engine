@@ -17,8 +17,8 @@ World3D* Examples::createOceanExample()
   Ocean *pOcean = new Ocean("TestOcean");
 
   ShaderProgram* pOceanShader = ShaderProgram::requestShaderProgram(true);
-  pOceanShader->addShader(new Shader(Tools::readFileContents(GumGlobals::SHADER_ASSETS_PATH + "ocean.vert"), Shader::TYPES::VERTEX_SHADER));
-  pOceanShader->addShader(new Shader(Tools::readFileContents(GumGlobals::SHADER_ASSETS_PATH + "ocean.frag"), Shader::TYPES::FRAGMENT_SHADER));
+  pOceanShader->addShader(Shader::requestShader("OceanShader", Tools::readFileContents(GumGlobals::SHADER_ASSETS_PATH + "ocean.vert"), Shader::TYPES::VERTEX_SHADER));
+  pOceanShader->addShader(Shader::requestShader("OceanShader", Tools::readFileContents(GumGlobals::SHADER_ASSETS_PATH + "ocean.frag"), Shader::TYPES::FRAGMENT_SHADER));
   pOceanShader->build("OceanShader");
   pOceanShader->addTexture("texture0", 0);
   GumEngine::Shaders->addShaderProgram(pOceanShader);

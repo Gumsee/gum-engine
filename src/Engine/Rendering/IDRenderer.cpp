@@ -10,8 +10,8 @@ IDRenderer::IDRenderer(Canvas* canvas)
   addDepthAttachment();
 
   pMeshIDShader = ShaderProgram::requestShaderProgram("MeshIDShader", true);
-  pMeshIDShader->addShader(new Shader(MeshIDVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pMeshIDShader->addShader(new Shader(MeshIDFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pMeshIDShader->addShader(Shader::requestShader("MeshIDShader", MeshIDVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pMeshIDShader->addShader(Shader::requestShader("MeshIDShader", MeshIDFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pMeshIDShader->build({ {"vertices", 0}, {"TransMatrix", 3}, {"individualColor", 10} });
 }
 

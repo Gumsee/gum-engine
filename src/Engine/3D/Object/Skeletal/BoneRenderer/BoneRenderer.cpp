@@ -39,8 +39,8 @@ BoneRenderer::BoneRenderer(AnimatedModel* model)
 
 
   pShader = ShaderProgram::requestShaderProgram("BoneRendererShader", true);
-  pShader->addShader(new Shader(BoneRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(BoneRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("BoneRendererShader", BoneRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("BoneRendererShader", BoneRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build({ {"vertices", 0}, {"transMatrices", 3} });
 
 

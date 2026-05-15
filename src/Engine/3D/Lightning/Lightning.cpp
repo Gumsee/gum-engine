@@ -63,7 +63,7 @@ void Lightning::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("LightningShader", true);
   pShader->addShader(Gum::PostProcessing::VertexShader);
-  pShader->addShader(new Shader(LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("LightningShader", LightningFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
 
   //Textures

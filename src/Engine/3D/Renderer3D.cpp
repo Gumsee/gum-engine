@@ -52,7 +52,7 @@ void Renderer3D::renderInternal()
     //Render the Shadowmap
     #ifndef GUM_ENGINE_NO_SHADOWMAP
     pShadowMaps->render(*pWorld->getLightManager()->getSun()->getDirection(), [this](){
-        pWorld->getObjectManager()->renderEverythingMeshesOnly();
+        pWorld->getObjectManager()->renderEverythingForShadowMap();
     });
     #endif
 

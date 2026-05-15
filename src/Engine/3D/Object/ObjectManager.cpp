@@ -8,6 +8,7 @@
 #include "System/Output.h"
 #include <System/MemoryManagement.h>
 #include <string>
+#include <Graphics/Graphics.h>
 
 
 Gum::File ObjectManager::MODEL_ASSETS_PATH = Gum::File("", Gum::Filesystem::DIRECTORY);
@@ -129,6 +130,17 @@ void ObjectManager::renderEverythingMeshesOnly()
 	for(auto objs : mObjectsForward)
         for(Object3D* obj : objs.second)
             obj->renderMesh();
+}
+
+void ObjectManager::renderEverythingForShadowMap()
+{
+	for(auto objs : mObjectsDefered)
+        for(Object3D* obj : objs.second)
+            obj->renderForShadowmap();
+        
+	for(auto objs : mObjectsForward)
+        for(Object3D* obj : objs.second)
+            obj->renderForShadowmap();
 }
 
 

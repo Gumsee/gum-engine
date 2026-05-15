@@ -14,7 +14,7 @@ Camera3D::Camera3D(const ivec2& resolution, World3D* world)
     : Camera(resolution, CAMERA3D)
 {
   this->fPitch = 30.0f;
-  this->fAngleAroundPos = -30.0f;
+  this->fAngleAroundPos = 90.0f;
   pOffsetToPos = new SmoothFloat(10, 5);
   pOffsetToPos->setMin(1);
   pOffsetToPos->setMax(100);

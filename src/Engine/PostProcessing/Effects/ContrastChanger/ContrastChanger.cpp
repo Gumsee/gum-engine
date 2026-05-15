@@ -10,7 +10,7 @@ ContrastChanger::ContrastChanger(Canvas *canvas, const float& contrast)
 
   this->pShader = ShaderProgram::requestShaderProgram("ContrastChangerShader", true);
   this->pShader->addShader(Gum::PostProcessing::VertexShader);
-  this->pShader->addShader(new Shader(ContrastChangerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  this->pShader->addShader(Shader::requestShader("ContrastChangerShader", ContrastChangerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   this->pShader->build();
 
   this->pShader->addTexture("texture0", 0);

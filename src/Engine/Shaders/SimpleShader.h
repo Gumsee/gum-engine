@@ -29,8 +29,8 @@ static void initSimpleShader()
 {
   ShaderProgram* shader;
   shader = ShaderProgram::requestShaderProgram("SimpleShader", true);
-  shader->addShader(new Shader(SimpleVertexShader, Shader::TYPES::VERTEX_SHADER));
-  shader->addShader(new Shader(SimpleFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  shader->addShader(Shader::requestShader("SimpleShader", SimpleVertexShader, Shader::TYPES::VERTEX_SHADER));
+  shader->addShader(Shader::requestShader("SimpleShader", SimpleFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
   shader->build({ {"vertices", 0}, {"TransMatrix", 3} });
 }

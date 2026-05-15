@@ -7,18 +7,18 @@
 
 SceneObject::SceneObject(Mesh *mesh, std::string name) : Object3D(mesh, name)
 {
-    pMaterial = Gum::MaterialManager::getDefaultMaterial();
+  pMaterial = Gum::MaterialManager::getDefaultMaterial();
 }
 
 SceneObject::SceneObject(std::string name) : Object3D(false)
 {
-    pMaterial = Gum::MaterialManager::getDefaultMaterial();
-    this->sName = name;
+  pMaterial = Gum::MaterialManager::getDefaultMaterial();
+  this->sName = name;
 }
 
 SceneObject::SceneObject(const Gum::File& file, const std::string& name) : Object3D(file, name)
 {
-    pMaterial = Gum::MaterialManager::getDefaultMaterial();
+  pMaterial = Gum::MaterialManager::getDefaultMaterial();
 }
 
 SceneObject::~SceneObject()
@@ -49,13 +49,28 @@ void SceneObject::render()
     pMaterial->unbindTextures();
 }
 
+void SceneObject::renderForShadowmap()
+{
+  #ifdef GUM_SHADOWMAP_WITH_TRANSPARENT_TEXTURES
+  if(pMaterial->hasTexture() && pMaterial->getTexture(0)->hasTransparency())
+  {
+    pMaterial->getTexture(0)->bind();
+    ShaderProgram::getCurrentlyBoundShader()->loadUniform("withTexture", true);
+  }
+  #endif
+  renderMesh();
+  #ifdef GUM_SHADOWMAP_WITH_TRANSPARENT_TEXTURES
+  ShaderProgram::getCurrentlyBoundShader()->loadUniform("withTexture", false);
+  #endif
+}
+
 
 PhysicsObjectInstance* SceneObject::addPhysicsInstance(PhysicsObjectInstance::Shape shape, float mass, World3D* world, vec3 special)
 {
-    PhysicsObjectInstance* instance = new PhysicsObjectInstance(this, shape, mass, world, special);
-    addInstance(instance);
+  PhysicsObjectInstance* instance = new PhysicsObjectInstance(this, shape, mass, world, special);
+  addInstance(instance);
 
-    return instance;
+  return instance;
 }
 
 

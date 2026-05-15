@@ -38,6 +38,7 @@ void G_Buffer::bind()
   clock.reset();
   gBuffer->bind();
   gBuffer->clear(Framebuffer::ClearFlags::COLOR | Framebuffer::ClearFlags::DEPTH);
+  
   //glBlendFunc(GL_SRC_ALPHA, GL_CONSTANT_COLOR);  
   //glDepthFunc(GL_LESS);
   Gum::Graphics::disableFeature(Gum::Graphics::Features::STENCIL_TESTING);
@@ -68,8 +69,8 @@ Framebuffer* G_Buffer::getFramebuffer()     { return this->gBuffer; }
 void G_Buffer::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("GBufferShader", true);
-  pShader->addShader(new Shader(GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("GBufferShader", GBufferVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("GBufferShader", GBufferFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
 
   pShader->addTexture("texture0", GUM_MATERIAL_TEXTURE0);

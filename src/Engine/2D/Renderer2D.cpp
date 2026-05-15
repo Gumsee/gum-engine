@@ -97,8 +97,8 @@ void Renderer2D::setWorld(World2D* world)
 void Renderer2D::initShader()
 {
   pParallaxSkyShader = ShaderProgram::requestShaderProgram("ParallaxSkyShader", true);
-  pParallaxSkyShader->addShader(new Shader(ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pParallaxSkyShader->addShader(new Shader(ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pParallaxSkyShader->addShader(Shader::requestShader("ParallaxSkyShader", ParallaxSkyVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pParallaxSkyShader->addShader(Shader::requestShader("ParallaxSkyShader", ParallaxSkyFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
   pParallaxSkyShader->build({{"vertices", 0}});
   pParallaxSkyShader->addTexture("textureSampler", 0);

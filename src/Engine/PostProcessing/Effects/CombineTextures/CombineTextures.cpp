@@ -10,7 +10,7 @@ CombineTextures::CombineTextures(Canvas *canvas, const float& exposure)
 
   pShader = ShaderProgram::requestShaderProgram("CombineTexturesShader", true);
   pShader->addShader(Gum::PostProcessing::VertexShader);
-  pShader->addShader(new Shader(CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("CombineTexturesShader", CombineTexturesFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
   pShader->addTexture("texture0", 0);
   pShader->addTexture("texture1", 1);

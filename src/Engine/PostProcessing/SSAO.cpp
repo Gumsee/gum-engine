@@ -205,7 +205,7 @@ void SSAO::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("SSAOShader", true);
   pShader->addShader(Gum::PostProcessing::VertexShader);
-  pShader->addShader(new Shader(SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("SSAOShader", SSAOFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
   pShader->addTexture("texPosition", 0);
   pShader->addTexture("texNormal", 1);
@@ -213,7 +213,7 @@ void SSAO::initShader()
 
   pBlurShader = ShaderProgram::requestShaderProgram("SSAOBlurShader", true);
   pBlurShader->addShader(Gum::PostProcessing::VertexShader);
-  pBlurShader->addShader(new Shader(SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pBlurShader->addShader(Shader::requestShader("SSAOBlurShader", SSAOBlurFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pBlurShader->build();
   pBlurShader->addTexture("ssaoInput", 0);
 }

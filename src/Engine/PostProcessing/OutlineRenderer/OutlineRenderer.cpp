@@ -48,13 +48,13 @@ void OutlineRenderer::render(Renderable* renderable, mat4 transform)
 void OutlineRenderer::initShader()
 {
   pShader = ShaderProgram::requestShaderProgram("OutlineRendererShader", true);
-  pShader->addShader(new Shader(OutlineRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShader->addShader(new Shader(OutlineRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShader->addShader(Shader::requestShader("OutlineRendererShader", OutlineRendererVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShader->addShader(Shader::requestShader("OutlineRendererShader", OutlineRendererFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShader->build();
 
   pProcessingShader = ShaderProgram::requestShaderProgram("OutlineRendererProcessingShader", true);
   pProcessingShader->addShader(Gum::PostProcessing::VertexShader);
-  pProcessingShader->addShader(new Shader(OutlineRendererProcessingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pProcessingShader->addShader(Shader::requestShader("OutlineRendererProcessingShader", OutlineRendererProcessingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pProcessingShader->build();
 }
 

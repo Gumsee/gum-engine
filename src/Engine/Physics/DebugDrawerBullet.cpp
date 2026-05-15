@@ -16,8 +16,8 @@ DebugDrawer::DebugDrawer()
   pVAO->addAttribute(pVBO, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
 
   pShaderProgram = ShaderProgram::requestShaderProgram("PhysicsDebuggingpShaderProgram", true);
-  pShaderProgram->addShader(new Shader(PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
-  pShaderProgram->addShader(new Shader(PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  pShaderProgram->addShader(Shader::requestShader("PhysicsDebuggingpShader", PhysicsDebuggingVertexShader, Shader::TYPES::VERTEX_SHADER));
+  pShaderProgram->addShader(Shader::requestShader("PhysicsDebuggingpShader", PhysicsDebuggingFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   pShaderProgram->build();
 }
 

@@ -28,7 +28,7 @@ CurveRenderer::CurveRenderer(Curve* curve, float thickness)
     pPointsBuffer = new VertexBufferObject<vec3>();
     pPointsBuffer->setData(pCurve->getData(), Gum::Graphics::DataState::STATIC);
     pVAO->addAttribute(pPointsBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
-    pVAO->addAttributeMat4(pTransMatricesVBO, 3, Gum::Graphics::Datatypes::FLOAT, 1);
+    pVAO->addAttributeMat(pTransMatricesVBO, 3, 4, Gum::Graphics::Datatypes::FLOAT, 1);
     pVAO->setVertexCount((unsigned int)pCurve->getData().size());
 
 
@@ -37,7 +37,7 @@ CurveRenderer::CurveRenderer(Curve* curve, float thickness)
     pControlPointsBuffer = new VertexBufferObject<vec3>();
     pControlPointsBuffer->setData(pCurve->getControlpoints(), Gum::Graphics::DataState::STATIC);
     pControlVAO->addAttribute(pControlPointsBuffer, 0, 3, Gum::Graphics::Datatypes::FLOAT, sizeof(vec3), 0);
-    pControlVAO->addAttributeMat4(pTransMatricesVBO, 3, Gum::Graphics::Datatypes::FLOAT, 1);
+    pControlVAO->addAttributeMat(pTransMatricesVBO, 3, 4, Gum::Graphics::Datatypes::FLOAT, 1);
     pControlVAO->setVertexCount(pCurve->numPoints());
 }
 

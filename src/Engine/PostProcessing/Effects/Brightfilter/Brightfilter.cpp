@@ -8,7 +8,7 @@ Brightfilter::Brightfilter(Canvas* canvas)
 
   this->pShader = ShaderProgram::requestShaderProgram("BrightnessFilterShader", true);
   this->pShader->addShader(Gum::PostProcessing::VertexShader);
-  this->pShader->addShader(new Shader(BrightfilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  this->pShader->addShader(Shader::requestShader("BrightnessFilterShader", BrightfilterFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
   this->pShader->build();
 
   this->pShader->addTexture("texture0", 0);

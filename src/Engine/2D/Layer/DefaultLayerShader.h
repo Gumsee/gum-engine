@@ -25,8 +25,8 @@ static ShaderProgram* initDefaultLayerShader()
 {
   ShaderProgram* shader;
   shader = ShaderProgram::requestShaderProgram("DefaultLayerShader", true);
-  shader->addShader(new Shader(DefaultLayerVertexShader, Shader::TYPES::VERTEX_SHADER));
-  shader->addShader(new Shader(DefaultLayerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
+  shader->addShader(Shader::requestShader("DefaultLayerShader", DefaultLayerVertexShader, Shader::TYPES::VERTEX_SHADER));
+  shader->addShader(Shader::requestShader("DefaultLayerShader", DefaultLayerFragmentShader, Shader::TYPES::FRAGMENT_SHADER));
 
   shader->build({ {"vertices", 0} });
   return shader;
